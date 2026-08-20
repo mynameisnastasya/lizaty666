@@ -48,7 +48,7 @@ CTA «Подобрать обучение» открывает трёхшаго�
 ## Технологии
 
 - чистый HTML, CSS и vanilla JavaScript;
-- GitHub Pages и кастомный домен `lizty666.ru`;
+- публикация через GitHub Pages: `https://mynameisnastasya.github.io/lizaty666/`;
 - responsive layout от 390 px;
 - semantic HTML, keyboard navigation и `prefers-reduced-motion`;
 - Open Graph, canonical URLs, sitemap и базовая schema.org-разметка.

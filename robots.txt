@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://lizty666.ru/sitemap.xml
+Sitemap: https://mynameisnastasya.github.io/lizaty666/sitemap.xml
