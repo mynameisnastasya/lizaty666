@@ -1,38 +1,197 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>liz_ty666 — астрология, руны, свечи, прогнозы и обучение</title>
-<meta name="description" content="liz_ty666: астрология, руны, свечи, прогнозы, обучение и разборы. Запись в Telegram.">
-<meta property="og:title" content="liz_ty666 — астрология, руны, свечи, прогнозы">
-<meta property="og:description" content="Разборы, прогнозы, руны, свечи и обучение. Запись в Telegram @liz_ty666">
-<meta property="og:type" content="website">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Unbounded:wght@400;700;900&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-:root{--black:#050505;--graphite:#141414;--graphite2:#1a1a1a;--milk:#F4F0E8;--grey:#B7B1AA;--grey2:#8A8480;--gold:#C9A45C;--gold-light:#DDB96E;--bordeaux:#4B0F18;--violet:#25112E;--violet2:#1d0d25}*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{background:var(--black);color:var(--milk);font-family:'Manrope',sans-serif;line-height:1.6;overflow-x:hidden}body:before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.42}h1,h2,h3{font-family:'Unbounded',sans-serif}a{color:inherit}img{max-width:100%;display:block}.container{max-width:1120px;margin:0 auto}header{position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(5,5,5,.98),rgba(5,5,5,.72),transparent);backdrop-filter:blur(8px);border-bottom:1px solid rgba(201,164,92,.08)}.logo{font-family:'Unbounded',sans-serif;font-size:18px;font-weight:900;letter-spacing:-.04em;text-decoration:none;color:var(--milk)}.nav{display:flex;gap:19px;align-items:center;flex-wrap:wrap}.nav a{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--grey);text-decoration:none;transition:.25s}.nav a:hover,.nav a.is-active{color:var(--gold)}.nav-cta{background:var(--gold);color:var(--black)!important;padding:9px 18px}.burger{display:none;flex-direction:column;gap:5px;background:0;border:0;padding:6px;cursor:pointer}.burger span{display:block;width:22px;height:2px;background:var(--milk)}.mobile-nav{display:none;position:fixed;inset:0;background:rgba(5,5,5,.98);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:24px}.mobile-nav.open{display:flex}.mobile-nav a{font-family:'Unbounded',sans-serif;font-size:18px;font-weight:700;text-decoration:none}.mobile-nav-close{position:absolute;right:24px;top:22px;background:0;border:0;color:var(--grey);font-size:26px}.fixed-cta{display:none;position:fixed;left:0;right:0;bottom:0;z-index:998;padding-bottom:env(safe-area-inset-bottom)}.fixed-cta a{display:block;background:var(--gold);color:var(--black);text-align:center;padding:15px;font-family:'Unbounded',sans-serif;font-size:13px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;text-decoration:none}.btn-primary,.btn-secondary{display:inline-flex;align-items:center;justify-content:center;font-family:'Unbounded',sans-serif;font-size:11px;font-weight:900;letter-spacing:.07em;text-transform:uppercase;text-decoration:none;transition:.25s;min-height:48px}.btn-primary{background:var(--gold);color:var(--black);padding:14px 30px}.btn-primary:hover{background:var(--gold-light);box-shadow:0 0 34px rgba(201,164,92,.22)}.btn-secondary{border:1px solid rgba(244,240,232,.25);color:var(--milk);padding:13px 28px;background:rgba(5,5,5,.22)}.btn-secondary:hover{border-color:var(--gold);color:var(--gold)}section{position:relative;padding:92px 40px}.section-label{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}.section-title{font-size:clamp(26px,4.2vw,56px);font-weight:900;line-height:1.05;letter-spacing:-.04em;text-transform:uppercase;margin-bottom:16px}.section-sub{font-size:16px;color:var(--grey);max-width:580px;line-height:1.75;margin-bottom:48px}.gold-line{width:48px;height:1px;background:var(--gold);opacity:.45;margin:18px 0}.fi{opacity:0;transform:translateY(18px);transition:.6s ease}.fi.vis{opacity:1;transform:none}.fi-d1{transition-delay:.1s}.fi-d2{transition-delay:.2s}
-#hero{min-height:100vh;display:flex;align-items:center;overflow:hidden;padding:112px 40px 76px;background:var(--black)}.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 55% 70% at 78% 36%,rgba(37,17,46,.78),transparent 70%),radial-gradient(ellipse 35% 42% at 83% 72%,rgba(75,15,24,.38),transparent 64%),linear-gradient(90deg,#050505 0%,#060507 48%,#09050d 100%)}.hero-bg:after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 25%,rgba(201,164,92,.05),transparent 24%),linear-gradient(90deg,rgba(5,5,5,.98) 0%,rgba(5,5,5,.9) 34%,rgba(5,5,5,.35) 67%,rgba(5,5,5,.16) 100%)}.hero-stars{position:absolute;inset:0;overflow:hidden;pointer-events:none}.star{position:absolute;width:2px;height:2px;border-radius:50%;background:var(--milk);animation:twinkle var(--dur,3s) ease-in-out infinite var(--del,0s)}@keyframes twinkle{0%,100%{opacity:.10}50%{opacity:.58}}.hero-wrap{position:relative;z-index:2;width:100%;max-width:1200px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(390px,46vw);gap:28px;align-items:center}.hero-content{position:relative;z-index:4;max-width:590px}.hero-tag{display:inline-block;border:1px solid rgba(201,164,92,.36);color:var(--gold);font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;padding:6px 14px;margin-bottom:26px;background:rgba(5,5,5,.22);backdrop-filter:blur(5px)}.hero h1{font-size:clamp(38px,5.45vw,74px);font-weight:900;line-height:1.06;letter-spacing:-.052em;text-transform:uppercase;margin-bottom:22px}.hero h1 .gold-script{display:block;font-family:'Cormorant Garamond',serif;font-size:1.02em;font-weight:600;font-style:italic;text-transform:none;letter-spacing:-.02em;color:var(--gold);margin-top:-.06em}.hero-sub{font-size:17px;color:rgba(244,240,232,.72);max-width:455px;line-height:1.62;margin-bottom:32px}.hero-btns{display:flex;gap:14px;flex-wrap:wrap}.hero-visual{position:relative;z-index:1;min-height:620px;height:calc(100vh - 120px);max-height:760px;display:flex;align-items:center;justify-content:center;overflow:visible}.photo-hero{position:relative;width:100%;height:100%;min-height:580px;border-left:1px solid rgba(201,164,92,.08);background:radial-gradient(ellipse at 56% 36%,rgba(201,164,92,.10),transparent 45%),radial-gradient(ellipse at 70% 60%,rgba(75,15,24,.28),transparent 64%)}.photo-hero img{position:absolute;right:-1%;bottom:0;width:108%;height:100%;object-fit:contain;object-position:center top;opacity:.92;filter:contrast(1.07) brightness(.90) saturate(1.04) drop-shadow(0 0 50px rgba(201,164,92,.10))}.photo-hero:before{content:'☽';position:absolute;left:5%;top:15%;font-family:'Cormorant Garamond',serif;font-size:82px;color:rgba(201,164,92,.38);z-index:2;text-shadow:0 0 25px rgba(201,164,92,.18)}.photo-hero:after{content:'';position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(90deg,rgba(5,5,5,.86) 0%,rgba(5,5,5,.34) 30%,rgba(5,5,5,.04) 62%,rgba(5,5,5,.18) 100%),linear-gradient(0deg,rgba(5,5,5,.78) 0%,transparent 22%,transparent 80%,rgba(5,5,5,.22) 100%)}.candle-glow{position:absolute;bottom:8%;left:52%;width:240px;height:240px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,rgba(201,164,92,.15),transparent 70%);animation:glow 3.8s ease-in-out infinite;z-index:2}@keyframes glow{50%{transform:translateX(-50%) scale(1.16);opacity:.76}}
-.grid{display:grid;gap:2px}.grid-3{grid-template-columns:repeat(3,1fr)}.grid-4{grid-template-columns:repeat(4,1fr)}.card{position:relative;background:var(--graphite2);padding:32px 26px;overflow:hidden;border:1px solid rgba(244,240,232,.04);transition:.3s;text-decoration:none}.card:hover{border-color:rgba(201,164,92,.24);box-shadow:0 0 42px rgba(201,164,92,.08);transform:translateY(-2px)}.card:before{content:'';position:absolute;inset:-1px;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(201,164,92,.16),transparent 35%);opacity:0;transition:.25s;pointer-events:none}.card:hover:before{opacity:1}.card h3{font-size:13px;text-transform:uppercase;letter-spacing:-.01em;margin-bottom:10px}.card p{font-size:14px;color:var(--grey);line-height:1.65}.icon{font-size:30px;color:var(--gold);opacity:.75;margin-bottom:14px}.card-link{display:inline-block;margin-top:18px;color:var(--gold);font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid rgba(201,164,92,.35)}#routes{background:var(--graphite)}#flagship{background:var(--bordeaux);overflow:hidden}#flagship:before{content:'';position:absolute;right:-120px;top:-120px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(201,164,92,.08),transparent 70%)}.flag-card{max-width:720px;margin:0 auto;background:rgba(5,5,5,.58);border:1px solid rgba(201,164,92,.25);padding:50px}.price{font-family:'Unbounded',sans-serif;font-size:clamp(42px,6vw,72px);font-weight:900;color:var(--gold);letter-spacing:-.04em}.format{font-size:12px;color:var(--grey);font-weight:700;letter-spacing:.09em;text-transform:uppercase;margin:6px 0 24px}.flag-card h2{font-size:clamp(28px,4vw,46px);line-height:1.05;text-transform:uppercase;margin-bottom:18px}.list{list-style:none;margin:24px 0 32px}.list li{padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:14px;color:var(--grey);display:flex;gap:12px}.list li:before{content:'—';color:var(--gold)}#services{background:var(--black)}.service-price{font-family:'Unbounded',sans-serif;color:var(--gold);font-size:23px;font-weight:900;margin-bottom:8px}#about-preview{background:var(--graphite)}.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}.about-photo{height:520px;border:1px solid rgba(201,164,92,.16);overflow:hidden;background:var(--graphite2);position:relative}.about-photo img{width:100%;height:100%;object-fit:cover;object-position:center top;filter:contrast(1.05) brightness(.95) saturate(1.04)}.about-photo:after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 88%,rgba(75,15,24,.3),transparent 60%)}.about-text p{color:var(--grey);font-size:15px;line-height:1.8;margin-bottom:16px}.about-accent{font-family:'Cormorant Garamond',serif;font-size:26px;font-style:italic;border-left:2px solid var(--gold);padding-left:20px;margin:26px 0}#final-cta{background:var(--black);text-align:center;overflow:hidden}#final-cta:before{content:'';position:absolute;left:50%;top:50%;width:560px;height:560px;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(37,17,46,.48),transparent 70%)}.final-inner{position:relative;z-index:2}.final-inner .section-sub{margin-left:auto;margin-right:auto;text-align:center}.footer{background:var(--graphite);border-top:1px solid rgba(244,240,232,.06);padding:44px 40px 36px}.footer-inner{max-width:1100px;margin:0 auto;display:flex;gap:28px;justify-content:space-between;flex-wrap:wrap}.footer-logo{font-family:'Unbounded',sans-serif;font-weight:900;text-decoration:none}.footer-links{display:flex;gap:18px;flex-wrap:wrap}.footer-links a{font-size:11px;color:var(--grey);text-decoration:none;text-transform:uppercase;letter-spacing:.08em}.footer-note{max-width:1100px;margin:24px auto 0;padding-top:22px;border-top:1px solid rgba(244,240,232,.05);font-size:11px;color:rgba(183,177,170,.35);line-height:1.7}.brand-loader{position:fixed;inset:0;z-index:20000;background:#050505;display:flex;align-items:center;justify-content:center;transition:.55s}.brand-loader.hide{opacity:0;pointer-events:none}.brand-loader__inner{text-align:center}.brand-loader__sigil{font-family:'Unbounded';font-size:44px;font-weight:900;color:var(--gold);letter-spacing:-.06em}.brand-loader__text{margin-top:12px;color:var(--grey);font-size:11px;text-transform:uppercase;letter-spacing:.18em}.brand-loader__line{width:160px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:20px auto 0;animation:loadline 1s infinite}@keyframes loadline{50%{opacity:.25}}.moon-light{position:fixed;right:-120px;top:12vh;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(201,164,92,.09),transparent 70%);pointer-events:none;z-index:0;animation:moon 7s ease-in-out infinite}@keyframes moon{50%{transform:translateY(28px)}}.zodiac-bg,.zodiac-bg *{display:none!important}.page-transition{position:fixed;inset:0;background:var(--black);z-index:15000;pointer-events:none;opacity:0;transition:.45s}.page-transition.active{opacity:1}.brand-cursor,.brand-cursor-dot{display:none}@media(pointer:fine){body{cursor:none}.brand-cursor{display:block;position:fixed;z-index:21000;width:38px;height:38px;border:1px solid rgba(201,164,92,.55);border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:width .2s,height .2s}.brand-cursor.hover{width:64px;height:64px;background:rgba(201,164,92,.06)}.brand-cursor-dot{display:block;position:fixed;z-index:21001;width:5px;height:5px;background:var(--gold);border-radius:50%;pointer-events:none;transform:translate(-50%,-50%)}}
-@media(max-width:900px){.nav{display:none}.burger{display:flex}.fixed-cta{display:block}section{padding:64px 20px}header{padding:14px 20px}#hero{min-height:auto;padding:96px 20px 62px;display:block}.hero-bg:after{background:linear-gradient(180deg,rgba(5,5,5,.86) 0%,rgba(5,5,5,.42) 34%,rgba(5,5,5,.94) 100%),radial-gradient(ellipse at 70% 22%,rgba(37,17,46,.64),transparent 56%)}.hero-wrap{display:flex;flex-direction:column;gap:22px;align-items:stretch}.hero-content{max-width:100%;order:1}.hero-tag{font-size:8.5px;letter-spacing:.13em;padding:5px 10px;margin-bottom:18px}.hero h1{font-size:clamp(31px,9.2vw,45px);line-height:1.08;letter-spacing:-.045em;margin-bottom:16px;max-width:360px}.hero h1 .gold-script{font-size:1em;margin-top:-2px}.hero-sub{font-size:14.5px;line-height:1.55;max-width:310px;margin-bottom:22px;color:rgba(244,240,232,.76)}.hero-btns{gap:10px;max-width:320px}.btn-primary,.btn-secondary{width:100%;min-height:44px;font-size:10px;padding:12px 16px}.hero-visual{order:2;position:relative;width:100%;height:390px;min-height:390px;max-height:none;margin:0;overflow:visible;z-index:1}.photo-hero{min-height:390px;height:390px;border-left:0;border-top:1px solid rgba(201,164,92,.08);background:radial-gradient(ellipse at 50% 28%,rgba(201,164,92,.12),transparent 45%),radial-gradient(ellipse at 70% 62%,rgba(75,15,24,.25),transparent 65%)}.photo-hero img{right:50%;transform:translateX(50%);bottom:0;width:100%;height:100%;object-fit:contain;object-position:center top;opacity:.92}.photo-hero:before{left:8%;top:9%;font-size:54px}.photo-hero:after{background:linear-gradient(180deg,rgba(5,5,5,.05) 0%,rgba(5,5,5,.05) 54%,rgba(5,5,5,.78) 100%),linear-gradient(90deg,rgba(5,5,5,.34) 0%,transparent 35%,transparent 70%,rgba(5,5,5,.28) 100%)}.candle-glow{width:170px;height:170px;bottom:8%}.grid-3,.grid-4,.about-grid{grid-template-columns:1fr}.flag-card{padding:34px 22px}.footer{padding:40px 20px 92px}.footer-inner{flex-direction:column}.about-photo{height:420px}}
-@media(max-width:480px){#hero{padding:88px 16px 54px}.hero h1{font-size:32px;max-width:330px}.hero-tag{max-width:300px;line-height:1.5}.hero-sub{max-width:300px}.hero-visual{height:330px;min-height:330px}.photo-hero,.photo-hero img{height:330px;min-height:330px}.photo-hero img{width:108%;object-position:center top}.hero-btns{max-width:100%}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Обучение астрологии у Лизы — от карты к человеку</title>
+  <meta name="description" content="Обучение астрологии у Лизы: от самостоятельного чтения натальной карты до глубокой консультационной практики и прогнозирования.">
+  <meta name="theme-color" content="#0c0b0c">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Я не учу заучивать трактовки. Я учу видеть человека.">
+  <meta property="og:description" content="Обучение астрологии от первых карт до консультационной практики и прогнозирования.">
+  <meta property="og:image" content="https://lizty666.ru/assets/liza-hero.jpg">
+  <meta property="og:url" content="https://lizty666.ru/">
+  <link rel="canonical" href="https://lizty666.ru/">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="editorial.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"liz_ty666","url":"https://lizty666.ru/","description":"Обучение астрологии, консультации и практики Лизы."}</script>
 </head>
 <body>
-<header><a class="logo" href="index.html">liz_ty666</a><nav class="nav" aria-label="Основная навигация"><a href="liza-chto-delat.html">Лиза, что делать?</a><a href="astrology.html">Астрология</a><a href="runes.html">Руны</a><a href="candles.html">Свечи</a><a href="education.html">Обучение</a><a href="reviews.html">Отзывы</a><a href="about.html">О Лизе</a><a href="faq.html">FAQ</a><a href="https://t.me/liz_ty666" target="_blank" rel="noopener noreferrer" class="nav-cta">Записаться</a></nav><button class="burger" aria-label="Открыть меню" aria-expanded="false" aria-controls="mobileNav" onclick="openMenu(this)"><span></span><span></span><span></span></button></header>
-<div class="mobile-nav" id="mobileNav"><button class="mobile-nav-close" onclick="closeMenu()" aria-label="Закрыть меню">✕</button><a href="index.html" onclick="closeMenu()">Главная</a><a href="liza-chto-delat.html" onclick="closeMenu()">Лиза, что делать?</a><a href="astrology.html" onclick="closeMenu()">Астрология</a><a href="runes.html" onclick="closeMenu()">Руны</a><a href="candles.html" onclick="closeMenu()">Свечи</a><a href="education.html" onclick="closeMenu()">Обучение</a><a href="reviews.html" onclick="closeMenu()">Отзывы</a><a href="about.html" onclick="closeMenu()">О Лизе</a><a href="faq.html" onclick="closeMenu()">FAQ</a><a href="https://t.me/liz_ty666" target="_blank" rel="noopener noreferrer" onclick="closeMenu()">Telegram →</a></div>
-<div class="fixed-cta"><a href="https://t.me/liz_ty666?text=Здравствуйте!%20Хочу%20записаться%20к%20Лизе.%20Мой%20запрос:" target="_blank" rel="noopener noreferrer">Записаться ко мне</a></div>
-<section id="hero" class="hero"><div class="hero-bg"></div><div class="hero-stars" id="starsContainer"></div><div class="hero-wrap"><div class="hero-content fi"><div class="hero-tag">Астрология · Руны · Свечи · Прогнозы · Обучение</div><h1>Я смотрю туда,<span class="gold-script">куда обычно страшно смотреть</span></h1><p class="hero-sub">Смотрю, куда движется ситуация — где риск, ресурс и что делать дальше.</p><div class="hero-btns"><a href="https://t.me/liz_ty666?text=Здравствуйте!%20Хочу%20записаться%20к%20Лизе.%20Мой%20запрос:" target="_blank" rel="noopener noreferrer" class="btn-primary">Записаться ко мне</a><a href="#routes" class="btn-secondary">Выбрать формат</a></div></div><div class="hero-visual"><div class="photo-hero"><img src="assets/212CB13A-DFA8-4E37-BF86-4F200A4A0E9A.png" alt="liz_ty666"><div class="candle-glow"></div></div></div></div></section>
-<section id="routes"><div class="container"><div class="section-label">Переходы по сайту</div><h2 class="section-title fi">Выберите, что сейчас ближе</h2><p class="section-sub fi fi-d1">Все карточки ведут на отдельные страницы сайта. Главная теперь работает как меню и витрина бренда.</p><div class="grid grid-4 fi fi-d2"><a class="card" href="liza-chto-delat.html"><div class="icon">⚡</div><h3>Лиза, что делать?</h3><p>1 запрос, голосовыми, 2–3 дня. Быстрый вход, когда ситуация занимает все мысли.</p><span class="card-link">Открыть страницу →</span></a><a class="card" href="astrology.html"><div class="icon">☽</div><h3>Астрология</h3><p>Прогнозы, соляр, натальная карта, отношения и периоды.</p><span class="card-link">Смотреть астрологию →</span></a><a class="card" href="runes.html"><div class="icon">ᚠ</div><h3>Руны</h3><p>Энергия ситуации, скрытые процессы, выбор, став и колесо года.</p><span class="card-link">Смотреть руны →</span></a><a class="card" href="candles.html"><div class="icon">🕯</div><h3>Свечи</h3><p>Свечи, очищение дома, разрыв энергосвязей и работа с состоянием.</p><span class="card-link">Смотреть свечи →</span></a><a class="card" href="education.html"><div class="icon">◉</div><h3>Обучение</h3><p>Психосоматика, свечная магия, натальная астрология, прогностика.</p><span class="card-link">Смотреть обучение →</span></a><a class="card" href="reviews.html"><div class="icon">✦</div><h3>Отзывы</h3><p>Отзывы и скриншоты сообщений клиентов после разборов.</p><span class="card-link">Смотреть отзывы →</span></a><a class="card" href="about.html"><div class="icon">◎</div><h3>О Лизе</h3><p>Подход, инструменты, стиль работы и честные границы.</p><span class="card-link">Узнать о Лизе →</span></a><a class="card" href="faq.html"><div class="icon">?</div><h3>FAQ</h3><p>Что выбрать, что нужно для разбора, сроки, оплата и обучение.</p><span class="card-link">Открыть FAQ →</span></a></div></div></section>
-<section id="flagship"><div class="container"><div class="flag-card fi"><div class="section-label">Флагманский формат</div><div class="price">2 766 ₽</div><div class="format">1 запрос · голосовыми · 2–3 дня</div><h2>Лиза,<br>что делать?</h2><p class="section-sub" style="margin-bottom:0">Вы описываете, что происходит — я смотрю через подходящие инструменты и даю ориентир: что видно, где риск и какой шаг сделать дальше.</p><ul class="list"><li>Нужно принять решение</li><li>Ситуация занимает все мысли</li><li>Нужно быстро понять, что происходит</li><li>Хочется не гадать в голове, а получить разбор</li></ul><a href="liza-chto-delat.html" class="btn-primary">Подробнее о формате</a></div></div></section>
-<section id="services"><div class="container"><div class="section-label">Услуги</div><h2 class="section-title fi">Основные направления</h2><p class="section-sub fi fi-d1">Ниже — быстрые переходы на страницы, где расписаны цены, формат и что входит.</p><div class="grid grid-3 fi fi-d2"><a class="card" href="astrology.html"><div class="service-price">от 3 666 ₽</div><h3>Астрология и прогнозы</h3><p>Прогноз на месяц, соляр, затмения, натальная карта, отношения.</p><span class="card-link">Перейти →</span></a><a class="card" href="runes.html"><div class="service-price">от 1 666 ₽</div><h3>Рунические форматы</h3><p>Совет от рун, консультация, рунический став, колесо года.</p><span class="card-link">Перейти →</span></a><a class="card" href="candles.html"><div class="service-price">от 666 ₽</div><h3>Свечи и очищение</h3><p>Свечи, наборы, очищение пространства, разрыв энергосвязей.</p><span class="card-link">Перейти →</span></a></div></div></section>
-<section id="about-preview"><div class="container"><div class="about-grid"><div class="about-photo fi"><img src="assets/212CB13A-DFA8-4E37-BF86-4F200A4A0E9A.png" alt="liz_ty666"></div><div class="about-text fi fi-d1"><div class="section-label">Обо мне</div><h2 class="section-title">Ясность,<br>а не чудо</h2><div class="gold-line"></div><p>Я соединяю астрологию, руны, свечи, прогнозы и энергетические практики, чтобы не просто «дать ответ», а показать картину.</p><p>Ко мне приходят, когда надоело крутить ситуацию в голове и хочется увидеть её глубже — через символы, периоды, энергию и честный разбор.</p><div class="about-accent">Не обещаю чудо.<br>Даю ясность.</div><a href="about.html" class="btn-secondary">Подробнее обо мне</a></div></div></div></section>
-<section id="final-cta"><div class="final-inner fi"><div class="section-label">Запись</div><h2 class="section-title">Хватит крутить<br>это в голове</h2><p class="section-sub">Если ситуация уже занимает все мысли — её можно посмотреть. Напишите мне в Telegram: я подскажу, какой формат подойдёт.</p><a href="https://t.me/liz_ty666?text=Здравствуйте!%20Хочу%20записаться%20на%20разбор.%20Мой%20запрос:" target="_blank" rel="noopener noreferrer" class="btn-primary">Написать мне</a></div></section>
-<footer class="footer"><div class="footer-inner"><a class="footer-logo" href="index.html">liz_ty666</a><div class="footer-links"><a href="liza-chto-delat.html">Лиза, что делать?</a><a href="astrology.html">Астрология</a><a href="runes.html">Руны</a><a href="candles.html">Свечи</a><a href="education.html">Обучение</a><a href="reviews.html">Отзывы</a><a href="about.html">О Лизе</a><a href="faq.html">FAQ</a></div><a class="btn-primary" href="https://t.me/liz_ty666" target="_blank" rel="noopener noreferrer">Telegram</a></div><p class="footer-note">Разборы, руны, свечные и энергетические практики не заменяют врача, психолога, юриста, финансового консультанта или другого профильного специалиста. Все решения вы принимаете самостоятельно.</p></footer>
-<script>
-(function(){var c=document.getElementById('starsContainer');if(c){var f=document.createDocumentFragment();for(var i=0;i<75;i++){var s=document.createElement('div');s.className='star';var sz=Math.random()>.82?3:2;s.style.cssText='left:'+(Math.random()*100)+'%;top:'+(Math.random()*100)+'%;--dur:'+(2+Math.random()*4)+'s;--del:'+(Math.random()*5)+'s;width:'+sz+'px;height:'+sz+'px;';f.appendChild(s)}c.appendChild(f)}})();function openMenu(btn){document.getElementById('mobileNav').classList.add('open');btn.setAttribute('aria-expanded','true');document.addEventListener('keydown',handleEsc)}function closeMenu(){document.getElementById('mobileNav').classList.remove('open');var b=document.querySelector('.burger');if(b)b.setAttribute('aria-expanded','false');document.removeEventListener('keydown',handleEsc)}function handleEsc(e){if(e.key==='Escape')closeMenu()}var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('vis');obs.unobserve(e.target)}})},{threshold:.08});document.querySelectorAll('.fi').forEach(function(el){obs.observe(el)});setTimeout(function(){var h=document.querySelector('.hero-content');if(h)h.classList.add('vis')},80);document.querySelectorAll('.card').forEach(function(card){card.classList.add('cinematic-card');card.addEventListener('mousemove',function(e){var r=card.getBoundingClientRect();card.style.setProperty('--mx',((e.clientX-r.left)/r.width)*100+'%');card.style.setProperty('--my',((e.clientY-r.top)/r.height)*100+'%')})});
-</script>
-<script src="app.js"></script>
+  <a class="skip-link" href="#content">К содержанию</a>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="brand" href="index.html">liz_ty<span>666</span></a>
+      <nav class="site-nav" id="mainNav" aria-label="Основная навигация">
+        <a href="#method">Метод</a>
+        <a href="education.html" data-page="education.html">Обучение</a>
+        <a href="astrology.html" data-page="astrology.html">Консультации</a>
+        <a href="practices.html" data-page="practices.html">Практики</a>
+        <a href="about.html" data-page="about.html">О Лизе</a>
+        <a href="reviews.html" data-page="reviews.html">Отзывы</a>
+        <a class="button button--small" href="education.html#choose" data-diagnostic>Подобрать обучение</a>
+      </nav>
+      <button class="menu-toggle" type="button" aria-label="Открыть меню" aria-controls="mainNav" aria-expanded="false"><span></span><span></span></button>
+    </div>
+  </header>
+
+  <main id="content">
+    <section class="hero">
+      <div class="orbit orbit--large hero__orbit" aria-hidden="true"></div>
+      <div class="container hero__grid">
+        <div class="hero__copy reveal">
+          <div class="eyebrow">Лиза · астролог и преподаватель</div>
+          <h1 class="display display--hero">Я не учу заучивать трактовки. <span class="accent">Я учу видеть человека.</span></h1>
+          <p class="lead">Обучение астрологии от первых карт до глубокой консультационной практики и прогнозирования.</p>
+          <div class="actions">
+            <a class="button" href="education.html#choose" data-diagnostic>Подобрать обучение</a>
+            <a class="button button--ghost" href="education.html#programs">Смотреть программы</a>
+          </div>
+          <p class="hero__micro">Можно прийти с нуля или продолжить с текущего уровня.</p>
+        </div>
+        <div class="hero__media reveal" data-delay="1">
+          <div class="hero__index" aria-hidden="true">01</div>
+          <div class="hero__frame"><img src="assets/liza-hero.jpg" alt="Лиза — астролог и преподаватель" width="1122" height="1402" fetchpriority="high"></div>
+          <div class="hero__folio"><strong>Не набор значений</strong><span>Система мышления, которая помогает собрать живого человека из элементов карты.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--raised" id="method">
+      <div class="container">
+        <div class="section__head reveal">
+          <div><div class="eyebrow">Проблема не в памяти</div><h2 class="display display--small">Знать значение аспекта ещё не значит уметь читать карту.</h2></div>
+          <p class="section__intro">Можно выучить сотни трактовок и всё равно потеряться, когда перед тобой настоящий человек и настоящая карта.</p>
+        </div>
+        <div class="method-line reveal" data-delay="1" aria-label="Методическая цепочка Лизы">
+          <div class="method-line__item"><span>01</span><strong>Увидеть</strong></div>
+          <div class="method-line__item"><span>02</span><strong>Связать</strong></div>
+          <div class="method-line__item"><span>03</span><strong>Предположить</strong></div>
+          <div class="method-line__item"><span>04</span><strong>Проверить</strong></div>
+          <div class="method-line__item"><span>05</span><strong>Сформулировать</strong></div>
+          <div class="method-line__item"><span>06</span><strong>Объяснить</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container think-grid">
+        <div class="think-photo reveal"><img src="assets/liza-method.jpg" alt="Лиза показывает свой подход к чтению карты" width="1122" height="1402" loading="lazy"></div>
+        <div class="thought reveal" data-delay="1">
+          <div class="thought__simple"><span class="eyebrow">Как читает новичок</span><strong>«Венера в Скорпионе = ревность».</strong><span>Одна позиция превращается в готовый ярлык.</span></div>
+          <div class="thought__system">
+            <h3>Как думает Лиза</h3>
+            <div class="formula"><span>положение</span><i>+</i><span>дом</span><i>+</i><span>аспекты</span><i>+</i><span>управители</span><i>+</i><span>контекст карты</span><i>+</i><span>история человека</span><i>=</i><span>рабочая гипотеза</span></div>
+          </div>
+          <div class="thought__result">Карта не должна превращаться в приговор.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--milk" id="choose">
+      <div class="container">
+        <div class="section__head reveal">
+          <div><div class="eyebrow">Точка входа</div><h2 class="display display--small">Где ты сейчас?</h2></div>
+          <p class="section__intro">Не нужно угадывать курс по названию. Начни с того, что уже умеешь и чего хочешь научиться делать дальше.</p>
+        </div>
+        <div class="entry-grid">
+          <a class="entry-card reveal" href="education.html#natal">
+            <span class="entry-card__num">01</span><span class="entry-card__arrow">↗</span>
+            <h3>Я начинаю с нуля</h3><p>Мне интересно научиться читать карту самостоятельно.</p>
+            <div class="entry-card__product">Натальная астрология<span class="entry-card__price">55 666 ₽</span></div>
+          </a>
+          <a class="entry-card reveal" data-delay="1" href="education.html#astropsychology">
+            <span class="entry-card__num">02</span><span class="entry-card__arrow">↗</span>
+            <h3>Базу знаю, но разборы поверхностные</h3><p>Хочу глубже понимать внутренние конфликты и сценарии человека.</p>
+            <div class="entry-card__product">Астропсихология<span class="entry-card__price">88 666 ₽</span></div>
+          </a>
+          <a class="entry-card reveal" href="education.html#forecasting">
+            <span class="entry-card__num">03</span><span class="entry-card__arrow">↗</span>
+            <h3>Хочу понимать человека и время</h3><p>Мне нужны транзиты, периоды и прогнозирование.</p>
+            <div class="entry-card__product">Прогностика<span class="entry-card__price">88 666 ₽</span></div>
+          </a>
+          <a class="entry-card entry-card--flagship reveal" data-delay="1" href="professional-program.html">
+            <span class="entry-card__num">04</span><span class="entry-card__arrow">↗</span>
+            <h3>Хочу консультировать профессионально</h3><p>Хочу соединить глубокую работу с человеком и прогнозирование.</p>
+            <div class="entry-card__product">Профессиональная программа<span class="entry-card__price">166 666 ₽</span></div>
+          </a>
+        </div>
+        <div class="actions" style="margin-top:30px"><a class="button button--ink" href="education.html#choose" data-diagnostic>Подобрать мой уровень</a></div>
+      </div>
+    </section>
+
+    <section class="section section--wine flagship">
+      <div class="container flagship__grid">
+        <div class="reveal">
+          <div class="eyebrow">Флагман · профессиональный путь</div>
+          <h2 class="display display--small">Когда «я знаю астрологию» хочется превратить в «я умею работать с человеком».</h2>
+          <div class="flagship__price">166 666 ₽</div>
+          <div class="flagship__meta">Астропсихология + прогностика</div>
+        </div>
+        <div class="reveal" data-delay="1">
+          <div class="transitions">
+            <div class="transition"><span>Знать значения</span><i>→</i><strong>Видеть связи</strong></div>
+            <div class="transition"><span>Видеть связи</span><i>→</i><strong>Строить гипотезы</strong></div>
+            <div class="transition"><span>Строить гипотезы</span><i>→</i><strong>Вести разговор</strong></div>
+            <div class="transition"><span>Читать настоящее</span><i>→</i><strong>Понимать периоды</strong></div>
+            <div class="transition"><span>Знать инструменты</span><i>→</i><strong>Собирать консультацию</strong></div>
+          </div>
+          <div class="actions" style="margin-top:32px"><a class="button" href="professional-program.html">Посмотреть программу</a></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--raised">
+      <div class="container">
+        <div class="section__head reveal">
+          <div><div class="eyebrow">Доказательства</div><h2 class="display display--small">Не «всё понравилось», а что человек научился делать сам.</h2></div>
+          <p class="section__intro">Факты важнее декоративных цитат. Поэтому кейсы выстраиваются через «до → в процессе → после», а живые сообщения собраны отдельно.</p>
+        </div>
+        <div class="proof-grid">
+          <article class="proof-card reveal">
+            <div class="eyebrow">Живые сообщения</div><h3>Отзывы без выдуманных имён, цифр и результатов.</h3><p>Актуальные скриншоты после консультаций, обучения и практик находятся в отдельном Telegram-канале.</p>
+            <a class="button" href="https://t.me/+dSRMo6E88dk4MjI6" target="_blank" rel="noopener noreferrer">Открыть отзывы ↗</a>
+          </article>
+          <article class="proof-card reveal" data-delay="1">
+            <div class="eyebrow">Система кейса</div><h3>Как здесь появляются истории учеников</h3><p>Только с разрешения и только тогда, когда можно показать реальный путь.</p>
+            <div class="case-schema"><div><b>До</b><span>Что не получалось</span></div><div><b>В процессе</b><span>Что стало понятно</span></div><div><b>После</b><span>Что умеет сама</span></div></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container consult-preview">
+        <div class="consult-preview__media reveal"><img src="assets/liza-smile.jpg" alt="Лиза на личной консультации" width="1122" height="1402" loading="lazy"></div>
+        <div class="consult-preview__copy reveal" data-delay="1">
+          <div class="eyebrow">Другой маршрут</div>
+          <h2 class="display display--small">Не хочешь учиться? Можно прийти к Лизе на личный разбор.</h2>
+          <p class="lead" style="margin-top:24px">Прогноз, соляр, разбор затмений, натальная карта, отношения или финансы — компактно собраны на отдельной странице.</p>
+          <div class="actions"><a class="button" href="astrology.html">Выбрать разбор</a><a class="button button--ghost" href="practices.html">Руны и практики</a></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="final-cta">
+      <div class="orbit orbit--large final-cta__orbit" aria-hidden="true"></div>
+      <div class="container reveal">
+        <div class="eyebrow">Следующий шаг</div>
+        <h2 class="display">Не выбирай по красивому названию. Выбери по своей точке.</h2>
+        <p class="lead">Три коротких вопроса — и Лиза подскажет, какой маршрут действительно имеет смысл.</p>
+        <a class="button button--ink" href="education.html#choose" data-diagnostic>Подобрать обучение</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="site-footer__top">
+        <a class="brand" href="index.html">liz_ty<span>666</span></a>
+        <nav class="site-footer__nav" aria-label="Навигация в подвале"><a href="index.html#method">Метод</a><a href="education.html">Обучение</a><a href="astrology.html">Консультации</a><a href="practices.html">Практики</a><a href="about.html">О Лизе</a><a href="reviews.html">Отзывы</a><a href="faq.html">FAQ</a><a href="contacts.html">Контакты</a></nav>
+        <div class="site-footer__cta"><a class="button button--small" href="https://t.me/liz_ty666" target="_blank" rel="noopener noreferrer">Telegram ↗</a></div>
+      </div>
+      <div class="site-footer__bottom"><p>Астрологические, рунические и энергетические практики носят ознакомительный и практический характер, не гарантируют конкретного результата и не заменяют врача, психолога, юриста или финансового консультанта. Решения пользователь принимает самостоятельно.</p><div class="site-footer__legal"><a href="privacy.html">Политика</a><a href="offer.html">Условия</a><span>© <span data-year></span></span></div></div>
+    </div>
+  </footer>
+  <script src="site.js" defer></script>
 </body>
 </html>
