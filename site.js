@@ -17,6 +17,7 @@
       var open = !menu.classList.contains('open');
       menu.classList.toggle('open', open);
       menuButton.setAttribute('aria-expanded', String(open));
+      menuButton.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
       body.classList.toggle('menu-open', open);
     });
     menu.querySelectorAll('a').forEach(function (link) {
@@ -111,7 +112,7 @@
         '<span class="diagnostic__count">Готово</span>' +
         '<span class="script">Спасибо.</span>' +
         '<h2>Лиза посмотрит твою точку входа и подскажет, какой формат действительно имеет смысл.</h2>' +
-        '<p>Telegram уже открылся с готовым сообщением. Отправь его, когда будешь готова.</p>' +
+        '<p>Сообщение для Лизы готово. Открой Telegram и отправь его, когда будешь готова.</p>' +
         '<div class="actions"><a class="button button--ink" id="telegramFallback" target="_blank" rel="noopener noreferrer">Открыть Telegram ещё раз</a><button class="button button--text" type="button" data-close>Закрыть</button></div>' +
       '</div>' +
     '</div>';
