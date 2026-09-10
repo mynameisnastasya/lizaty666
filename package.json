@@ -1,0 +1,12 @@
+{
+  "name": "lizaty666-site",
+  "private": true,
+  "scripts": {
+    "serve": "python3 -m http.server 4173",
+    "test:e2e": "playwright test",
+    "test:e2e:update": "playwright test --update-snapshots"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.1"
+  }
+}

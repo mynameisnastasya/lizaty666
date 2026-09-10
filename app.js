@@ -136,7 +136,7 @@
       canonical.rel='canonical';
       document.head.appendChild(canonical);
     }
-    canonical.href='https://mynameisnastasya.github.io/lizaty666'+location.pathname.replace(/index\.html$/,'');
+    canonical.href='https://lizty666.ru'+location.pathname.replace(/index\.html$/,'');
   }
 
   document.addEventListener('DOMContentLoaded',function(){

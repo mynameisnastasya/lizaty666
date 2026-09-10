@@ -1,5 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="14" fill="#0c0b0c"/>
-  <ellipse cx="32" cy="32" rx="22" ry="11" fill="none" stroke="#ede4d7" stroke-width="2" transform="rotate(-10 32 32)"/>
-  <circle cx="50" cy="25" r="5" fill="#b41628"/>
-</svg>
+test
