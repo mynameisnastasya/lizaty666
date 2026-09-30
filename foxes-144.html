@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Лисья колода — 144 метафорические карты | liz_ty666</title>
+<meta name="description" content="Отдельная интерактивная лисья колода из 144 метафорических карт: случайная карта, трактовка, поиск по колоде и атмосферное видео.">
+<meta name="theme-color" content="#120f0e">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Prata&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#120f0e;--ink2:#1b1715;--paper:#ece3d6;--wine:#6c2a2e;--wine2:#3b1719;--gold:#cda994;--muted:#9e9288;--line:rgba(236,227,214,.16);--line-dark:rgba(18,15,14,.14);--serif:Prata,serif;--sans:Manrope,system-ui,sans-serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--sans);line-height:1.55;overflow-x:hidden}a{color:inherit}button,input,select{font:inherit}:focus-visible{outline:2px solid #d7b9a2;outline-offset:4px}.noise{position:fixed;inset:0;pointer-events:none;z-index:100;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.028'/%3E%3C/svg%3E")}
+.header{position:sticky;top:0;z-index:80;display:flex;align-items:center;justify-content:space-between;padding:18px 5vw;background:rgba(18,15,14,.88);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}.logo{text-decoration:none;font-weight:700;letter-spacing:-.03em}.header-nav{display:flex;align-items:center;gap:22px}.header-nav a{text-decoration:none;font-size:12px;color:#d4c9bf}.header-nav a:hover{color:var(--paper)}
+.hero{min-height:88svh;display:grid;grid-template-columns:1.05fr .95fr;gap:6vw;align-items:center;padding:10vh 5vw 12vh;position:relative;overflow:hidden;background:radial-gradient(circle at 76% 18%,rgba(108,42,46,.42),transparent 31%),linear-gradient(145deg,#120f0e 0%,#1b1715 56%,#241716 100%)}.hero:after{content:"";position:absolute;right:-18vw;top:-18vw;width:62vw;aspect-ratio:1;border:1px solid rgba(205,169,148,.13);border-radius:50%;box-shadow:0 0 0 70px rgba(205,169,148,.025),0 0 0 140px rgba(205,169,148,.018)}.hero-copy{position:relative;z-index:2;max-width:760px}.eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);display:flex;gap:12px;align-items:center}.eyebrow:before{content:"";width:38px;height:1px;background:currentColor}.hero h1{font:400 clamp(54px,7.2vw,108px)/.91 var(--serif);letter-spacing:-.055em;margin:24px 0 28px}.hero h1 em{font-style:normal;color:var(--gold)}.hero p{max-width:620px;font-size:clamp(17px,1.45vw,21px);color:#d3c8bf}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:34px}.btn{border:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:0 25px;border-radius:999px;text-decoration:none;font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;background:var(--paper);color:var(--ink);transition:.25s}.btn:hover{transform:translateY(-2px)}.btn-outline{background:transparent;color:var(--paper);border:1px solid rgba(236,227,214,.3)}.hero-meta{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:30px;color:var(--muted);font-size:12px}.hero-meta strong{color:var(--paper)}
+.stack{position:relative;z-index:2;width:min(420px,78vw);aspect-ratio:.76;margin:auto}.stack-card,.feature-card{position:absolute;inset:0;border:1px solid rgba(236,227,214,.18);border-radius:30px}.stack-card.one{transform:rotate(-8deg) translate(-28px,8px);background:#3b1719}.stack-card.two{transform:rotate(9deg) translate(28px,5px);background:#241c19}.feature-card{padding:16px;background:linear-gradient(145deg,#211917,#120f0e);box-shadow:0 30px 80px rgba(0,0,0,.38)}.card-frame{height:100%;border:1px solid rgba(205,169,148,.45);border-radius:22px;display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative;overflow:hidden;text-align:center;background:radial-gradient(circle at 50% 35%,rgba(108,42,46,.5),transparent 35%),linear-gradient(180deg,transparent,rgba(205,169,148,.04))}.card-frame:before,.card-frame:after{content:"";position:absolute;width:74%;aspect-ratio:1;border:1px solid rgba(205,169,148,.2);border-radius:50%}.card-frame:before{top:-38%}.card-frame:after{bottom:-44%}.fox-orb{width:158px;height:158px;border:1px solid rgba(205,169,148,.45);border-radius:50%;display:grid;place-items:center;font-size:78px;background:rgba(18,15,14,.55);box-shadow:0 18px 60px rgba(0,0,0,.28);position:relative;z-index:2}.fox-orb:after{content:"";position:absolute;inset:11px;border:1px dashed rgba(205,169,148,.35);border-radius:50%}.card-no{position:absolute;left:22px;top:20px;font-size:11px;color:var(--muted);letter-spacing:.12em}.card-category{position:absolute;bottom:20px;font-size:11px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}.feature-title{font:400 clamp(31px,4vw,48px)/1.04 var(--serif);margin-top:24px;max-width:82%;position:relative;z-index:2}.feature-lens{margin-top:9px;color:var(--gold);font-size:11px;letter-spacing:.15em;text-transform:uppercase;font-weight:700;position:relative;z-index:2}
+.reading{background:var(--wine2);padding:13vh 5vw}.section-kicker{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:18px}.reading-grid{display:grid;grid-template-columns:minmax(280px,.72fr) minmax(0,1.28fr);gap:6vw;align-items:stretch}.selected-card{min-height:540px;border:1px solid rgba(236,227,214,.2);border-radius:28px;padding:26px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;background:radial-gradient(circle at 50% 35%,rgba(205,169,148,.16),transparent 26%),linear-gradient(145deg,#2a1918,#120f0e)}.selected-card:before{content:"";position:absolute;width:72%;aspect-ratio:1;border:1px solid rgba(236,227,214,.12);border-radius:50%;left:14%;top:18%}.selected-fox{position:absolute;left:50%;top:36%;transform:translate(-50%,-50%);font-size:118px;filter:drop-shadow(0 20px 28px rgba(0,0,0,.32))}.selected-top{position:absolute;left:24px;right:24px;top:22px;display:flex;justify-content:space-between;color:#c1b5ad;font-size:11px}.selected-card h2{position:relative;font:400 clamp(40px,5vw,60px)/1.02 var(--serif);margin:0;z-index:2}.selected-card p{position:relative;margin:8px 0 0;color:var(--gold);text-transform:uppercase;letter-spacing:.15em;font-size:11px;font-weight:700;z-index:2}.interpretation{align-self:center}.interpretation-head{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;padding-bottom:25px;border-bottom:1px solid rgba(236,227,214,.17)}.interpretation-head h2{font:400 clamp(34px,4vw,56px)/1.04 var(--serif);margin:0}.main-meaning{font:400 clamp(23px,2.8vw,36px)/1.48 var(--serif);margin:32px 0}.meaning-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.meaning{border:1px solid rgba(236,227,214,.14);padding:22px;border-radius:18px;background:rgba(236,227,214,.035)}.meaning b{display:block;color:var(--gold);font-size:10px;letter-spacing:.15em;margin-bottom:10px}.meaning h3{font-size:14px;margin:0 0 8px}.meaning p{margin:0;color:#cfc0b8;font-size:14px}.disclaimer{font-size:12px;color:#a99891;margin-top:22px;max-width:760px}
+.video-section{background:var(--paper);color:var(--ink);padding:14vh 5vw;display:grid;grid-template-columns:.65fr 1.35fr;gap:6vw;align-items:center}.video-copy h2{font:400 clamp(46px,6vw,86px)/.95 var(--serif);letter-spacing:-.045em;margin:0 0 24px}.video-copy p{font-size:17px;color:#5f554f;max-width:520px}.video-copy .section-kicker{color:var(--wine)}.video-note{font-size:12px!important;color:#7c6c63!important;margin-top:24px}.video-frame{position:relative;aspect-ratio:16/9;border-radius:28px;overflow:hidden;background:#0b0908;box-shadow:0 30px 70px rgba(18,15,14,.22);border:1px solid rgba(18,15,14,.16)}.video-frame:after{content:"";position:absolute;inset:12px;border:1px solid rgba(205,169,148,.45);border-radius:20px;pointer-events:none}.video-frame iframe{width:100%;height:100%;border:0;display:block}
+.deck{background:var(--paper);color:var(--ink);padding:0 5vw 14vh}.deck-head{display:grid;grid-template-columns:1fr .7fr;gap:5vw;align-items:end;margin-bottom:38px}.deck-head h2{font:400 clamp(48px,6.5vw,92px)/.95 var(--serif);letter-spacing:-.045em;margin:0}.deck-head p{color:#655a54;max-width:520px}.filters{display:grid;grid-template-columns:minmax(0,1fr) 230px auto;gap:12px;margin-bottom:28px}.input,.select,.count{min-height:48px;border:1px solid var(--line-dark);background:rgba(255,255,255,.25);color:var(--ink);border-radius:999px;padding:0 18px}.input{width:100%}.select{appearance:none;padding-right:42px}.count{display:flex;align-items:center;justify-content:center;font-size:12px;color:#665b54;white-space:nowrap}.card-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.mini-card{height:356px;text-align:left;border:1px solid var(--line-dark);border-radius:20px;padding:18px;background:#f2eadf;color:var(--ink);cursor:pointer;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;transition:.25s}.mini-card:hover{transform:translateY(-4px);box-shadow:0 20px 45px rgba(18,15,14,.12);border-color:rgba(108,42,46,.38)}.mini-top{position:absolute;left:18px;right:18px;top:16px;display:flex;justify-content:space-between;color:#82766e;font-size:10px;letter-spacing:.06em}.mini-art{position:absolute;left:50%;top:60px;transform:translateX(-50%);width:145px;height:145px;border:1px solid rgba(108,42,46,.25);border-radius:50%;display:grid;place-items:center;font-size:70px;background:radial-gradient(circle,rgba(108,42,46,.13),transparent 68%)}.mini-art:after{content:"";position:absolute;inset:10px;border:1px dashed rgba(108,42,46,.2);border-radius:50%}.mini-title{font:400 27px/1.06 var(--serif)}.mini-lens{margin-top:7px;color:var(--wine);font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}.mini-hint{margin-top:14px;color:#7f736b;font-size:11px}.pagination{display:flex;justify-content:center;align-items:center;gap:16px;margin-top:34px}.pagination span{min-width:72px;text-align:center;color:#70645d;font-size:12px}.pagination .btn{min-height:44px;background:var(--ink);color:var(--paper)}.pagination .btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.footer{padding:44px 5vw;background:var(--ink2);display:grid;grid-template-columns:1fr auto;gap:30px;color:var(--muted);font-size:12px}.footer a{text-decoration:none}.footer-links{display:flex;gap:18px;flex-wrap:wrap}
+@media(max-width:1000px){.hero{grid-template-columns:1fr;padding-top:8vh}.stack{margin-top:30px}.reading-grid,.video-section{grid-template-columns:1fr}.video-frame{margin-top:20px}.card-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.filters{grid-template-columns:1fr 220px}.count{grid-column:1/-1;justify-self:start;padding:0 18px}.deck-head{grid-template-columns:1fr}}
+@media(max-width:720px){.header{padding:16px 20px}.header-nav a:not(.back){display:none}.hero,.reading,.video-section,.deck{padding-left:20px;padding-right:20px}.hero{min-height:auto;padding-bottom:88px}.hero h1{font-size:clamp(48px,15vw,72px)}.stack{width:min(340px,82vw)}.reading{padding-top:90px;padding-bottom:90px}.selected-card{min-height:430px}.interpretation-head{display:block}.interpretation-head .btn{margin-top:20px}.meaning-grid{grid-template-columns:1fr}.video-section{padding-top:90px;padding-bottom:90px}.filters{grid-template-columns:1fr}.count{grid-column:auto}.card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.mini-card{height:330px}.mini-art{width:124px;height:124px;font-size:58px}.footer{grid-template-columns:1fr}}
+@media(max-width:480px){.card-grid{grid-template-columns:1fr}.mini-card{height:350px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="noise" aria-hidden="true"></div>
+<header class="header">
+  <a class="logo" href="index.html">liz_ty666 · 🦊</a>
+  <nav class="header-nav" aria-label="Навигация страницы">
+    <a class="back" href="index.html">← На главную</a>
+    <a href="#reading">Карта</a>
+    <a href="#video">Видео</a>
+    <a href="#deck">Все 144</a>
+  </nav>
+</header>
+
+<main>
+<section class="hero" id="top">
+  <div class="hero-copy">
+    <div class="eyebrow">Отдельная страница · 144 карты</div>
+    <h1>Лиса знает тропы,<br><em>которые не видно сразу</em></h1>
+    <p>Выберите лисью карту или доверьтесь случайности. Это метафорическая колода для саморефлексии: образ помогает увидеть ситуацию под другим углом и сформулировать собственный ответ.</p>
+    <div class="actions">
+      <button class="btn" id="heroDraw" type="button">Вытянуть карту</button>
+      <a class="btn btn-outline" href="#deck">Смотреть все 144</a>
+    </div>
+    <div class="hero-meta"><span>18 лисьих образов</span><span>×</span><span>8 состояний</span><span>=</span><strong>144 карты</strong></div>
+  </div>
+  <div class="stack" aria-hidden="true">
+    <div class="stack-card one"></div><div class="stack-card two"></div>
+    <article class="feature-card"><div class="card-frame">
+      <span class="card-no" id="heroNo">№ 001</span>
+      <div class="fox-orb">🦊</div>
+      <div class="feature-title" id="heroTitle">Тропа</div>
+      <div class="feature-lens" id="heroLens">Начало</div>
+      <span class="card-category" id="heroCategory">Направление</span>
+    </div></article>
+  </div>
+</section>
+
+<section class="reading" id="reading">
+  <div class="section-kicker">Текущая карта</div>
+  <div class="reading-grid">
+    <article class="selected-card">
+      <div class="selected-top"><span id="selectedNo">№ 001</span><span id="selectedCategory">Направление</span></div>
+      <div class="selected-fox" aria-hidden="true">🦊</div>
+      <h2 id="selectedTitle">Тропа</h2>
+      <p id="selectedLens">Начало</p>
+    </article>
+    <div class="interpretation">
+      <div class="interpretation-head">
+        <div><div class="section-kicker">Трактовка</div><h2 id="readingTitle">Тропа · Начало</h2></div>
+        <button class="btn btn-outline" id="readingDraw" type="button">Другая карта</button>
+      </div>
+      <p class="main-meaning" id="meaning"></p>
+      <div class="meaning-grid">
+        <div class="meaning"><b>01</b><h3>Что заметить</h3><p id="shadow"></p></div>
+        <div class="meaning"><b>02</b><h3>Вопрос к себе</h3><p id="question"></p></div>
+      </div>
+      <p class="disclaimer">Используйте карту как повод для саморефлексии, а не как диагноз, прогноз или замену профессиональной помощи. Решение всегда остаётся за вами.</p>
+    </div>
+  </div>
+</section>
+
+<section class="video-section" id="video">
+  <div class="video-copy">
+    <div class="section-kicker">Видео колоды</div>
+    <h2>Лиса между туманом и светом</h2>
+    <p>Короткий атмосферный ролик продолжает визуальный язык колоды: рыжая лиса, медленный лес, приглушённое золото и пауза перед собственным ответом.</p>
+    <p class="video-note">Видео встроено прямо в эту страницу — никаких вкладок внутри колоды.</p>
+  </div>
+  <div class="video-frame">
+    <iframe src="https://share.descript.com/view/5febqRaH0C1" title="Лисья колода — атмосферное видео" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+  </div>
+</section>
+
+<section class="deck" id="deck">
+  <div class="deck-head">
+    <div><div class="section-kicker" style="color:var(--wine)">Полная колода</div><h2>Все 144 карты</h2></div>
+    <p>Ищите по образу, теме или слову из трактовки. Нажмите на любую карту — её смысл откроется выше.</p>
+  </div>
+  <div class="filters">
+    <input class="input" id="search" type="search" placeholder="Например: граница, туман, доверие…" aria-label="Поиск по лисьей колоде">
+    <select class="select" id="category" aria-label="Фильтр по теме"><option value="Все">Все темы</option></select>
+    <div class="count" id="count">144 из 144</div>
+  </div>
+  <div class="card-grid" id="grid"></div>
+  <div class="pagination" id="pagination">
+    <button class="btn" id="prev" type="button">Назад</button><span id="pageInfo">1 / 6</span><button class="btn" id="next" type="button">Далее</button>
+  </div>
+</section>
+</main>
+
+<footer class="footer"><div>Лисья колода · 144 образа для честного разговора с собой.</div><div class="footer-links"><a href="index.html">Главная</a><a href="privacy.html">Политика</a><a href="contacts.html">Контакты</a></div></footer>
+
+<script>
+(function(){
+var archetypes=[
+{name:"Тропа",category:"Направление",core:"движение, которое становится понятнее только после первого шага",shadow:"ожидание полной карты маршрута до начала движения"},
+{name:"Нора",category:"Ресурс",core:"безопасное внутреннее место, где можно восстановить силы",shadow:"желание спрятаться дольше, чем действительно нужно"},
+{name:"След",category:"Инстинкт",core:"маленькие признаки, по которым можно восстановить общую картину",shadow:"поиск скрытого смысла там, где достаточно простого факта"},
+{name:"Сумерки",category:"Неизвестность",core:"переходное время, когда старое уже гаснет, а новое ещё не видно",shadow:"попытку требовать ясности от момента, который по природе неясен"},
+{name:"Хвост",category:"Инстинкт",core:"чувствительность к балансу, настроению и перемене направления",shadow:"слишком быструю реакцию на каждое колебание среды"},
+{name:"Уши",category:"Контакт",core:"умение слышать не только слова, но и тон, паузы и контекст",shadow:"настороженность, из-за которой любой звук кажется угрозой"},
+{name:"Лес",category:"Неизвестность",core:"пространство сложного выбора, где ориентиры появляются постепенно",shadow:"страх заблудиться ещё до того, как сделан шаг"},
+{name:"Снег",category:"Переход",core:"новый слой тишины, на котором особенно хорошо видны свежие следы",shadow:"желание заморозить чувства ради внешнего спокойствия"},
+{name:"Костёр",category:"Ресурс",core:"тепло, присутствие и точку, к которой можно вернуться",shadow:"выгорание от попытки постоянно поддерживать максимальный огонь"},
+{name:"Поле",category:"Направление",core:"открытое пространство и возможность увидеть ситуацию шире",shadow:"уязвимость перед чужими взглядами и оценками"},
+{name:"Луна",category:"Инстинкт",core:"интуитивное знание, которое приходит без готового объяснения",shadow:"додумывание вместо проверки реальности"},
+{name:"Река",category:"Переход",core:"текучесть, изменение формы и движение без полного контроля",shadow:"попытку удержать то, что уже меняется"},
+{name:"Камень",category:"Граница",core:"устойчивость, вес и право занимать своё место",shadow:"жёсткость там, где полезнее гибкость"},
+{name:"Дупло",category:"Ресурс",core:"бережное хранилище личного, ценного и не предназначенного для всех",shadow:"закрытость, которая незаметно превращается в изоляцию"},
+{name:"Перекрёсток",category:"Направление",core:"момент выбора между несколькими реальными маршрутами",shadow:"попытку найти вариант без цены, потери или риска"},
+{name:"Ветер",category:"Контакт",core:"информацию о переменах, которую можно почувствовать раньше, чем увидеть",shadow:"зависимость от внешнего настроения и чужих импульсов"},
+{name:"Рассвет",category:"Переход",core:"возвращение света после периода неопределённости",shadow:"требование, чтобы новое сразу стало ярким и очевидным"},
+{name:"Туман",category:"Неизвестность",core:"право двигаться маленькими шагами при неполной информации",shadow:"принятие временной неясности за окончательную правду"}
+];
+var lenses=[
+{name:"Начало",motion:"что-то просит маленького, но реального первого шага",invite:"Не требуйте от начала доказательств, что оно обязательно приведёт к успеху.",question:"Какой первый шаг достаточно мал, чтобы сделать его сегодня?"},
+{name:"Выбор",motion:"важно заметить не только варианты, но и цену каждого «да»",invite:"Выбор становится яснее, когда вы признаёте, от чего отказываетесь вместе с ним.",question:"Какой вариант ближе к вашим ценностям, даже если он не самый удобный?"},
+{name:"Граница",motion:"появляется задача отделить своё от чужого",invite:"Граница может быть формой уважения, а не наказанием или стеной.",question:"Где вам сейчас нужно более ясное «да», «нет» или «не сейчас»?"},
+{name:"Доверие",motion:"контроль можно немного ослабить, не отказываясь от ответственности",invite:"Доверие не требует слепоты — оно требует достаточно опор, чтобы не проверять всё бесконечно.",question:"Что вы уже знаете достаточно хорошо, чтобы перестать перепроверять?"},
+{name:"Перемена",motion:"прежняя форма перестаёт соответствовать происходящему",invite:"Сопротивление переменам часто показывает, что именно вам особенно дорого.",question:"Что вы пытаетесь сохранить — и можно ли сохранить смысл, изменив форму?"},
+{name:"Пауза",motion:"сейчас полезнее не ускоряться, а услышать, что происходит",invite:"Пауза — это действие, если она возвращает чувствительность и выбор.",question:"Что станет заметно, если вы на время перестанете торопить решение?"},
+{name:"Контакт",motion:"ключ находится в живой встрече, разговоре или способности быть увиденным",invite:"Настоящий контакт начинается не с идеальных слов, а с присутствия.",question:"Что важно сказать или услышать без попытки немедленно исправить ситуацию?"},
+{name:"Отпускание",motion:"что-то можно перестать удерживать усилием",invite:"Отпустить — не всегда значит перестать любить; иногда это значит перестать контролировать.",question:"Что изменится, если вы перестанете отвечать за то, что вам не принадлежит?"}
+];
+var cards=[];
+archetypes.forEach(function(a,ai){lenses.forEach(function(l,li){var id=ai*lenses.length+li+1;cards.push({id:id,number:String(id).padStart(3,"0"),archetype:a.name,lens:l.name,category:a.category,title:a.name+" · "+l.name,interpretation:"Лиса встречает образ «"+a.name+"» — он говорит про "+a.core+". В теме «"+l.name+"» это может означать: "+l.motion+". "+l.invite,shadow:"Обратите внимание на "+a.shadow+". Это не «плохая сторона» карты, а место, где метафора может стать особенно полезной.",question:l.question});});});
+var selected=cards[0],query="",category="Все",page=1,pageSize=24;
+var els={heroNo:document.getElementById("heroNo"),heroTitle:document.getElementById("heroTitle"),heroLens:document.getElementById("heroLens"),heroCategory:document.getElementById("heroCategory"),selectedNo:document.getElementById("selectedNo"),selectedCategory:document.getElementById("selectedCategory"),selectedTitle:document.getElementById("selectedTitle"),selectedLens:document.getElementById("selectedLens"),readingTitle:document.getElementById("readingTitle"),meaning:document.getElementById("meaning"),shadow:document.getElementById("shadow"),question:document.getElementById("question"),grid:document.getElementById("grid"),count:document.getElementById("count"),search:document.getElementById("search"),category:document.getElementById("category"),prev:document.getElementById("prev"),next:document.getElementById("next"),pageInfo:document.getElementById("pageInfo"),pagination:document.getElementById("pagination")};
+function showCard(card,scroll){selected=card;els.heroNo.textContent="№ "+card.number;els.heroTitle.textContent=card.archetype;els.heroLens.textContent=card.lens;els.heroCategory.textContent=card.category;els.selectedNo.textContent="№ "+card.number;els.selectedCategory.textContent=card.category;els.selectedTitle.textContent=card.archetype;els.selectedLens.textContent=card.lens;els.readingTitle.textContent=card.title;els.meaning.textContent=card.interpretation;els.shadow.textContent=card.shadow;els.question.textContent=card.question;if(scroll)document.getElementById("reading").scrollIntoView({behavior:"smooth",block:"start"});}
+function draw(){showCard(cards[Math.floor(Math.random()*cards.length)],true);}
+function filtered(){var q=query.trim().toLocaleLowerCase("ru");return cards.filter(function(c){var cat=category==="Все"||c.category===category;var hay=(c.title+" "+c.category+" "+c.interpretation+" "+c.shadow+" "+c.question).toLocaleLowerCase("ru");return cat&&(!q||hay.indexOf(q)!==-1);});}
+function render(){var list=filtered(),pages=Math.max(1,Math.ceil(list.length/pageSize));if(page>pages)page=pages;var start=(page-1)*pageSize,visible=list.slice(start,start+pageSize);els.grid.innerHTML="";visible.forEach(function(c){var b=document.createElement("button");b.type="button";b.className="mini-card";b.setAttribute("aria-label","Открыть карту "+c.number+": "+c.title);b.innerHTML='<span class="mini-top"><span>№ '+c.number+'</span><span>'+c.category+'</span></span><span class="mini-art" aria-hidden="true">🦊</span><span class="mini-title">'+c.archetype+'</span><span class="mini-lens">'+c.lens+'</span><span class="mini-hint">Открыть трактовку ↗</span>';b.addEventListener("click",function(){showCard(c,true);});els.grid.appendChild(b);});els.count.textContent=list.length+" из 144";els.pageInfo.textContent=page+" / "+pages;els.prev.disabled=page===1;els.next.disabled=page===pages;els.pagination.style.display=pages>1?"flex":"none";}
+var cats=["Все"];archetypes.forEach(function(a){if(cats.indexOf(a.category)===-1)cats.push(a.category);});els.category.innerHTML="";cats.forEach(function(c){var o=document.createElement("option");o.value=c;o.textContent=c;els.category.appendChild(o);});
+els.search.addEventListener("input",function(e){query=e.target.value;page=1;render();});els.category.addEventListener("change",function(e){category=e.target.value;page=1;render();});els.prev.addEventListener("click",function(){if(page>1){page--;render();document.getElementById("deck").scrollIntoView({behavior:"smooth"});}});els.next.addEventListener("click",function(){var pages=Math.max(1,Math.ceil(filtered().length/pageSize));if(page<pages){page++;render();document.getElementById("deck").scrollIntoView({behavior:"smooth"});}});
+document.getElementById("heroDraw").addEventListener("click",draw);document.getElementById("readingDraw").addEventListener("click",draw);
+var now=new Date(),seed=(now.getFullYear()*10000+(now.getMonth()+1)*100+now.getDate())%cards.length;showCard(cards[seed],false);render();
+})();
+</script>
+</body>
+</html>
