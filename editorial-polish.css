@@ -1,0 +1,61 @@
+:root {
+  --grey2: #a8a59f;
+}
+
+.reveal-pending,
+.reveal-pending.is-revealed {
+  opacity: 1 !important;
+  transform: none !important;
+  clip-path: none !important;
+}
+
+.format,
+.svc-format,
+.footer-note,
+.final-hint,
+.legal-links a,
+.footer-links a,
+.note,
+.svc-note,
+.disclaimer,
+.fits h4,
+.svc-fits h4 {
+  color: #aaa8a1 !important;
+  opacity: 1 !important;
+}
+
+main > section:nth-of-type(even):not(.final):not(#final-cta):not(#flagship),
+body[data-page="index"] #routes,
+body[data-page="index"] #services {
+  --accent: #a7462f;
+  --gold: #a7462f;
+  --gold-light: #bc5d42;
+}
+
+main > section:nth-of-type(even):not(.final):not(#final-cta):not(#flagship) .section-label,
+main > section:nth-of-type(even):not(.final):not(#final-cta):not(#flagship) .label,
+main > section:nth-of-type(even):not(.final):not(#final-cta):not(#flagship) .tag,
+body[data-page="index"] #routes .section-label,
+body[data-page="index"] #services .section-label,
+body[data-page="index"] #routes .card-link,
+body[data-page="index"] #services .card-link {
+  color: #a7462f !important;
+}
+
+main > section:nth-of-type(even):not(.final):not(#final-cta):not(#flagship) .card,
+body[data-page="index"] #routes .card,
+body[data-page="index"] #services .card {
+  border-color: rgba(22, 25, 26, .18) !important;
+}
+
+main > section:nth-of-type(even):not(.final):not(#final-cta):not(#flagship) .card p,
+body[data-page="index"] #routes .card p,
+body[data-page="index"] #services .card p {
+  color: #4f5552 !important;
+}
+
+@media (max-width: 768px) {
+  .editorial-orbit-scene span:nth-child(3) {
+    opacity: .55;
+  }
+}
