@@ -22,9 +22,10 @@ module.exports = defineConfig({
     screenshot: 'only-on-failure'
   },
   webServer: {
-    command: 'python3 -m http.server 4173',
+    command: 'npm run start',
     port: 4173,
-    reuseExistingServer: true
+    env: { PORT: '4173' },
+    reuseExistingServer: !process.env.CI
   },
   projects: viewports.map(([name, width, height]) => ({
     name,
