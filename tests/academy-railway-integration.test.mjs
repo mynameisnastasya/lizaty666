@@ -139,3 +139,26 @@ test('unconfigured payment and Telegram webhooks are fail-closed', async () => {
   assert.equal(payment.body.error, 'Provider credentials not configured');
   assert.equal(telegram.body.error, 'bot_not_configured');
 });
+
+test('Refund period reconciliation remains a hard checkout release blocker', async () => {
+  const { status, body } = await getJSON(API, '/v1/release-readiness');
+  assert.equal(status, 200);
+  assert.equal(body.readyForPublicSales, false);
+  assert.ok(Array.isArray(body.blockedBy));
+  assert.ok(body.blockedBy.includes('refund_period_reconciliation_not_verified'),
+    'Never enable checkout before every order has a verified grant period and refund policy');
+});
+
+test('Refund webhook rejects a forged notification when merchant credentials are absent', async () => {
+  const r = await getJSON(API, '/v1/yookassa/webhook', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      type: 'notification',
+      event: 'refund.succeeded',
+      object: { id: 'forged-refund-000001' },
+    }),
+  });
+  assert.equal(r.status, 503);
+  assert.equal(r.body.error, 'Provider credentials not configured');
+});
