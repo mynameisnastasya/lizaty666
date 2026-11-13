@@ -41,7 +41,7 @@ test('static sections and assets are available', async () => {
   ]) {
     const response = await check(path);
     assert.equal(response.status, 200, path);
-    assert.match(response.headers.get('content-type'), new RegExp(type), path);
+    assert.ok((response.headers.get('content-type') || '').includes(type), path);
   }
 });
 
