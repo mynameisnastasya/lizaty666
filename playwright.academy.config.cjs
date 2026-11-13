@@ -2,7 +2,7 @@ const { defineConfig } = require('@playwright/test');
 
 module.exports = defineConfig({
   testDir: './tests',
-  testMatch: 'academy-parity.spec.js',
+  testMatch: ['academy-parity.spec.js', 'academy-browser-flows.spec.js'],
   timeout: 45_000,
   expect: { timeout: 15_000 },
   retries: 1,
