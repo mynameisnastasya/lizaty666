@@ -15,7 +15,7 @@ test('a visitor can search and choose their birthplace on Railway Academy', asyn
   await page.getByRole('button', { name: 'НАЙТИ ГОРОД' }).click();
   await expect(page.getByRole('button', { name: /Москва, Россия/ }).first()).toBeVisible({ timeout: 20000 });
   await page.getByRole('button', { name: /Москва, Россия/ }).first().click();
-  await expect(page.getByText('Город выбран.')).toBeVisible({ timeout: 10000 });
+  await expect(page.locator('#daily-city')).toHaveValue('Москва, Россия', { timeout: 10000 });
   expect(assetFailures).toEqual([]);
 });
 
