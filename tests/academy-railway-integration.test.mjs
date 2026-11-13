@@ -121,3 +121,21 @@ test('Staging API does not expose admin or data-writing routes', async () => {
   });
   assert.equal(res.status, 405);
 });
+
+test('unconfigured payment and Telegram webhooks are fail-closed', async () => {
+  const [payment, telegram] = await Promise.all([
+    getJSON(API, '/v1/yookassa/webhook', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'notification', event: 'payment.succeeded', object: { id: 'bogus0000000001' } }),
+    }),
+    getJSON(API, '/v1/telegram/webhook', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ update_id: 100000, message: { text: '/start' } }),
+    }),
+  ]);
+  // Neither provider's credentials are available in the staging API.
+  assert.equal(payment.status, 503);
+  assert.equal(telegram.status, 503);
+  assert.equal(payment.body.error, 'Provider credentials not configured');
+  assert.equal(telegram.body.error, 'bot_not_configured');
+});
