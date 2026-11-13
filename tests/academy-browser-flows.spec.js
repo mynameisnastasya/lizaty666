@@ -2,21 +2,17 @@ const { test, expect } = require('@playwright/test');
 
 const STAGE = 'https://lizty666-stage.up.railway.app';
 
-test('a visitor can search and choose their birthplace on Railway Academy', async ({ page }) => {
-  const assetFailures = [];
-  page.on('response', response => {
-    if (response.url().startsWith(STAGE + '/_assets/') && response.status() >= 400) {
-      assetFailures.push({ status: response.status(), url: response.url() });
-    }
+test('a logged-out visitor cannot access the protected birth form', async ({ page }) => {
+  const missingAssets = [];
+  page.on('response', r => {
+    if (r.url().startsWith(STAGE + '/_assets/') && r.status() >= 400) missingAssets.push(r.url());
   });
   await page.goto(STAGE + '/ezhednevka', { waitUntil: 'domcontentloaded', timeout: 30000 });
-  await expect(page.locator('#daily-city')).toBeVisible({ timeout: 20000 });
-  await page.locator('#daily-city').fill('Москва');
-  await page.getByRole('button', { name: 'НАЙТИ ГОРОД' }).click();
-  await expect(page.getByRole('button', { name: /Москва, Россия/ }).first()).toBeVisible({ timeout: 20000 });
-  await page.getByRole('button', { name: /Москва, Россия/ }).first().click();
-  await expect(page.locator('#daily-city')).toHaveValue('Москва, Россия', { timeout: 10000 });
-  expect(assetFailures).toEqual([]);
+  await expect(page.locator('body')).toContainText('TELEGRAM', { timeout: 10000 });
+  // The form is intentionally behind TelegramForecastGate; do not fake a logged-in user.
+  await expect(page.locator('#daily-city')).toHaveCount(0);
+  await expect(page.locator('a[href*="t.me/Lizty666bot"]').first()).toBeAttached();
+  expect(missingAssets).toEqual([]);
 });
 
 test('logged-out Academy renders an explicit guest state', async ({ page }) => {
@@ -36,7 +32,7 @@ test('checkout shows safely unavailable payment status instead of attempting cha
   expect(availability.status()).toBe(200);
   expect((await availability.json()).enabled).toBe(false);
   expect((await status.json()).salesOpen).toBe(false);
-  await expect(page.locator('body')).toContainText('Ежедневка');
+  await expect(page.locator('body')).toContainText('Оплата пока не открыта');
 });
 
 test('original storefront no longer appears at Academy Railway staging', async ({ page }) => {
