@@ -17,10 +17,28 @@
 - Безопасность: координатор должен проверять журнал и GitHub Issues до каждого запуска, не работать параллельно над одним этапом, фиксировать checkpoints и не делать production/deploy/data-migration без разрешения.
 - **Ограничение:** после 24 запусков дальнейшая работа автоматически не гарантируется, если к этому времени задачи не завершены. Потребуется явное продление расписания.
 
+## Почасовой запуск — 2026-11-13, этап 1 (#6), checkpoint 1
+
+- **Статус:** In progress; Floot read-access восстановлен после заявленного сброса лимита. Gate этапа 1 ещё **не** выполнен; #7–#11 не запускались.
+- **Конкуренция:** перед работой прочитаны PROJECT_AUDIT.md и Issues #6–#11. Все issues open/Planned, новых отметок In progress за предыдущий час не обнаружено. Рабочая ветка только `audit/full-migration-2026-11-13`.
+- **Исследовано (read-only):** `Floot.list_files` для проекта «LIZ_TY666 — разборы, соляр и обучение» (ID в закрытом контексте подключения, без секретов). Получено дерево компонентов, endpoints, helpers, pages, static, зависимостей; отдельно прочитаны `static/__dev/dependencies.json`, `helpers/schema.tsx`, `helpers/db.tsx`, `pages/_index.tsx`, `endpoints/orders/create_POST.ts`, `endpoints/payments/yookassa-webhook_POST.ts`, `static/__dev/migrations/mini-auth-20261110.sql`.
+- **Подтверждённая структура:** исходный Floot — React 19 / React Router 6, TSX, PostgreSQL через Kysely и postgres-js, SSR включён; есть библиотеки Stripe, YooKassa-интеграция в helpers, Telegram, astronomy-engine, Zod, bcryptjs, jose. Это **не** просто статический GitHub Pages сайт, описанный в README другого репозитория. Используется переменная окружения **по имени** `FLOOT_DATABASE_URL`; значение не читалось и не записывалось.
+- **Карта страниц (по дереву, маршруты требуют runtime-верификации):** `/`, `/app`, `/daily-forecast`, `/daily`, `/fortune`, `/login`, `/payment`, `/payment-return`, `/orders-admin`, `/order-consent`, `/privacy`, `/offer`, `/refunds`, `/requisites`, `/delivery`; семейство `/ezhednevka*` (mini, oplata, legal/consent/cookies/terms/refunds/payments/delivery и др.). Некоторые TSX-файлы короткие и могут быть редиректами — не считать отдельной работающей функцией без проверки.
+- **API inventory (по файлам, без вызова):** группы `auth` (login, register, reset, logout, session), `forecast` (register, preview, mini-auth, Telegram, dispatch, checkout, status, settings, places, today, chart, verify), `orders` (create, admin, fulfillment), `payments` (YooKassa checkout/status/webhook, Stripe config, Telegram settings, return, event), `visitor` (events, opt-out, admin). Наличие файлов не означает доступность API.
+- **DB inventory (по сгенерированным типам, не live DB):** `Users`, `Sessions`, `LoginAttempts`, `PasswordResetCodes`, `SiteOrderRequests`, `SiteOrderRefunds`, `ForecastClients`, `ForecastOrders`, `ForecastPaymentEvents`, `ForecastMiniSessions`, `ForecastConsentRecords`, `ForecastMessages`, `ForecastTelegramOrders`, `PaymentNotificationOutbox`, `MerchantPaymentSettings`, `MerchantFulfillmentSettings` и другие. Реальные ограничения, индексы и количество строк **не** проверены. SQL-миграция `mini-auth-20261110.sql` описывает мини-сессии и согласия; факт применения в БД неизвестен.
+- **Платёжный read-only обзор:** `endpoints/orders/create_POST.ts` проверяет origin, content-type, размер тела, каталог, контакт, лимит заявок; `endpoints/payments/yookassa-webhook_POST.ts` принимает уведомления и передаёт их на серверную сверку с провайдером. **Не утверждается**, что защита от дублей, валидация и все состояния платежей доказанно корректны: необходимы изучение helpers и sandbox-тесты в #9.
+- **Особенность версии:** Floot сообщил, что после последней публикации имеются неопубликованные изменения в четырёх helper/endpoint-файлах. Это риск несоответствия исходного рабочего дерева опубликованной версии; необходима отдельная сверка, **не** выполнять publish.
+- **Подтверждённые дефекты продукта:** пока нет. **Риски:** MIG-002 и MIG-003 сохраняются, MIG-001 (лимит) снят для чтения; новый риск MIG-005 **High / Open / неподтверждённый дефект** — несоответствие опубликованной версии Floot и текущих файлов, требуются версии и diff.
+- **Исправления:** только документирование в рабочей Git-ветке, без правок исходного приложения, DB, Railway или Floot.
+- **Тесты:** PASS — чтение дерева Floot и семи файлов; PASS — статическая инвентаризация API/страниц/типов БД; NOT RUN — build, typecheck, unit/integration/E2E, живые запросы к API, платежи, backup/restore. PASS означает лишь доступность и анализ файлов, не работоспособность приложения.
+- **Блокеры:** резервные копии в приватном согласованном хранилище и restore proof отсутствуют; полный экспорт и схема live БД ещё не выполнены. Потребуется продолжение этапа 1.
+- **Согласовать:** место безопасного хранения резервной копии и разрешённый способ выгрузки; никаких дампов в публичный GitHub.
+- **Следующий checkpoint:** на следующем часовом запуске продолжить **только #6**: исследовать оставшиеся важные helpers/endpoints, schema relations, интеграции, diff published vs working и список обязательных функций; не начинать #7 до закрытия gate.
+
 ## Шесть этапов и зависимости
 | № | GitHub Issue | План WITA | Зависимость | Статус |
 |---|---|---|---|---|
-| 1 | [#6 — инвентаризация](https://github.com/mynameisnastasya/lizaty666/issues/6) | 13 ноя 23:05 | Доступ к Floot/после сброса лимита | Planned — gate pending |
+| 1 | [#6 — инвентаризация](https://github.com/mynameisnastasya/lizaty666/issues/6) | 13 ноя 23:05 | Доступ к Floot/после сброса лимита | In progress — checkpoint 1 |
 | 2 | [#7 — архитектура и миграция](https://github.com/mynameisnastasya/lizaty666/issues/7) | 14 ноя 00:05 | Результат этапа 1 | Planned — gate pending |
 | 3 | [#8 — бизнес-логика](https://github.com/mynameisnastasya/lizaty666/issues/8) | 14 ноя 01:05 | Результат этапов 1–2 | Planned — gate pending |
 | 4 | [#9 — платежи/безопасность](https://github.com/mynameisnastasya/lizaty666/issues/9) | 14 ноя 02:05 | Результат этапов 1–3 | Planned — gate pending |
@@ -41,10 +59,10 @@
 ### Реестр блокеров и рисков
 | ID | Приоритет | Статус | Компонент | Подтверждённый факт / риск | Следующее действие |
 |---|---|---|---|---|---|
-| MIG-001 | High | Blocked | Floot export/read | `list_files` возвращает «Daily build limit reached» до заявленного reset. Следовательно, текущая полная инвентаризация исходников недоступна. | Повторить чтение после 23:00 WITA; если отклонено снова — зафиксировать новое сообщение и перенести gate. |
+| MIG-001 | High | Read access restored; export incomplete | Floot export/read | `list_files` возвращает «Daily build limit reached» до заявленного reset. Следовательно, текущая полная инвентаризация исходников недоступна. | Чтение доступно; продолжить безопасную инвентаризацию, экспорт/backup пока не подтверждены. |
 | MIG-002 | High (риск, **не подтверждённый дефект**) | Open | Source parity | GitHub README описывает статический сайт, а Railway содержит отдельные функции и БД. Соответствие исходного Floot-кода и миграционной версии не доказано. | Карта функций, diff и traceability после доступа. |
 | MIG-003 | High (риск, **не подтверждённый дефект**) | Open | Backup/restore | Подтверждённых backup и restore verification **нет** в результатах текущей проверки. | Согласовать приватное хранилище и разрешённый метод, затем проверить контрольные суммы/восстановление без нарушения production. |
-| MIG-004 | High (риск, **не подтверждённый дефект**) | Open | Payment release gate | Staging payment-api существует, но реальные сценарии оплаты, webhook/idempotency и release readiness не проверялись. | Только sandbox-тесты; production payment выключен до допуска. |
+| MIG-005 | High (риск, **не подтверждённый дефект**) | Open | Floot version parity | Floot сообщает о неопубликованных изменениях в четырёх файлах; состав опубликованной версии ещё не сопоставлен. | Проверить версионный diff без публикации. |\n| MIG-004 | High (риск, **не подтверждённый дефект**) | Open | Payment release gate | Staging payment-api существует, но реальные сценарии оплаты, webhook/idempotency и release readiness не проверялись. | Только sandbox-тесты; production payment выключен до допуска. |
 
 Никаких дефектов продукта пока не объявлено подтверждёнными. Указанные риски не равны проверенным уязвимостям.
 
