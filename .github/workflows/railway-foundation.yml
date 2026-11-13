@@ -12,5 +12,26 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - run: npm run build
-      - run: npm run test:unit
+      - name: Verify Node syntax
+        run: npm run build
+      - name: Run HTTP unit and integration tests
+        run: npm run test:unit
+      - name: Build Railway Docker image
+        run: docker build --tag lizaty666-web:pr .
+      - name: Smoke-test running container
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run --detach --name lizaty666-web-ci --publish 127.0.0.1:4174:3000 lizaty666-web:pr
+          trap 'docker rm -f lizaty666-web-ci >/dev/null 2>&1 || true' EXIT
+          for i in $(seq 1 25); do
+            if curl --fail --silent --show-error http://127.0.0.1:4174/health > /tmp/liz-health.json 2>/dev/null; then
+              grep -q '"ok":true' /tmp/liz-health.json
+              curl --fail --silent --show-error http://127.0.0.1:4174/ > /tmp/liz-index.html
+              grep -qi '<html' /tmp/liz-index.html
+              exit 0
+            fi
+            sleep 1
+          done
+          docker logs lizaty666-web-ci
+          exit 1
