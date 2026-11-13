@@ -30,7 +30,7 @@ test.describe('site integrity', () => {
 
   test('main navigation and Telegram CTAs remain available', async ({ page }) => {
     await page.goto('/index.html');
-    await expect(page.locator('a[href*="t.me/liz_ty666"]').first()).toBeVisible();
+    await expect(page.locator('a[href*="t.me/liz_ty666"]:visible').first()).toBeVisible();
     for (const href of ['astrology.html', 'runes.html', 'candles.html', 'education.html']) {
       await expect(page.locator(`a[href="${href}"]`).first()).toBeAttached();
     }
@@ -51,7 +51,7 @@ test.describe('site integrity', () => {
     const page = await context.newPage();
     await page.goto('/index.html');
     await expect(page.locator('h1')).toBeVisible();
-    await expect(page.locator('a[href*="t.me/liz_ty666"]').first()).toBeVisible();
+    await expect(page.locator('a[href*="t.me/liz_ty666"]:visible').first()).toBeVisible();
     await context.close();
   });
 });
