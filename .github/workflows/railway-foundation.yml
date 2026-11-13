@@ -16,6 +16,8 @@ jobs:
         run: npm run build
       - name: Run HTTP unit and integration tests
         run: npm run test:unit
+      - name: Verify live Railway staging website (read-only)
+        run: node --test tests/railway-stage.test.mjs
       - name: Build Railway Docker image
         run: docker build --tag lizaty666-web:pr .
       - name: Smoke-test running container
