@@ -84,12 +84,8 @@ test('Price discrepancies cannot be mistaken for ready-to-launch payments', asyn
   assert.equal(plans.body.currency, 'RUB');
   const current = Object.fromEntries(plans.body.plans.map(p => [p.code, p.rub]));
   const parity = Object.entries(FLOOT_PRICES).every(([key, value]) => current[key] === value);
-  if (!parity) {
-    assert.equal(readiness.body.readyForPublicSales, false, 'Price mismatch must never allow real payments');
-    console.warn('RELEASE BLOCKER: Floot subscription prices differ from Railway API:', {
-      floot: FLOOT_PRICES, railway: current,
-    });
-  }
+  assert.equal(parity, true, 'Railway prices must exactly match the published Floot Academy');
+  assert.equal(readiness.body.readyForPublicSales, false, 'Staging must never permit real payments');
   assert.equal(Object.keys(current).length, 3);
 });
 
