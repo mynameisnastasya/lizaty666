@@ -18,6 +18,8 @@ jobs:
         run: npm run test:unit
       - name: Verify live Railway staging website (read-only)
         run: node --test tests/railway-stage.test.mjs
+      - name: Verify independent Railway staging site and payment safety
+        run: node --test tests/railway-staging.test.mjs
       - name: Build Railway Docker image
         run: docker build --tag lizaty666-web:pr .
       - name: Smoke-test running container
