@@ -35,8 +35,8 @@ PAGES = [
 EXT = (".js", ".css", ".png", ".jpg", ".jpeg", ".svg", ".webp",
        ".gif", ".avif", ".woff", ".woff2", ".ttf", ".ico", ".json")
 RAW_RE = re.compile(
-    r"""(?:(?:/|\\/)_(?:assets|cdn)/(?:static/)?[A-Za-z0-9._/~%+-]+|"""
-    r"""(?:\\?./)[A-Za-z0-9._~%+/-]+\\.(?:js|css|png|jpe?g|svg|webp|avif|woff2?|ttf))"""
+    r"(?:/_(?:assets|cdn)/(?:static/)?[A-Za-z0-9._~%+/-]+"
+    r"|\\./[A-Za-z0-9._~%+/-]+\\.(?:js|css|png|jpe?g|svg|webp|avif|woff2?|ttf))"
 )
 MAX_FILE = 9 * 1024 * 1024
 MAX_TOTAL = 80 * 1024 * 1024
