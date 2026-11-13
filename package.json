@@ -4,7 +4,10 @@
   "scripts": {
     "serve": "python3 -m http.server 4173",
     "test:e2e": "playwright test",
-    "test:e2e:update": "playwright test --update-snapshots"
+    "test:e2e:update": "playwright test --update-snapshots",
+    "start": "node server.mjs",
+    "build": "node --check server.mjs",
+    "test:unit": "node --test tests/server.test.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.1"
