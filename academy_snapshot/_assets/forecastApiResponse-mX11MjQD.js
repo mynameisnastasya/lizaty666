@@ -1,0 +1,1 @@
+import{S as e}from"./vendor-Bi_sAcyh.js";async function i(r,o){const a=await r.text();let t;try{t=e.parse(a)}catch{throw r.status>=500?new Error("Сервис прогнозов временно недоступен. Попробуй ещё раз чуть позже."):new Error(r.ok?"Не удалось прочитать ответ сервера. Попробуй ещё раз.":o)}if(!r.ok)throw new Error(typeof t?.error=="string"?t.error:o);return t}export{i as f};

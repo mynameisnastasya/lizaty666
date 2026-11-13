@@ -1,0 +1,427 @@
+{
+  "assets": {
+    "/_assets/Checkbox-BLH76D2I.js": {
+      "bytes": 450,
+      "sha256": "7e19b11a98beaeee3c17acb45ad21afdff6be77c97c10e2c44491daeea71f68a"
+    },
+    "/_assets/Checkbox-DJQoG4g2.css": {
+      "bytes": 1713,
+      "sha256": "ec31bc0c8487f255e100a8b66e1cd374280c4856f99a72f746ba2bc456fb5e28"
+    },
+    "/_assets/Helmet-ZPMDVic_.js": {
+      "bytes": 15685,
+      "sha256": "2bc209cd9fdce5e26c56d5fe47cfbb130833da0ec4474b1f9d6245d6432cdc49"
+    },
+    "/_assets/Input-ComL_Tvb.css": {
+      "bytes": 1681,
+      "sha256": "615321fc5e7f4e18c01a8ddece66b106d94f1a516b9f51b26f44d7125b7c9ab8"
+    },
+    "/_assets/Input-DpGIge0z.js": {
+      "bytes": 239,
+      "sha256": "26346276986b0588b5eab36234db6517209e46a551777f5a01e92f5f0d5b2857"
+    },
+    "/_assets/Input.module-Dmb6Vdaa.js": {
+      "bytes": 53,
+      "sha256": "1c5e2cafa8b37571a757a34c1c4acbe6464dd643c72b1b13f24d54bc3c2ad73d"
+    },
+    "/_assets/MerchantDocument-D9qEStFU.css": {
+      "bytes": 955,
+      "sha256": "8087e29dfb175d9d90fe626463fb49916834bd27e7e987088e4d0ab98249c52d"
+    },
+    "/_assets/MerchantDocument-DtkM1cx6.js": {
+      "bytes": 2024,
+      "sha256": "0edeeeca4aaf61d288dc6105cec2a391e7e6d479adfdca6e7b1e66e6e6ece98a"
+    },
+    "/_assets/Select-C_0_0bMB.css": {
+      "bytes": 2611,
+      "sha256": "1566a518f89794b20bb8e188e0cbcd95c2324dc9fbbd5bdb74aa9aca26f173c2"
+    },
+    "/_assets/Select-DawST8QU.js": {
+      "bytes": 21872,
+      "sha256": "01ba241b83e1e3bab5e0e37a93baff940838df860d8663d3a8bcc2b35d9a61c8"
+    },
+    "/_assets/Textarea-Cl-dL5g3.js": {
+      "bytes": 443,
+      "sha256": "613ad8c12470e8dc680c4262b0151829cb695dd6c0fc8ab797e808d0b9fa94a7"
+    },
+    "/_assets/Textarea-DJiIkOMW.css": {
+      "bytes": 398,
+      "sha256": "14430b2d8a193ef15b74c506c054e5659bcd8f6869059cb6dad28d20ebd2c9f7"
+    },
+    "/_assets/_index-BUNcKvmV.js": {
+      "bytes": 40430,
+      "sha256": "419086e911967c4a65550963e8f0e3f9f8917054f65ad26b56c0f237727af04f"
+    },
+    "/_assets/_index-DyZlfCVL.css": {
+      "bytes": 42123,
+      "sha256": "655a64693a13c1453a098f3a8b557cba7bd0157cd88eef4335c3904682fe6e5f"
+    },
+    "/_assets/aFTR7PB1QTsUX8KYvumzEY2tbZX9.woff2": {
+      "bytes": 9616,
+      "sha256": "8711f938c3f04f91e35ae64ebc7f2eecd800d2ae1c3542f6c837c758a50422f5"
+    },
+    "/_assets/aFTR7PB1QTsUX8KYvumzEYOtbQ.woff2": {
+      "bytes": 14988,
+      "sha256": "9964608a849396bd00c4bfd7034afe03486469dcf20b4f6b8cbdfdd310369951"
+    },
+    "/_assets/aFTU7PB1QTsUX8KYthSQBLyM.woff2": {
+      "bytes": 9552,
+      "sha256": "a52e19ebe0398c9c0f8fa28a0c5e9a6bc324f35d9f0881c9aa407d10af447175"
+    },
+    "/_assets/aFTU7PB1QTsUX8KYthqQBA.woff2": {
+      "bytes": 14820,
+      "sha256": "e1896b13b2b1bb112fac2f9571bd6c40e118746e77a4511edbf43fbb41bf3e1e"
+    },
+    "/_assets/app-Cl7HAdUM.js": {
+      "bytes": 20616,
+      "sha256": "1972dc57656e327a3710ae1d095e34a9898dc0ef71bedc905afe588c19a3757d"
+    },
+    "/_assets/app-DmxcKPqR.css": {
+      "bytes": 10891,
+      "sha256": "9475049ab5f0303a03ba25569bf9ef2a7b82e7154b113cacae2928d57a8e2741"
+    },
+    "/_assets/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYp3tKgS4.woff2": {
+      "bytes": 33736,
+      "sha256": "cfa9a397d86f66c5c51775a2500a712d5f632a04f0c5eca6930dfaf612d4566d"
+    },
+    "/_assets/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYpHtKgS4.woff2": {
+      "bytes": 23416,
+      "sha256": "a4d7cf345b8091e1d2c8c5c8fa3bd0f9bb9d00bc8988185471db398ddb5ae4c4"
+    },
+    "/_assets/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYpntKgS4.woff2": {
+      "bytes": 11220,
+      "sha256": "6252e819a7665ae512c2d046308a9016ada63c06d0d8f96984c4b29f6c9e1bd2"
+    },
+    "/_assets/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYqXtK.woff2": {
+      "bytes": 37640,
+      "sha256": "d80df8ff5aecd299a61549f9e29ab1ed0b9b05f4ea71d50fe978e07d5240b235"
+    },
+    "/_assets/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYrXtKgS4.woff2": {
+      "bytes": 21168,
+      "sha256": "017fab69b4be8ffc08ca312823327989ade6dc3d948f0afa125e12ec2e5e7ca1"
+    },
+    "/_assets/delivery-CeIifjUG.js": {
+      "bytes": 250,
+      "sha256": "d0acfd3467a9fbbd4a499bbb8ae1e12f097fbc573398dbb79c98817d35747451"
+    },
+    "/_assets/ezhednevka-7B9WNHye.css": {
+      "bytes": 17447,
+      "sha256": "743ad394d6cd3c56458e87c07840b7d61f87bff035fc61bbf527e4bb646e2fc3"
+    },
+    "/_assets/ezhednevka-B-ZQ6mnR.js": {
+      "bytes": 40687,
+      "sha256": "3948b85e8aaa56c6055694442920c967f9e1744e1574c1511007ef3ec72092bc"
+    },
+    "/_assets/ezhednevka-consent-CdnudqDp.js": {
+      "bytes": 249,
+      "sha256": "387df0c488977c4534d87678aad16a249dd4b0db7d7af70e26ae0f5e0048a5ad"
+    },
+    "/_assets/ezhednevka-cookies-B-7NA353.js": {
+      "bytes": 249,
+      "sha256": "dd98bde797e836c74c1b21af1854eae867f898ec1560eac9acdf1b22554b50dc"
+    },
+    "/_assets/ezhednevka-delivery-ChLYLmyX.js": {
+      "bytes": 250,
+      "sha256": "d0acfd3467a9fbbd4a499bbb8ae1e12f097fbc573398dbb79c98817d35747451"
+    },
+    "/_assets/ezhednevka-marketing-consent-CpfPg3Uh.js": {
+      "bytes": 259,
+      "sha256": "dcdb48c175b6a6e068fe89123a8b7e0b2b4537a63771b85f907d7d1b11c7c6ab"
+    },
+    "/_assets/ezhednevka-mini-BCe_sBup.css": {
+      "bytes": 452,
+      "sha256": "7c34744983dee801262876d0a6356dc90f37845bbab972cfc9ef4ab716471ede"
+    },
+    "/_assets/ezhednevka-mini-BFOOxVnN.js": {
+      "bytes": 2447,
+      "sha256": "f9e091a408114c92bab6983ff7e704caeb0ca5e7392d7de5527791f02230d060"
+    },
+    "/_assets/ezhednevka-offer-CHFh3CJ6.js": {
+      "bytes": 253,
+      "sha256": "53c8e242929c69b3a4122f8342ba01495188738dcd5f8e08f71bdfc25eb44398"
+    },
+    "/_assets/ezhednevka-oplata-BQO4KstU.js": {
+      "bytes": 16615,
+      "sha256": "2c5908575a6b3907928b03589f30f00c74e1d9b945321dd2f7d4491d62006439"
+    },
+    "/_assets/ezhednevka-oplata-y2nRKADo.css": {
+      "bytes": 6013,
+      "sha256": "4870c90917c2a976443486ee5669e677da9ad8cddaa7f92df867b9a6b9ac4f30"
+    },
+    "/_assets/ezhednevka-payments-DJzVealD.js": {
+      "bytes": 250,
+      "sha256": "5f5cc644f1ca3fe3e49638b0b1a89e1195045cffa5007764a1c3111db1e3177e"
+    },
+    "/_assets/ezhednevka-privacy-B6rLC1js.js": {
+      "bytes": 249,
+      "sha256": "58f5bfa850b63672f30f532435a51afa5b6b4f8727a962d310e110a570b261f6"
+    },
+    "/_assets/ezhednevka-refunds-CgoxVr80.js": {
+      "bytes": 249,
+      "sha256": "719098a16c82ef2213c028a231814c1a2358609d909b98b0ec2882eef6588c91"
+    },
+    "/_assets/ezhednevka-requisites-b7TlOjeA.js": {
+      "bytes": 252,
+      "sha256": "18231483bf9edc680fc6316c03e0b55dd1c9f4bbee35d31457bbf9f7cf75a80e"
+    },
+    "/_assets/ezhednevka-terms-CisHtFnD.js": {
+      "bytes": 247,
+      "sha256": "733696046c07ff562d8083263217323a5fe1308e4cee23d7113685f545471985"
+    },
+    "/_assets/forecastApiResponse-mX11MjQD.js": {
+      "bytes": 476,
+      "sha256": "01ff5a9779c7cdbbfa8748dede49ec81ac4245c755c5c81b7383da6531690e19"
+    },
+    "/_assets/forecastConfig-CWVKiq9Z.js": {
+      "bytes": 320,
+      "sha256": "92e9f9882c8b8457e9b8f6b4bc2f81597ebfd35c943077fcb790084e81c34454"
+    },
+    "/_assets/fortune-BL6iCSxG.css": {
+      "bytes": 12062,
+      "sha256": "f6425cf53e02b18b7fc3bba90ca3b4bce51bfaaa63337f9d3815bb548c61ed4a"
+    },
+    "/_assets/fortune-BlyLsRBH.js": {
+      "bytes": 19333,
+      "sha256": "78ffd6b9a897734ea345ed51a31fa53ecdb86aa30286e28e940cd9a530df02f7"
+    },
+    "/_assets/index-B6O574Mf.css": {
+      "bytes": 20259,
+      "sha256": "05b07d88053e469d8587465ba971bb65bd1fcb5536e9638ac3e931d72ce69b3b"
+    },
+    "/_assets/index-BbP3371Q.js": {
+      "bytes": 49,
+      "sha256": "b9445685a0a326915cbac64923db0867e58369d30d65b246844cd45a429d71d7"
+    },
+    "/_assets/index-CL6k-n2Q.js": {
+      "bytes": 93750,
+      "sha256": "9ae7842b23b357e22d12c14dd6e992a9852fe0a71050c01c93b12fdf1296d1d0"
+    },
+    "/_assets/index-PbC-ommS.js": {
+      "bytes": 9159,
+      "sha256": "2ce71a65fcc7693c5e3297f6627ef3f7a52a10e5dbcd6b24cb78584de5610242"
+    },
+    "/_assets/login-BKwNF5QO.js": {
+      "bytes": 17707,
+      "sha256": "cc39fd1318775157ea938f314b587e12b3120018ae1b60820790554c676878b2"
+    },
+    "/_assets/login-BNp5oe9B.css": {
+      "bytes": 6791,
+      "sha256": "c15559fa93804d73438ea55d83c4dcaaabce700183b4bdc98caa3c3018c61949"
+    },
+    "/_assets/offer-DLajCKPr.js": {
+      "bytes": 247,
+      "sha256": "10196886ad988c277b47a2c2061c0a2742c2429d045214b6dc9eec9f254432e3"
+    },
+    "/_assets/order-consent-C7UANOJ5.js": {
+      "bytes": 3082,
+      "sha256": "fd9cb884cec1d790388c41544af2c67573faab34d27d414a137941bcb3149d9c"
+    },
+    "/_assets/order-consent-ChJ49CdJ.css": {
+      "bytes": 466,
+      "sha256": "efcc9b0a8b81a383329d7de44a13c23a0b340a11f7a8b9167fad38b52a6e15c9"
+    },
+    "/_assets/orders-admin-C0kNZdhl.css": {
+      "bytes": 4533,
+      "sha256": "365db2ebcac9e99a14e1f58bccfbf003d35c6249c8543333784d048d7e4c53dd"
+    },
+    "/_assets/orders-admin-jiN4D5Az.js": {
+      "bytes": 19694,
+      "sha256": "734dd0768fc014f40cf96513cc6ff33ef3e06298c423804864f82e06525b6d99"
+    },
+    "/_assets/payment-BWW1-ZNg.js": {
+      "bytes": 20182,
+      "sha256": "58202f3f4c4dcc9f7ca423e4603f7a7218f0af37c70e17ad3e1d42de7069991d"
+    },
+    "/_assets/payment-De8swi3_.css": {
+      "bytes": 17136,
+      "sha256": "f5a197c5fe80b0a969c57f6abbf31da2974f4454dc3c604862bca0a3f54fe157"
+    },
+    "/_assets/payment-return-D9V9gGwC.js": {
+      "bytes": 3989,
+      "sha256": "3a37fab5b24c2dfea6071a6852be824539699bdc54ad1bf9cc67732126b2b062"
+    },
+    "/_assets/payment.module-CtMNc7FU.js": {
+      "bytes": 1486,
+      "sha256": "ad6ee622399916d03905d5bb37de60e7520a10d217c3e9ed26c540c576ba3dfe"
+    },
+    "/_assets/privacy-DyO3S3AL.js": {
+      "bytes": 249,
+      "sha256": "58f5bfa850b63672f30f532435a51afa5b6b4f8727a962d310e110a570b261f6"
+    },
+    "/_assets/refunds-DrjtuVHq.js": {
+      "bytes": 249,
+      "sha256": "719098a16c82ef2213c028a231814c1a2358609d909b98b0ec2882eef6588c91"
+    },
+    "/_assets/register_POST.schema-DPKt0zGH.js": {
+      "bytes": 1031,
+      "sha256": "9828170f62604c811b5ff1d1877262da024464fd962e788226509d1196b04532"
+    },
+    "/_assets/requisites-VC3LRjDR.js": {
+      "bytes": 252,
+      "sha256": "18231483bf9edc680fc6316c03e0b55dd1c9f4bbee35d31457bbf9f7cf75a80e"
+    },
+    "/_assets/settings_POST.schema-CdG_4oeY.js": {
+      "bytes": 1045,
+      "sha256": "cf403b996d5cc585380f8717da5f1ddf8a163f26cc023f26d784e921ff11f6da"
+    },
+    "/_assets/vendor-Bi_sAcyh.js": {
+      "bytes": 483629,
+      "sha256": "5190fdab579b4636d61bf727e792fb7b0004f86dbff3bc174f8dd01a7dba3da1"
+    },
+    "/_assets/xn7gYHE41ni1AdIRggOxSuXd.woff2": {
+      "bytes": 14352,
+      "sha256": "447c49583b1b735cc6f566151db1d24354cec41076c55dd98455cfbde9e806c1"
+    },
+    "/_assets/xn7gYHE41ni1AdIRggSxSuXd.woff2": {
+      "bytes": 9268,
+      "sha256": "e507c109c31789b33994646b457ee288639324516357250607c9b1398186e069"
+    },
+    "/_assets/xn7gYHE41ni1AdIRggexSg.woff2": {
+      "bytes": 24532,
+      "sha256": "8c2def024c1bf31aacf3624ae3c4d701269b4ec3dc765c04830839f0d36b2d9e"
+    },
+    "/_assets/xn7gYHE41ni1AdIRggixSuXd.woff2": {
+      "bytes": 8388,
+      "sha256": "dbf64d973b3987844df30992c93f47d24ac8935ee8c9b1e320942aeb1b367703"
+    },
+    "/_assets/xn7gYHE41ni1AdIRggmxSuXd.woff2": {
+      "bytes": 15160,
+      "sha256": "2f7335119075b2079f1d882530bbc18728461612bf90743203d73a74a48f4d9b"
+    },
+    "/_assets/xn7gYHE41ni1AdIRggqxSuXd.woff2": {
+      "bytes": 2588,
+      "sha256": "3c09135e88bbfcd848e99be137710afbb615a8d9a73c5c48e6cb0245a162af1d"
+    },
+    "/_cdn/static/3233b583-5b54-4fd9-992b-b51cee1ae0b8-liza-closeup.webp": {
+      "bytes": 59258,
+      "sha256": "065b926aa65902722d0b96fbcc1d2a0e361695cd096752ba99c4f69b4a442f3d"
+    },
+    "/_cdn/static/35a1a8ea-2f75-4168-a068-4d7d863a3c4b-liza-favicon.png": {
+      "bytes": 6460,
+      "sha256": "8b7fb47beb371d5ff2aed26b54c73264cfe61f16d2858a09ec152e24ccb2993e"
+    },
+    "/_cdn/static/8bc920b6-53aa-4a6d-8122-431152df0d17-liza-portrait.webp": {
+      "bytes": 38336,
+      "sha256": "75b33e0c8f0b1eb608fcaba43899caf2939347057a5974efe664c6a7d9ab9f96"
+    },
+    "/_cdn/static/babbc62e-c6b1-4fa8-8aed-9216b0e52a55.png": {
+      "bytes": 1552727,
+      "sha256": "8e7ec738b002b7c27ae09768970810346ca4afc4c5ad189291ed14ed824124d4"
+    }
+  },
+  "pages": {
+    "/": {
+      "bytes": 78979,
+      "sha256": "6cba884b1e669840fe45300421366fc54ec161ab1bccf624ab4cda212e2f120e"
+    },
+    "/app": {
+      "bytes": 29511,
+      "sha256": "6b300127b51c3b6f43d829bab43129306b1ab8582acca622a4082c19c71502e8"
+    },
+    "/daily": {
+      "bytes": 29689,
+      "sha256": "bcaa958220ab2e90b1a85efe4e15a6f0bae477567199ef8f05e48b4b43a1cbf4"
+    },
+    "/daily-forecast": {
+      "bytes": 29689,
+      "sha256": "bcaa958220ab2e90b1a85efe4e15a6f0bae477567199ef8f05e48b4b43a1cbf4"
+    },
+    "/delivery": {
+      "bytes": 26326,
+      "sha256": "ad4d98c801e74123f5ad0c8984d8c91ca94b480c7940ee076d1f6da8bb325421"
+    },
+    "/ezhednevka": {
+      "bytes": 29689,
+      "sha256": "bcaa958220ab2e90b1a85efe4e15a6f0bae477567199ef8f05e48b4b43a1cbf4"
+    },
+    "/ezhednevka-consent": {
+      "bytes": 26157,
+      "sha256": "f0013d77dbc24c34e9d3eb4f8d94e4609acef5a7a9157a8c481e28e3632662b8"
+    },
+    "/ezhednevka-cookies": {
+      "bytes": 25810,
+      "sha256": "7ed0d784b143e96ec908fb5dcdd0c2de8100c4371e646c35e7f0593dab03bb45"
+    },
+    "/ezhednevka-delivery": {
+      "bytes": 26337,
+      "sha256": "d08c422b57127f27384c70c7f7e8c4b21c5c813cc981cc98b25743c87b7169cc"
+    },
+    "/ezhednevka-marketing-consent": {
+      "bytes": 24427,
+      "sha256": "98cedaebe3e601f347ff7658c705f0daf6dee32c98b1b39d31670aa71862a65d"
+    },
+    "/ezhednevka-mini": {
+      "bytes": 22259,
+      "sha256": "5b38d12a1571b22fca812dfa8377591275c30ae04a96837eee9a7afeaf69e6b1"
+    },
+    "/ezhednevka-offer": {
+      "bytes": 29250,
+      "sha256": "b165cc310347b009a0bfcd842f8e8c9a9580e9664eebdb89bff20b599f61b126"
+    },
+    "/ezhednevka-oplata": {
+      "bytes": 27948,
+      "sha256": "212d82d05054481413c33d60883ed667f9607c4491a4676b7d78a94477de5e32"
+    },
+    "/ezhednevka-payments": {
+      "bytes": 25547,
+      "sha256": "d9b9f565e7a0dfc3085f2f2a74c2dceb73c66c2bf60a9225812fde0d3da9a7a7"
+    },
+    "/ezhednevka-privacy": {
+      "bytes": 33191,
+      "sha256": "0de66b176b13d0bc61ecb5ac1fd47a6a8154ed03fbb205300609167d930b4a34"
+    },
+    "/ezhednevka-refunds": {
+      "bytes": 26132,
+      "sha256": "1c4b836a45ef80fd25d30abc2ce5aa12402aac9ec9bf722bbd1df4a9a8143c48"
+    },
+    "/ezhednevka-requisites": {
+      "bytes": 25350,
+      "sha256": "e875d903d31b4dfb094afb46212f781cf029b7114c20fe6cf80bccdb2a091c4b"
+    },
+    "/ezhednevka-terms": {
+      "bytes": 25644,
+      "sha256": "9d633decc4b70922627bc3de56a06a1430f27924a3d5c595c859a65896040374"
+    },
+    "/fortune": {
+      "bytes": 32192,
+      "sha256": "3b4fcea9ccda32b47cf2dbb0d40c4a4ce46c42b097d64b82eba4d585d8dc8110"
+    },
+    "/login": {
+      "bytes": 26132,
+      "sha256": "85b30141128e18521dc2e17d2d9c8df10d45ab912313c0dea277a5d6221246e1"
+    },
+    "/offer": {
+      "bytes": 28837,
+      "sha256": "e5d954ea1723ee427039a53588b4cb1533df493395adfbb2bc279ac1aeb45a77"
+    },
+    "/order-consent": {
+      "bytes": 25083,
+      "sha256": "73a226994ec5baa44d935218483ecd99e5184388fe580f6664b406540c82f060"
+    },
+    "/orders-admin": {
+      "bytes": 28568,
+      "sha256": "3ac69a68f332c92d728f1434f74982f6d494b7a8b42c06f85e057be7268b904d"
+    },
+    "/payment": {
+      "bytes": 26924,
+      "sha256": "c9ff0653dcffcfd9743501c15502e84fa26acc9079b503c05511d436d0383f54"
+    },
+    "/payment-return": {
+      "bytes": 23332,
+      "sha256": "1bf0cc5cfc3c53a3375c658846fe469f02ae8e9fde83a7f6bc49c2d6ca9e9cf1"
+    },
+    "/privacy": {
+      "bytes": 33180,
+      "sha256": "db020b2af1097d5eba5858b3f05c9a0d8beefd004df5a370077bdff867ad888f"
+    },
+    "/refunds": {
+      "bytes": 26121,
+      "sha256": "8728879fa44604f139585db2c598e47ec2eeeda1362ba7ab932931eb1dabb65b"
+    },
+    "/requisites": {
+      "bytes": 25339,
+      "sha256": "a1decaf5a166257a2af507b43a63fde7d696312d1ca300bc6d00c69f3f249824"
+    }
+  },
+  "source": "https://liz-ty666-academy.floot.app"
+}
