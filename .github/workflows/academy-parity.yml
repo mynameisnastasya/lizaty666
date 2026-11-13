@@ -5,6 +5,7 @@ on:
       - migration/floot-academy-railway-20261114
     paths:
       - tests/academy-parity.spec.js
+      - tests/academy-browser-flows.spec.js
       - playwright.academy.config.cjs
       - .github/workflows/academy-parity.yml
   workflow_dispatch:
