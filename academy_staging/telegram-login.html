@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive"><meta name="color-scheme" content="dark">
+<title>Вход через Telegram — LIZ_TY666</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100dvh;background:radial-gradient(ellipse at 60% -10%,#42243b,#100c13 58%);color:#f8e8ef;font:16px/1.55 system-ui,-apple-system,Arial,sans-serif}
+a{color:#f0bbd5}header{max-width:1080px;padding:23px 22px;margin:auto;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #5b3e50}
+.logo{font:normal 27px Georgia,serif;color:white;text-decoration:none}.logo span{color:#df9cbd}
+main{max-width:710px;margin:0 auto;padding:clamp(35px,8vw,72px) 22px}
+.kicker{letter-spacing:.2em;font-size:11px;font-weight:750;color:#d9a3bd}
+h1{font:normal clamp(39px,8vw,65px)/1.08 Georgia,serif;margin:10px 0 22px}h1 em{color:#df9bb8}
+p{color:#d8c3d0;font-size:17px}.card{background:#251727;border:1px solid #775269;border-radius:19px;margin:30px 0;padding:clamp(21px,5vw,34px);box-shadow:0 16px 60px #0005}
+h2{font:normal 27px Georgia,serif;margin:0 0 18px}
+button,.button{appearance:none;display:inline-block;border:1px solid #e7aac7;background:#e4b5cb;color:#291523;border-radius:11px;padding:14px 19px;font-size:16px;font-weight:750;cursor:pointer;text-decoration:none}
+button:disabled{opacity:.5;cursor:not-allowed}.button{background:#382539;color:#f3dce7;margin:12px 0}
+.small{color:#c2a7b6;font-size:13px}.status{margin-top:19px;min-height:27px;color:#e9c9da;font-size:15px}
+#next{display:none}.note{border-left:2px solid #d093b2;padding-left:15px;font-size:14px}
+</style>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+<header><a href="/" class="logo">LIZ<span>_</span>TY666</a><a href="/">На главную</a></header>
+<main>
+<div class="kicker">ЕЖЕДНЕВКА / ЛИЧНЫЙ КАБИНЕТ</div>
+<h1>Твой аккаунт.<br><em>Твой Telegram.</em></h1>
+<p>Никаких email, паролей и отдельной регистрации. Один Telegram ID объединяет твою анкету рождения, подписку и ежедневные прогнозы.</p>
+<section class="card">
+<h2>Войти через Telegram</h2>
+<p>Открой <b>@Lizty666bot</b> в личном чате и подтверди вход. Так система будет знать, куда отправлять именно твой прогноз.</p>
+<button id="begin">ВОЙТИ ЧЕРЕЗ TELEGRAM</button>
+<div id="next">
+<p>Нажми ниже, а в чате бота — <b>Старт</b>. Затем вернись к этой странице.</p>
+<a class="button" id="botlink" target="_blank" rel="noopener noreferrer" href="https://t.me/Lizty666bot">ОТКРЫТЬ @Lizty666bot</a>
+<p class="small">Ссылка для входа действует 10 минут. Страница автоматически завершит вход после подтверждения в Telegram.</p>
+</div>
+<div id="message" class="status" role="status" aria-live="polite"></div>
+<p class="note">Для ежедневной рассылки также понадобятся согласие на сообщения и активная подписка. В тестовой версии реальные платежи и доставка отключены.</p>
+</section>
+<p class="small">Открываешь академию внутри Telegram? Вход произойдёт автоматически после проверки подписи Telegram Mini App.</p>
+</main>
+<script>
+const el=id=>document.getElementById(id),status=t=>el('message').textContent=t;
+const api=async(action,opts={})=>{
+ const r=await fetch('/_api/tg-auth/'+action,{cache:'no-store',credentials:'include',...opts});
+ let data={};try{const j=await r.json();data=j.json||j}catch{}
+ return {code:r.status,data};
+};
+let polling=false;
+async function check(){
+ const res=await api('status');
+ if(res.code===200&&['authenticated',''].includes(res.data.state||'')){
+  status('Твой Telegram подтверждён. Открываю личную карту…');
+  location.replace('/railway-profile');return true;
+ }
+ return false;
+}
+async function poll(){
+ if(polling)return;polling=true;
+ for(let n=0;n<240;n++){
+  try{if(await check())return}catch{}
+  await new Promise(resolve=>setTimeout(resolve,2200));
+ }
+ status('Срок ссылки истёк. Нажми «Войти через Telegram», чтобы получить новую.');
+ polling=false;
+}
+el('begin').addEventListener('click',async()=>{
+ const btn=el('begin');btn.disabled=true;status('Готовлю безопасную ссылку…');
+ try{
+  const res=await api('start',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+  if(res.code!==200||typeof res.data.botUrl!=='string'){
+   status('Telegram-бот пока не подключён к Railway. Вход появится после настройки токена и webhook.');return;
+  }
+  el('botlink').href=res.data.botUrl;
+  el('next').style.display='block';
+  status('Открой бота, отправь /start и вернись сюда.');
+  poll();
+ }catch{status('Не удалось связаться с сервисом Telegram.')}finally{btn.disabled=false}
+});
+(async()=>{
+ try{
+  if(await check())return;
+  const t=window.Telegram?.WebApp;
+  if(t?.initData){
+   t.ready?.();t.expand?.();
+   status('Проверяю подпись твоего Telegram-аккаунта…');
+   const res=await api('mini',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData:t.initData})});
+   if(res.code===200){location.replace('/railway-profile');return}
+   status('Telegram не подтвердил вход. Открой приложение через кнопку бота.');
+  }
+ }catch{status('Авторизация временно недоступна.')}
+})();
+</script>
+</body></html>
