@@ -163,123 +163,51 @@ test('Refund webhook rejects a forged notification when merchant credentials are
   assert.equal(r.body.error, 'Provider credentials not configured');
 });
 
-test('staging account register/login/logout with isolated cookie', async () => {
-  // Synthetic account: no customer identity or real data is used or migrated.
-  const { randomUUID } = await import('node:crypto');
-  const email = 'qa-' + randomUUID() + '@example.invalid';
-  const password = 'Qa-' + randomUUID() + '!A2';
-  const request = (route, payload, cookie) => fetch(WEB + '/_api/auth/' + route, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Origin: WEB,
-      ...(cookie ? { Cookie: cookie } : {})
-    },
-    body: JSON.stringify({json: payload}),
-    signal: AbortSignal.timeout(20_000)
-  });
-  const joined = await request('register_with_password', {
-    email, password, displayName: 'Тестовая запись', role: 'admin'
-  });
-  assert.equal(joined.status, 200, 'Synthetic staging account registration');
-  const registration = await joined.json();
-  assert.equal(registration.json.user.email, email);
-  assert.equal(registration.json.user.role, 'user', 'No role escalation from signup data');
-  const cookie = joined.headers.get('set-cookie')?.split(';')[0] || '';
-  assert.match(cookie, /^liz_stage_sid=[A-Za-z0-9_-]{43}$/);
-  const setCookie = joined.headers.get('set-cookie') || '';
-  assert.match(setCookie, /HttpOnly/i);
-  assert.match(setCookie, /Secure/i);
-  assert.match(setCookie, /SameSite=Lax/i);
-
-  const active = await fetch(WEB + '/_api/auth/session', {
-    headers: {Cookie: cookie},
-    signal: AbortSignal.timeout(15_000)
-  });
-  assert.equal(active.status, 200);
-  const activeSession = await active.json();
-  assert.equal(activeSession.json.user.email, email);
-
-  const loggedOut = await request('logout', {}, cookie);
-  assert.equal(loggedOut.status, 200);
-  const revoked = await fetch(WEB + '/_api/auth/session', {
-    headers: {Cookie: cookie}, signal: AbortSignal.timeout(15_000)
-  });
-  assert.equal(revoked.status, 401, 'Logout must invalidate session server-side');
-
-  const wrong = await request('login_with_password', {email, password: 'Incorrect-Password-123'});
-  assert.equal(wrong.status, 401, 'Wrong password must not authenticate');
-
-  const loggedIn = await request('login_with_password', {email, password});
-  assert.equal(loggedIn.status, 200, 'Login must work after logout');
-  const login = await loggedIn.json();
-  assert.equal(login.json.user.email, email);
+test('Telegram identity is the only supported staging sign-in method', async () => {
+  for(const action of ['register_with_password','login_with_password','request_password_reset','reset_password']){
+    const r=await getJSON(WEB,'/_api/auth/'+action,{method:'POST',headers:{'Content-Type':'application/json',Origin:WEB},body:JSON.stringify({json:{email:'nobody@example.invalid',password:'test-only'}})});
+    assert.equal(r.status,410,'Email/password account route has been retired: '+action);
+  }
+  const page=await fetch(WEB+'/login',{signal:AbortSignal.timeout(15_000)});
+  assert.equal(page.status,200);
+  const html=await page.text();
+  assert.match(html,/Войти через Telegram/i);
+  assert.ok(html.includes('Lizty666bot'));
+  assert.doesNotMatch(html,/<input[^>]*type=["']?password/i);
+  assert.doesNotMatch(html,/<input[^>]*type=["']?email/i);
 });
 
-test('staging authenticated birth registration and real astrology', async () => {
-  const { randomUUID } = await import('node:crypto');
-  const email='astro-qa-'+randomUUID()+'@example.invalid';
-  const password='QA!'+randomUUID()+'z9';
-  const headers={'Origin':WEB,'Content-Type':'application/json'};
-  const call=async(path,body,cookie)=> {
-    const res=await fetch(WEB+'/_api/'+path,{
-      method:'POST',headers:{...headers,...(cookie?{Cookie:cookie}:{})},
-      body:JSON.stringify({json:body}),signal:AbortSignal.timeout(55_000)
-    });
-    const value=await res.json();
-    return {status:res.status,body:value.json||value};
-  };
-  const reg=await fetch(WEB+'/_api/auth/register_with_password',{
-    method:'POST',headers,body:JSON.stringify({json:{email,password,displayName:'QA Натальная'}}),
-    signal:AbortSignal.timeout(22_000)
+test('forged Telegram identity, absent bot session and unsafe profile writes are rejected', async () => {
+  const status=await getJSON(WEB,'/_api/tg-auth/status');
+  assert.equal(status.status,401,'No session should be minted without a bot confirmation');
+  const forged=await getJSON(WEB,'/_api/tg-auth/mini',{
+    method:'POST',headers:{'Content-Type':'application/json',Origin:WEB},
+    body:JSON.stringify({initData:'user=%7B%22id%22%3A123456789%7D&auth_date=1700000000&hash='+'a'.repeat(64)})
   });
-  assert.equal(reg.status,200,'QA registration');
-  const cookie=reg.headers.get('set-cookie')?.split(';')[0];
-  assert.ok(cookie,'Account cookie issued');
-  const place=await getJSON(WEB,'/_api/forecast/places?q='+encodeURIComponent('Москва'));
-  const city=place.body.json.places.find(x=>x.name==='Москва'&&x.timezone==='Europe/Moscow');
-  assert.ok(city?.id,'GeoNames Moscow found');
-  const data={
-    fullName:'Тест Натальная',birthDate:'2000-07-15',birthTime:null,
-    birthPlaceId:city.id,deliveryTimezone:'Europe/Moscow',deliveryHour:8,
-    acceptTerms:true,pdConsent:true,marketingConsent:false,legalVersion:'staging-qa-20261114'
-  };
-  const unauthorized=await call('forecast/register',data);
-  assert.equal(unauthorized.status,401,'Birth data cannot be written without cookie');
-  const saved=await call('forecast/register',data,cookie);
-  assert.equal(saved.status,200,'Authenticated birth form saved');
-  const me=await fetch(WEB+'/_api/forecast/me',{headers:{Cookie:cookie},signal:AbortSignal.timeout(18_000)});
-  assert.equal(me.status,200);
-  const profile=(await me.json()).json;
-  assert.equal(profile.registered,true);
-  assert.equal(profile.birthCity,city.name);
-  assert.equal(profile.birthTime,null);
-  assert.equal(profile.subscriptionUntil,null,'No fabricated paid access');
-  const chart=await fetch(WEB+'/_api/forecast/chart',{headers:{Cookie:cookie},signal:AbortSignal.timeout(50_000)});
-  assert.equal(chart.status,200,'Private astrology engine returned a chart');
-  const natal=(await chart.json()).json;
-  assert.equal(natal.registered,true);
-  assert.ok(natal.natal['Солнце'],'Calculated natal Sun');
-  assert.equal(natal.birthTimeKnown,false);
-  assert.equal(natal.natal['Луна'],undefined,'Unknown birth time must not claim precise natal Moon');
-  const preview=await call('forecast/preview',{},cookie);
-  assert.equal(preview.status,200,'Personal astro forecast preview succeeds');
-  assert.ok(preview.body.preview?.length>40,'Calculated preview has content');
-  const repeat=await call('forecast/preview',{},cookie);
-  assert.equal(repeat.status,200);
-  assert.equal(repeat.body.alreadyUsed,true,'Cannot mint a second free preview');
-  assert.equal(repeat.body.preview,preview.body.preview,'Preview is stable');
-  const settings=await call('forecast/settings',{deliveryTimezone:'Asia/Makassar',deliveryHour:9},cookie);
-  assert.equal(settings.status,200);
-  const updated=await fetch(WEB+'/_api/forecast/me',{headers:{Cookie:cookie},signal:AbortSignal.timeout(15_000)});
-  assert.equal((await updated.json()).json.deliveryTimezone,'Asia/Makassar');
-  const changed=await call('forecast/register',{...data,birthDate:'2001-07-15'},cookie);
-  assert.equal(changed.status,200,'Birth details can be corrected in the owner profile');
-  const stale=await fetch(WEB+'/_api/forecast/me',{headers:{Cookie:cookie},signal:AbortSignal.timeout(15_000)});
-  const staleProfile=(await stale.json()).json;
-  assert.equal(staleProfile.trialConsumed,true);
-  assert.equal(staleProfile.trialProfileChanged,true);
-  assert.equal(staleProfile.freePreview,null,'An older preview must never be presented as a result for new birth data');
-  const noSecond=await call('forecast/preview',{},cookie);
-  assert.equal(noSecond.status,409,'No second free preview after profile correction');
+  assert.ok([401,503].includes(forged.status),'Unverified Telegram initData must not sign a user in');
+  const fakeCookie=await getJSON(WEB,'/_api/auth/session',{headers:{Cookie:'liz_tg_sid=fake-token'}});
+  assert.equal(fakeCookie.status,401);
+  for(const action of ['register','preview','settings']){
+    const r=await getJSON(WEB,'/_api/forecast/'+action,{
+      method:'POST',headers:{'Content-Type':'application/json',Origin:WEB},
+      body:JSON.stringify({json:{fullName:'QA',birthDate:'2000-07-15',telegramId:'123456789'}})
+    });
+    assert.equal(r.status,401,'No arbitrary Telegram ID can write profile via '+action);
+  }
+});
+
+test('Telegram account ID is bound to bot chat and payment checkout stays disabled', async () => {
+  const [login,readiness]=await Promise.all([
+    getJSON(WEB,'/_api/tg-auth/start',{
+      method:'POST',headers:{'Content-Type':'application/json',Origin:WEB},body:JSON.stringify({})
+    }),
+    getJSON(API,'/v1/release-readiness')
+  ]);
+  assert.ok([200,503].includes(login.status),'Before bot configuration, sign-in must fail closed');
+  if(login.status===200){
+    assert.match(login.body.json.botUrl,/^https:\/\/t\.me\/Lizty666bot\?start=login_[A-Za-z0-9_-]{22}$/);
+    assert.equal(login.body.json.expiresInSeconds,600);
+  }else assert.ok(login.body.json.error);
+  assert.equal(readiness.body.readyForPublicSales,false);
+  assert.ok(readiness.body.blockedBy.includes('telegram_account_auth_and_delivery_binding_not_verified'));
 });
