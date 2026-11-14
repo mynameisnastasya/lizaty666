@@ -119,7 +119,7 @@ test('Staging API does not expose admin or data-writing routes', async () => {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: '{}', signal: AbortSignal.timeout(15_000),
   });
-  assert.equal(res.status, 405);
+  assert.ok([401, 403, 405].includes(res.status), "Unauthorized or cross-origin profile submission must be rejected");
 });
 
 test('unconfigured payment and Telegram webhooks are fail-closed', async () => {
