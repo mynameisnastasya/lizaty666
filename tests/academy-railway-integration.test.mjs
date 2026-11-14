@@ -229,3 +229,15 @@ test('Telegram Mini App is backed by signature validation, not an email account'
  assert.equal(status.status,401);
  assert.equal(status.body.json.error,'Not authenticated');
 });
+
+
+test('staging birth form uses current Telegram-only consent page', async () => {
+  const res=await fetch(WEB+'/railway-profile',{signal:AbortSignal.timeout(15_000),cache:'no-store'});
+  assert.equal(res.status,200);
+  const html=await res.text();
+  assert.match(html,/войти через Telegram/i);
+  assert.match(html,/id="deliveryConsent"/);
+  assert.match(html,/один раз на этот Telegram-аккаунт/i);
+  assert.doesNotMatch(html,/<input[^>]*type=["']?password/i);
+  assert.doesNotMatch(html,/<input[^>]*type=["']?email/i);
+});
