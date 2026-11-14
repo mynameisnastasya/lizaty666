@@ -178,6 +178,10 @@ test('Telegram identity is the only supported staging sign-in method', async () 
 });
 
 test('forged Telegram identity, absent bot session and unsafe profile writes are rejected', async () => {
+  const csrf=await getJSON(WEB,'/_api/tg-auth/start',{method:'POST',headers:{'Content-Type':'application/json',Origin:'https://fake.example'},body:'{}'});
+  assert.equal(csrf.status,403,'A foreign page must not start a Telegram login flow');
+  const oldCookie=await getJSON(WEB,'/_api/tg-auth/status',{headers:{Cookie:'liz_stage_sid='+('a'.repeat(43))}});
+  assert.equal(oldCookie.status,401,'Retired email session must not authenticate as Telegram');
   const status=await getJSON(WEB,'/_api/tg-auth/status');
   assert.equal(status.status,401,'No session should be minted without a bot confirmation');
   const forged=await getJSON(WEB,'/_api/tg-auth/mini',{
