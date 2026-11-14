@@ -3,9 +3,11 @@ const { test, expect } = require('@playwright/test');
 const original = 'https://liz-ty666-academy.floot.app';
 const railway = 'https://lizty666-stage.up.railway.app';
 
+// Telegram sign-in and Mini App intentionally replace Floot email UI on Railway.
+// Their security and layout are tested in academy-browser-flows.spec.js.
 const routes = [
-  '/', '/ezhednevka', '/ezhednevka-mini',
-  '/ezhednevka-oplata', '/payment', '/login',
+  '/', '/ezhednevka',
+  '/ezhednevka-oplata', '/payment',
 ];
 
 async function openPage(browser, host, route) {
