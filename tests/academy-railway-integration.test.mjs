@@ -215,3 +215,62 @@ test('staging account register/login/logout with isolated cookie', async () => {
   const login = await loggedIn.json();
   assert.equal(login.json.user.email, email);
 });
+
+test('staging authenticated birth registration and real astrology', async () => {
+  const { randomUUID } = await import('node:crypto');
+  const email='astro-qa-'+randomUUID()+'@example.invalid';
+  const password='QA!'+randomUUID()+'z9';
+  const headers={'Origin':WEB,'Content-Type':'application/json'};
+  const call=async(path,body,cookie)=> {
+    const res=await fetch(WEB+'/_api/'+path,{
+      method:'POST',headers:{...headers,...(cookie?{Cookie:cookie}:{})},
+      body:JSON.stringify({json:body}),signal:AbortSignal.timeout(55_000)
+    });
+    const value=await res.json();
+    return {status:res.status,body:value.json||value};
+  };
+  const reg=await fetch(WEB+'/_api/auth/register_with_password',{
+    method:'POST',headers,body:JSON.stringify({json:{email,password,displayName:'QA Натальная'}}),
+    signal:AbortSignal.timeout(22_000)
+  });
+  assert.equal(reg.status,200,'QA registration');
+  const cookie=reg.headers.get('set-cookie')?.split(';')[0];
+  assert.ok(cookie,'Account cookie issued');
+  const place=await getJSON(WEB,'/_api/forecast/places?q='+encodeURIComponent('Москва'));
+  const city=place.body.json.places.find(x=>x.name==='Москва'&&x.timezone==='Europe/Moscow');
+  assert.ok(city?.id,'GeoNames Moscow found');
+  const data={
+    fullName:'Тест Натальная',birthDate:'2000-07-15',birthTime:null,
+    birthPlaceId:city.id,deliveryTimezone:'Europe/Moscow',deliveryHour:8,
+    acceptTerms:true,pdConsent:true,marketingConsent:false,legalVersion:'staging-qa-20261114'
+  };
+  const unauthorized=await call('forecast/register',data);
+  assert.equal(unauthorized.status,401,'Birth data cannot be written without cookie');
+  const saved=await call('forecast/register',data,cookie);
+  assert.equal(saved.status,200,'Authenticated birth form saved');
+  const me=await fetch(WEB+'/_api/forecast/me',{headers:{Cookie:cookie},signal:AbortSignal.timeout(18_000)});
+  assert.equal(me.status,200);
+  const profile=(await me.json()).json;
+  assert.equal(profile.registered,true);
+  assert.equal(profile.birthCity,city.name);
+  assert.equal(profile.birthTime,null);
+  assert.equal(profile.subscriptionUntil,null,'No fabricated paid access');
+  const chart=await fetch(WEB+'/_api/forecast/chart',{headers:{Cookie:cookie},signal:AbortSignal.timeout(50_000)});
+  assert.equal(chart.status,200,'Private astrology engine returned a chart');
+  const natal=(await chart.json()).json;
+  assert.equal(natal.registered,true);
+  assert.ok(natal.natal['Солнце'],'Calculated natal Sun');
+  assert.equal(natal.birthTimeKnown,false);
+  assert.equal(natal.natal['Луна'],undefined,'Unknown birth time must not claim precise natal Moon');
+  const preview=await call('forecast/preview',{},cookie);
+  assert.equal(preview.status,200,'Personal astro forecast preview succeeds');
+  assert.ok(preview.body.preview?.length>40,'Calculated preview has content');
+  const repeat=await call('forecast/preview',{},cookie);
+  assert.equal(repeat.status,200);
+  assert.equal(repeat.body.alreadyUsed,true,'Cannot mint a second free preview');
+  assert.equal(repeat.body.preview,preview.body.preview,'Preview is stable');
+  const settings=await call('forecast/settings',{deliveryTimezone:'Asia/Makassar',deliveryHour:9},cookie);
+  assert.equal(settings.status,200);
+  const updated=await fetch(WEB+'/_api/forecast/me',{headers:{Cookie:cookie},signal:AbortSignal.timeout(15_000)});
+  assert.equal((await updated.json()).json.deliveryTimezone,'Asia/Makassar');
+});
