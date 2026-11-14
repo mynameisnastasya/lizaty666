@@ -244,3 +244,26 @@ test('staging birth form uses current Telegram-only consent page', async () => {
   assert.doesNotMatch(html,/<input[^>]*type=["']?password/i);
   assert.doesNotMatch(html,/<input[^>]*type=["']?email/i);
 });
+
+
+test('Telegram webhook cutover enables real browser pairing without passwords or real payments', async () => {
+  const res=await fetch(WEB+'/_api/tg-auth/start',{
+    method:'POST',headers:{'Content-Type':'application/json',Origin:WEB},
+    body:'{}',signal:AbortSignal.timeout(15_000)
+  });
+  assert.equal(res.status,200,'Signed-in browser pairing should start only when the Telegram webhook is on Railway');
+  const body=await res.json();
+  assert.match(body?.json?.botUrl||'',/^https:\/\/t\.me\/Lizty666bot\?start=login_[A-Za-z0-9_-]{22}$/);
+  assert.equal(body.json.expiresInSeconds,600);
+  const pairCookie=res.headers.get('set-cookie')||'';
+  assert.match(pairCookie,/^liz_tg_pair=[A-Za-z0-9_-]{43};/);
+  assert.match(pairCookie,/HttpOnly/);
+  assert.match(pairCookie,/Secure/);
+  const session=await getJSON(WEB,'/_api/tg-auth/status',{
+    headers:{Cookie:pairCookie.split(';')[0]}
+  });
+  assert.equal(session.status,202);
+  assert.equal(session.body.json.state,'waiting','A browser must not authenticate without a Telegram confirmation');
+  const ready=await getJSON(API,'/v1/release-readiness');
+  assert.equal(ready.body.readyForPublicSales,false,'Real payment gating stays closed during Telegram cutover');
+});
