@@ -227,4 +227,5 @@ test('Telegram Mini App is backed by signature validation, not an email account'
  assert.doesNotMatch(html,/<input[^>]*type=["']?password/i);
  const status=await getJSON(WEB,'/_api/tg-auth/session');
  assert.equal(status.status,401);
+ assert.equal(status.body.json.error,'Not authenticated');
 });
