@@ -122,7 +122,7 @@ test('Staging API does not expose admin or data-writing routes', async () => {
   assert.ok([401, 403, 405].includes(res.status), "Unauthorized or cross-origin profile submission must be rejected");
 });
 
-test('unconfigured payment and Telegram webhooks are fail-closed', async () => {
+test('forged payment and Telegram webhooks fail closed with or without installed credentials', async () => {
   const [payment, telegram] = await Promise.all([
     getJSON(API, '/v1/yookassa/webhook', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -133,11 +133,13 @@ test('unconfigured payment and Telegram webhooks are fail-closed', async () => {
       body: JSON.stringify({ update_id: 100000, message: { text: '/start' } }),
     }),
   ]);
-  // Neither provider's credentials are available in the staging API.
+  // A configured merchant API must independently fetch and verify a real provider object.
+  // No such object exists for this forged ID; a missing bot secret also cannot authenticate.
   assert.equal(payment.status, 503);
-  assert.equal(telegram.status, 503);
-  assert.equal(payment.body.error, 'Provider credentials not configured');
-  assert.equal(telegram.body.error, 'bot_not_configured');
+  assert.ok(['Provider credentials not configured',
+    'Temporary backend failure; no payment status is assumed'].includes(payment.body.error));
+  assert.ok([403,503].includes(telegram.status));
+  assert.ok(['bot_not_configured','invalid_webhook_secret'].includes(telegram.body.error));
 });
 
 test('Refund period reconciliation remains a hard checkout release blocker', async () => {
@@ -149,7 +151,7 @@ test('Refund period reconciliation remains a hard checkout release blocker', asy
     'Never enable checkout before every order has a verified grant period and refund policy');
 });
 
-test('Refund webhook rejects a forged notification when merchant credentials are absent', async () => {
+test('Refund webhook refuses a forged provider refund whether or not a merchant key is configured', async () => {
   const r = await getJSON(API, '/v1/yookassa/webhook', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -160,7 +162,8 @@ test('Refund webhook rejects a forged notification when merchant credentials are
     }),
   });
   assert.equal(r.status, 503);
-  assert.equal(r.body.error, 'Provider credentials not configured');
+  assert.ok(['Provider credentials not configured',
+    'Temporary backend failure; no payment status is assumed'].includes(r.body.error));
 });
 
 test('Telegram identity is the only supported staging sign-in method', async () => {
