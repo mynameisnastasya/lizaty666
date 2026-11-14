@@ -213,7 +213,7 @@ test('Telegram account ID is bound to bot chat and payment checkout stays disabl
     assert.equal(login.body.json.expiresInSeconds,600);
   }else assert.ok(login.body.json.error);
   assert.equal(readiness.body.readyForPublicSales,false);
-  assert.ok(readiness.body.blockedBy.includes('telegram_account_auth_and_delivery_binding_not_verified'));
+  assert.ok(readiness.body.blockedBy.includes('telegram_id_and_delivery_chat_not_e2e_verified'));
 });
 
 test('Telegram Mini App is backed by signature validation, not an email account', async () => {
