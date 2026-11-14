@@ -61,3 +61,9 @@ test('real staging registration UI creates a secure web session and supports log
   const revoked=await page.request.get(STAGE+'/_api/auth/session');
   expect(revoked.status()).toBe(401);
 });
+
+test('staging birth form remains gated for a logged-out visitor', async ({page}) => {
+  await page.goto(STAGE+'/railway-profile',{waitUntil:'domcontentloaded',timeout:30_000});
+  await expect(page.locator('#gate')).toBeVisible({timeout:12_000});
+  await expect(page.locator('#panel')).toBeHidden();
+});
