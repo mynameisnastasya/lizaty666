@@ -1,0 +1,55 @@
+name: Capture the published Floot Academy frontend
+on:
+  push:
+    branches:
+      - migration/floot-academy-railway-20261114
+    paths:
+      - scripts/mirror_floot.py
+      - .github/workflows/capture-floot.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: floot-academy-public-snapshot
+  cancel-in-progress: false
+
+jobs:
+  capture-public-frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: migration/floot-academy-railway-20261114
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch only public, anonymous Floot pages and static assets
+        run: python3 scripts/mirror_floot.py
+      - name: Summarize captured snapshot
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          data = json.loads(Path('academy_snapshot/manifest.json').read_text())
+          print('Pages:', len(data['pages']))
+          print('Assets:', len(data['assets']))
+          print('Unavailable:', len(data.get('unavailable', [])))
+          assert len(data['pages']) == 28
+          assert len(data['assets']) >= 10
+          PY
+      - name: Commit immutable public snapshot to migration branch only
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add academy_snapshot
+          if git diff --cached --quiet; then
+            echo 'No snapshot changes'
+          else
+            git commit -m 'build: mirror public Floot Academy frontend [skip ci]'
+            git push origin HEAD:migration/floot-academy-railway-20261114
+          fi

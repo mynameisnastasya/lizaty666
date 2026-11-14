@@ -1,0 +1,1 @@
+import{r as p,j as a}from"./vendor-Bi_sAcyh.js";import{i as o}from"./Input.module-Dmb6Vdaa.js";const e=p.forwardRef(({className:t,...r},s)=>a.jsx("input",{ref:s,className:`${o.input} ${t||""}`,...r}));e.displayName="Input";export{e as I};

@@ -1,0 +1,33 @@
+name: Academy Floot vs Railway parity checks
+on:
+  push:
+    branches:
+      - migration/floot-academy-railway-20261114
+    paths:
+      - tests/academy-parity.spec.js
+      - tests/academy-browser-flows.spec.js
+      - playwright.academy.config.cjs
+      - .github/workflows/academy-parity.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser-parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test --config playwright.academy.config.cjs
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: academy-parity-report
+          path: playwright-report/
+          retention-days: 7

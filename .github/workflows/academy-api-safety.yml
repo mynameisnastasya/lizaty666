@@ -1,0 +1,24 @@
+name: Railway Academy API safety checks
+on:
+  push:
+    branches:
+      - migration/floot-academy-railway-20261114
+    paths:
+      - tests/academy-railway-integration.test.mjs
+      - .github/workflows/academy-api-safety.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-staging:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Check anonymous API, prices and payment safety against live Railway staging
+        run: node --test tests/academy-railway-integration.test.mjs

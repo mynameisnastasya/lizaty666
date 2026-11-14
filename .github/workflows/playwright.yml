@@ -15,7 +15,13 @@ jobs:
           node-version: 24
       - run: npm install
       - run: npx playwright install --with-deps chromium
-      - run: npm run test:e2e
+      # The default branch is an unrelated legacy storefront; its assertions must not be used for Floot Academy.
+      - name: Legacy storefront browser checks
+        if: (github.head_ref || github.ref_name) != 'migration/floot-academy-railway-20261114'
+        run: npm run test:e2e
+      - name: Original Floot Academy vs Railway browser checks
+        if: (github.head_ref || github.ref_name) == 'migration/floot-academy-railway-20261114'
+        run: npx playwright test --config playwright.academy.config.cjs
       - if: always()
         uses: actions/upload-artifact@v4
         with:

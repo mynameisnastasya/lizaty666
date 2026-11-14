@@ -1,0 +1,1 @@
+const t={plans:{month:{key:"month",title:"1 месяц",months:1,amount:366600,price:3666,approxMonthly:3666},halfyear:{key:"halfyear",title:"6 месяцев",months:6,amount:666600,price:6666,approxMonthly:1111},year:{key:"year",title:"1 год",months:12,amount:888800,price:8888,approxMonthly:741}}};export{t as f};

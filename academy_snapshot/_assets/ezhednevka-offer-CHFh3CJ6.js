@@ -1,0 +1,1 @@
+import{j as t}from"./vendor-Bi_sAcyh.js";import{M as o}from"./MerchantDocument-DtkM1cx6.js";import"./Helmet-ZPMDVic_.js";import"./index-BbP3371Q.js";import"./index-CL6k-n2Q.js";function n(){return t.jsx(o,{document:"daily-offer"})}export{n as default};

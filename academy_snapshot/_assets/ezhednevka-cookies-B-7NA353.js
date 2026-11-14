@@ -1,0 +1,1 @@
+import{j as o}from"./vendor-Bi_sAcyh.js";import{M as t}from"./MerchantDocument-DtkM1cx6.js";import"./Helmet-ZPMDVic_.js";import"./index-BbP3371Q.js";import"./index-CL6k-n2Q.js";function n(){return o.jsx(t,{document:"cookies"})}export{n as default};
