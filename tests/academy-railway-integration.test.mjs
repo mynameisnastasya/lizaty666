@@ -215,3 +215,16 @@ test('Telegram account ID is bound to bot chat and payment checkout stays disabl
   assert.equal(readiness.body.readyForPublicSales,false);
   assert.ok(readiness.body.blockedBy.includes('telegram_account_auth_and_delivery_binding_not_verified'));
 });
+
+test('Telegram Mini App is backed by signature validation, not an email account', async () => {
+ const response=await fetch(WEB+'/ezhednevka-mini',{signal:AbortSignal.timeout(15_000)});
+ assert.equal(response.status,200);
+ const html=await response.text();
+ assert.match(html,/Telegram.WebApp|Telegram\?\.WebApp/);
+ assert.match(html,/initData/);
+ assert.match(html,/\/_api\/tg-auth\//);
+ assert.doesNotMatch(html,/<input[^>]*type=["']?email/i);
+ assert.doesNotMatch(html,/<input[^>]*type=["']?password/i);
+ const status=await getJSON(WEB,'/_api/tg-auth/session');
+ assert.equal(status.status,401);
+});
