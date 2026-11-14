@@ -41,25 +41,25 @@ test('original storefront no longer appears at Academy Railway staging', async (
   await expect(page.locator('body')).toContainText('ЧТО ДЕЛАТЬ');
 });
 
-test('real staging registration UI creates a secure web session and supports logout', async ({page}) => {
-  const {randomUUID}=require('node:crypto');
-  const email='browser-qa-'+randomUUID()+'@example.invalid';
-  const password='StagingTest-'+randomUUID()+'!Aa2';
+test('staging sign-in uses Telegram only and never requests email or password', async ({page}) => {
   await page.goto(STAGE+'/login',{waitUntil:'domcontentloaded',timeout:30_000});
-  await page.getByRole('tab',{name:'РЕГИСТРАЦИЯ'}).click();
-  await page.getByRole('textbox',{name:'Email'}).fill(email);
-  await page.getByPlaceholder('Your Name').fill('Тест Вход');
-  await page.locator('input[type=password]').fill(password);
-  await page.getByRole('button',{name:'Create Account'}).click();
-  await expect(page).toHaveURL(/\/railway-profile(?:[#?]|$)/,{timeout:20_000});
-  const session=await page.request.get(STAGE+'/_api/auth/session');
-  expect(session.status()).toBe(200);
-  expect((await session.json()).json.user.email).toBe(email);
-  await page.goto(STAGE+'/login',{waitUntil:'domcontentloaded'});
-  await expect(page.getByText('С возвращением!')).toBeVisible({timeout:15_000});
-  await page.getByRole('button',{name:'ВЫЙТИ ИЗ АККАУНТА'}).click();
-  const revoked=await page.request.get(STAGE+'/_api/auth/session');
-  expect(revoked.status()).toBe(401);
+  await expect(page).toHaveTitle('Вход через Telegram — LIZ_TY666');
+  await expect(page.getByRole('button',{name:'ВОЙТИ ЧЕРЕЗ TELEGRAM'})).toBeVisible();
+  await expect(page.locator('input[type=email]')).toHaveCount(0);
+  await expect(page.locator('input[type=password]')).toHaveCount(0);
+  await expect(page.getByText('Твой Telegram ID')).toBeVisible();
+  await page.getByRole('button',{name:'ВОЙТИ ЧЕРЕЗ TELEGRAM'}).click();
+  await expect(page.locator('#status')).not.toBeEmpty({timeout:15_000});
+  const identity=await page.request.get(STAGE+'/_api/auth/session');
+  expect(identity.status()).toBe(401,'No session without verified Telegram message');
+});
+
+test('Telegram Mini App shows the same verified identity gateway', async ({page}) => {
+  await page.goto(STAGE+'/ezhednevka-mini',{waitUntil:'domcontentloaded',timeout:30_000});
+  await expect(page).toHaveTitle('Вход через Telegram — LIZ_TY666');
+  await expect(page.locator('input[type=email]')).toHaveCount(0);
+  await expect(page.locator('input[type=password]')).toHaveCount(0);
+  await expect(page.getByRole('button',{name:'ВОЙТИ ЧЕРЕЗ TELEGRAM'})).toBeVisible();
 });
 
 test('staging birth form remains gated for a logged-out visitor', async ({page}) => {
