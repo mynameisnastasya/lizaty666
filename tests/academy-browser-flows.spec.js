@@ -40,3 +40,24 @@ test('original storefront no longer appears at Academy Railway staging', async (
   await expect(page).toHaveTitle('LIZ_TY666 — личные разборы, соляр, затмения и обучение');
   await expect(page.locator('body')).toContainText('ЧТО ДЕЛАТЬ');
 });
+
+test('real staging registration UI creates a secure web session and supports logout', async ({page}) => {
+  const {randomUUID}=require('node:crypto');
+  const email='browser-qa-'+randomUUID()+'@example.invalid';
+  const password='StagingTest-'+randomUUID()+'!Aa2';
+  await page.goto(STAGE+'/login',{waitUntil:'domcontentloaded',timeout:30_000});
+  await page.getByRole('tab',{name:'РЕГИСТРАЦИЯ'}).click();
+  await page.getByRole('textbox',{name:'Email'}).fill(email);
+  await page.getByRole('textbox',{name:'Display Name'}).fill('Тест Вход');
+  await page.locator('input[type=password]').fill(password);
+  await page.getByRole('button',{name:'Create Account'}).click();
+  await expect(page).toHaveURL(/\/ezhednevka(?:[#?]|$)/,{timeout:20_000});
+  const session=await page.request.get(STAGE+'/_api/auth/session');
+  expect(session.status()).toBe(200);
+  expect((await session.json()).json.user.email).toBe(email);
+  await page.goto(STAGE+'/login',{waitUntil:'domcontentloaded'});
+  await expect(page.getByText('С возвращением!')).toBeVisible({timeout:15_000});
+  await page.getByRole('button',{name:'ВЫЙТИ ИЗ АККАУНТА'}).click();
+  const revoked=await page.request.get(STAGE+'/_api/auth/session');
+  expect(revoked.status()).toBe(401);
+});
