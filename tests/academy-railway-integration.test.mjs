@@ -162,3 +162,56 @@ test('Refund webhook rejects a forged notification when merchant credentials are
   assert.equal(r.status, 503);
   assert.equal(r.body.error, 'Provider credentials not configured');
 });
+
+test('staging account register/login/logout with isolated cookie', async () => {
+  // Synthetic account: no customer identity or real data is used or migrated.
+  const { randomUUID } = await import('node:crypto');
+  const email = 'qa-' + randomUUID() + '@example.invalid';
+  const password = 'Qa-' + randomUUID() + '!A2';
+  const request = (route, payload, cookie) => fetch(WEB + '/_api/auth/' + route, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Origin: WEB,
+      ...(cookie ? { Cookie: cookie } : {})
+    },
+    body: JSON.stringify({json: payload}),
+    signal: AbortSignal.timeout(20_000)
+  });
+  const joined = await request('register_with_password', {
+    email, password, displayName: 'Тестовая запись', role: 'admin'
+  });
+  assert.equal(joined.status, 200, 'Synthetic staging account registration');
+  const registration = await joined.json();
+  assert.equal(registration.json.user.email, email);
+  assert.equal(registration.json.user.role, 'user', 'No role escalation from signup data');
+  const cookie = joined.headers.get('set-cookie')?.split(';')[0] || '';
+  assert.match(cookie, /^liz_stage_sid=[A-Za-z0-9_-]{43}$/);
+  const setCookie = joined.headers.get('set-cookie') || '';
+  assert.match(setCookie, /HttpOnly/i);
+  assert.match(setCookie, /Secure/i);
+  assert.match(setCookie, /SameSite=Lax/i);
+
+  const active = await fetch(WEB + '/_api/auth/session', {
+    headers: {Cookie: cookie},
+    signal: AbortSignal.timeout(15_000)
+  });
+  assert.equal(active.status, 200);
+  const activeSession = await active.json();
+  assert.equal(activeSession.json.user.email, email);
+
+  const loggedOut = await request('logout', {}, cookie);
+  assert.equal(loggedOut.status, 200);
+  const revoked = await fetch(WEB + '/_api/auth/session', {
+    headers: {Cookie: cookie}, signal: AbortSignal.timeout(15_000)
+  });
+  assert.equal(revoked.status, 401, 'Logout must invalidate session server-side');
+
+  const wrong = await request('login_with_password', {email, password: 'Incorrect-Password-123'});
+  assert.equal(wrong.status, 401, 'Wrong password must not authenticate');
+
+  const loggedIn = await request('login_with_password', {email, password});
+  assert.equal(loggedIn.status, 200, 'Login must work after logout');
+  const login = await loggedIn.json();
+  assert.equal(login.json.user.email, email);
+});
