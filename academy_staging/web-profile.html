@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive"><meta name="color-scheme" content="dark">
+<title>Моя натальная карта — LIZ_TY666 · staging</title>
+<style>
+:root{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:#f7e7ee;background:#100c13}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 65% -10%,#3a1d30 0%,#100c13 56%);line-height:1.55}
+header{border-bottom:1px solid #513445;background:#180f1bbd;padding:20px max(20px,calc((100vw - 1050px)/2));display:flex;justify-content:space-between;align-items:center;gap:16px}
+a{color:#edbbd3}header a{text-decoration:none}.brand{font-family:Georgia,serif;font-size:26px;letter-spacing:1px;color:#fff}.brand span{color:#de9ab8}
+main{max-width:860px;padding:40px 18px 80px;margin:auto}.kicker{font-size:11px;font-weight:800;color:#d89db9;letter-spacing:.2em;text-transform:uppercase}
+h1{font:normal clamp(35px,8vw,64px)/1.07 Georgia,serif;letter-spacing:-.03em;margin:8px 0 22px}h1 em{color:#e6a8c6;font-weight:normal}
+.lead{font-size:17px;max-width:650px;color:#ddc4d1}.warning{background:#382333;border:1px solid #936480;border-radius:10px;padding:13px 16px;color:#f4c9da;font-size:14px;margin:24px 0}
+.panel{border:1px solid #69465b;background:#211523;border-radius:18px;padding:clamp(19px,4vw,34px);box-shadow:0 16px 50px #08040955}
+h2{font:normal 27px Georgia,serif;margin:2px 0 24px;color:#fbe5ee}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.field{display:flex;flex-direction:column;gap:7px;min-width:0}
+label{font-size:13px;font-weight:650;color:#f4d6e4}input,select{width:100%;background:#140d16;border:1px solid #735269;border-radius:9px;color:#fff0f6;padding:12px 13px;font:16px system-ui;outline:none}
+input:focus,select:focus{border-color:#e7afca;box-shadow:0 0 0 3px #e7afca22}input::placeholder{color:#987d8e}
+small{color:#c6aab9;font-size:12px}.wide{grid-column:1/-1}.checks{margin-top:20px;display:grid;gap:14px}.check{display:flex;gap:11px;align-items:flex-start;font-size:14px;cursor:pointer}.check input{width:18px;height:18px;flex:0 0 auto;margin:3px 0 0;accent-color:#df9fbd}
+button{font:600 15px system-ui;cursor:pointer;border-radius:10px;padding:13px 18px;border:1px solid #c688a7;background:#e1afc5;color:#2d1523}
+button:disabled{opacity:.5;cursor:not-allowed}.secondary{background:transparent;color:#efc1d8}.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:25px}
+#results{display:flex;flex-direction:column;gap:4px;margin-top:4px;max-height:220px;overflow:auto}#results button{background:#301d2b;text-align:left;color:#f3e2e9;border:1px solid #644358;padding:9px 12px;font-weight:400}
+#results button:hover,#results button:focus{background:#513149}.picked{font-size:13px;color:#e9b8d0;padding:4px 0}#status{padding:12px 0;font-weight:600;min-height:28px}
+#forecast{display:none;margin-top:22px;padding:20px;border-radius:12px;background:#362334;white-space:pre-wrap;overflow-wrap:anywhere}
+#gate{display:none}.info{margin:20px 0 0;color:#c4aabb;font-size:13px}
+@media(max-width:630px){.grid{grid-template-columns:1fr}.wide{grid-column:1}header{padding:16px 18px}main{padding-top:27px}}
+</style>
+</head>
+<body>
+<header><a href="/" class="brand">LIZ<span>_</span>TY666</a><a href="/app">Личный кабинет</a></header>
+<main>
+<div class="kicker">Ежедневка / личная карта</div>
+<h1>Твои данные.<br><em>Твой прогноз.</em></h1>
+<p class="lead">Выбери город рождения и укажи время, которое помнишь. Мы переведём местное время в UTC с учётом исторического часового пояса.</p>
+<div class="warning"><b>Тестовая версия на Railway.</b> Данные Floot сюда ещё не перенесены. Не используй настоящие персональные данные для проверки, если не хочешь создавать отдельный тестовый профиль.</div>
+<div id="gate">Для сохранения карты сначала <a href="/login">войти или зарегистрироваться</a> в тестовом кабинете.</div>
+<div id="panel" class="panel" hidden>
+<h2>Анкета рождения</h2>
+<form id="profile">
+<div class="grid">
+<div class="field wide"><label for="fullName">Как тебя называть?</label><input id="fullName" name="fullName" required minlength="2" maxlength="100" autocomplete="name" placeholder="Твоё имя"></div>
+<div class="field"><label for="birthDate">Дата рождения</label><input id="birthDate" type="date" required max="2026-11-14"></div>
+<div class="field"><label for="birthTime">Местное время рождения</label><input id="birthTime" type="time"><small>Если неизвестно, оставь пустым. Дома и натальную Луну не будем считать точными.</small></div>
+<div class="field wide"><label for="city">Город рождения (выбери подсказку)</label><input id="city" placeholder="Начни вводить: Москва, Кемерово..." autocomplete="off" required><div id="results" role="listbox"></div><div class="picked" id="cityChosen"></div></div>
+<div class="field"><label for="deliveryTimezone">Часовой пояс прогноза</label><select id="deliveryTimezone" required><option value="Europe/Moscow">Москва</option><option value="Europe/Kaliningrad">Калининград</option><option value="Europe/Samara">Самара</option><option value="Asia/Yekaterinburg">Екатеринбург</option><option value="Asia/Novosibirsk">Новосибирск</option><option value="Asia/Krasnoyarsk">Красноярск</option><option value="Asia/Irkutsk">Иркутск</option><option value="Asia/Vladivostok">Владивосток</option><option value="Asia/Makassar">Бали</option><option value="Asia/Almaty">Алматы</option><option value="Europe/Berlin">Берлин</option><option value="Europe/London">Лондон</option><option value="America/New_York">Нью-Йорк</option></select></div>
+<div class="field"><label for="deliveryHour">Желаемый час сообщения</label><select id="deliveryHour"></select></div>
+</div>
+<div class="checks">
+<label class="check"><input type="checkbox" id="acceptTerms" required>Ознакомилась с <a href="/ezhednevka-offer" target="_blank" rel="noopener">условиями Ежедневки</a>.</label>
+<label class="check"><input type="checkbox" id="pdConsent" required>Согласна с <a href="/ezhednevka-consent" target="_blank" rel="noopener">обработкой данных рождения</a>.</label>
+<label class="check"><input type="checkbox" id="marketingConsent">Хочу получать отдельные маркетинговые сообщения (необязательно).</label>
+</div>
+<div class="actions"><button id="save" type="submit">СОХРАНИТЬ МОЮ КАРТУ</button><button type="button" id="preview" class="secondary" disabled>МОЙ БЕСПЛАТНЫЙ ПРОГНОЗ</button><a href="/app" class="secondary" style="padding:13px 0">Открыть карту →</a></div>
+</form>
+<div id="status" aria-live="polite"></div><div id="forecast"></div>
+<p class="info">Данные анкеты доступны только текущему вошедшему аккаунту. Пробный прогноз предоставляется один раз на аккаунт. Платная подписка и Telegram-рассылка в staging отключены.</p>
+</div>
+</main>
+<script>
+const $=id=>document.getElementById(id),form=$('profile');let chosen=null,searchSeq=0,debounce;
+for(let h=0;h<24;h++){const opt=document.createElement('option');opt.value=h;opt.textContent=String(h).padStart(2,'0')+':00';$('deliveryHour').appendChild(opt)}
+$('deliveryHour').value='8';
+try{const tz=Intl.DateTimeFormat().resolvedOptions().timeZone;if([...$('deliveryTimezone').options].some(o=>o.value===tz))$('deliveryTimezone').value=tz}catch{}
+function status(t,error=false){$('status').textContent=t;$('status').style.color=error?'#ffb4be':'#bdf0d9'}
+async function api(path,options){const r=await fetch('/_api/'+path,{cache:'no-store',credentials:'include',...options});let body={};try{body=(await r.json()).json||{}}catch{}if(!r.ok)throw Error(body.error||body.message||'Сервис временно недоступен');return body}
+async function start(){try{await api('auth/session');$('panel').hidden=false;const x=await api('forecast/me');if(x.registered){$('fullName').value=x.fullName||'';$('birthDate').value=x.birthDate||'';$('birthTime').value=x.birthTime||'';$('deliveryTimezone').value=x.deliveryTimezone||'Europe/Moscow';$('deliveryHour').value=String(x.deliveryHour??8);if(x.birthPlaceId){chosen={id:x.birthPlaceId,name:x.birthCity};$('city').value=x.birthCity||'';$('cityChosen').textContent='Сохранённый город: '+x.birthCity}$('preview').disabled=false;status('Твоя анкета загружена.')}}catch{$('panel').hidden=true;$('gate').style.display='block'}}
+$('city').addEventListener('input',()=>{chosen=null;$('cityChosen').textContent='';$('results').replaceChildren();clearTimeout(debounce);const q=$('city').value.trim();if(q.length<2)return;const n=++searchSeq;debounce=setTimeout(async()=>{try{const r=await api('forecast/places?q='+encodeURIComponent(q));if(n!==searchSeq)return;for(const c of r.places||[]){const b=document.createElement('button');b.type='button';b.role='option';b.textContent=c.label||c.name;b.onclick=()=>{chosen=c;$('city').value=c.label||c.name;$('cityChosen').textContent='Выбран город: '+(c.label||c.name);$('results').replaceChildren()};$('results').appendChild(b)}}catch{status('Поиск городов временно недоступен',true)}},280)});
+form.addEventListener('submit',async e=>{e.preventDefault();if(!chosen){status('Выбери город из списка подсказок.',true);return}const btn=$('save');btn.disabled=true;status('Сохраняю анкету...');const data={fullName:$('fullName').value.trim(),birthDate:$('birthDate').value,birthTime:$('birthTime').value||null,birthPlaceId:Number(chosen.id),deliveryTimezone:$('deliveryTimezone').value,deliveryHour:Number($('deliveryHour').value),acceptTerms:$('acceptTerms').checked,pdConsent:$('pdConsent').checked,marketingConsent:$('marketingConsent').checked,legalVersion:'LIZ_TY666-20261114-staging'};try{await api('forecast/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({json:data})});status('Карта сохранена. Теперь доступен персональный расчёт.');$('preview').disabled=false}catch(err){status(err.message||'Не получилось сохранить',true)}finally{btn.disabled=false}});
+$('preview').addEventListener('click',async()=>{const btn=$('preview');btn.disabled=true;status('Рассчитываю прогноз по твоей карте...');try{const v=await api('forecast/preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({json:{}})});$('forecast').textContent=v.preview||'';$('forecast').style.display='block';status(v.alreadyUsed?'Это сохранённый пробный прогноз.':'Прогноз рассчитан и сохранён.')}catch(e){status(e.message||'Расчёт недоступен',true)}finally{btn.disabled=false}});
+start();
+</script>
+</body></html>
