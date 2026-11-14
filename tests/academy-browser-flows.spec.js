@@ -47,7 +47,7 @@ test('staging sign-in uses Telegram only and never requests email or password', 
   await expect(page.getByRole('button',{name:'ВОЙТИ ЧЕРЕЗ TELEGRAM'})).toBeVisible();
   await expect(page.locator('input[type=email]')).toHaveCount(0);
   await expect(page.locator('input[type=password]')).toHaveCount(0);
-  await expect(page.getByText('Твой Telegram ID')).toBeVisible();
+  await expect(page.locator('main')).toContainText('Один Telegram ID');
   await page.getByRole('button',{name:'ВОЙТИ ЧЕРЕЗ TELEGRAM'}).click();
   await expect(page.locator('#status')).not.toBeEmpty({timeout:15_000});
   const identity=await page.request.get(STAGE+'/_api/auth/session');
