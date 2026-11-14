@@ -48,10 +48,10 @@ test('real staging registration UI creates a secure web session and supports log
   await page.goto(STAGE+'/login',{waitUntil:'domcontentloaded',timeout:30_000});
   await page.getByRole('tab',{name:'РЕГИСТРАЦИЯ'}).click();
   await page.getByRole('textbox',{name:'Email'}).fill(email);
-  await page.getByRole('textbox',{name:'Display Name'}).fill('Тест Вход');
+  await page.getByPlaceholder('Your Name').fill('Тест Вход');
   await page.locator('input[type=password]').fill(password);
   await page.getByRole('button',{name:'Create Account'}).click();
-  await expect(page).toHaveURL(/\/ezhednevka(?:[#?]|$)/,{timeout:20_000});
+  await expect(page).toHaveURL(/\/railway-profile(?:[#?]|$)/,{timeout:20_000});
   const session=await page.request.get(STAGE+'/_api/auth/session');
   expect(session.status()).toBe(200);
   expect((await session.json()).json.user.email).toBe(email);
