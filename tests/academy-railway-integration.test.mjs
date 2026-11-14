@@ -273,4 +273,13 @@ test('staging authenticated birth registration and real astrology', async () => 
   assert.equal(settings.status,200);
   const updated=await fetch(WEB+'/_api/forecast/me',{headers:{Cookie:cookie},signal:AbortSignal.timeout(15_000)});
   assert.equal((await updated.json()).json.deliveryTimezone,'Asia/Makassar');
+  const changed=await call('forecast/register',{...data,birthDate:'2001-07-15'},cookie);
+  assert.equal(changed.status,200,'Birth details can be corrected in the owner profile');
+  const stale=await fetch(WEB+'/_api/forecast/me',{headers:{Cookie:cookie},signal:AbortSignal.timeout(15_000)});
+  const staleProfile=(await stale.json()).json;
+  assert.equal(staleProfile.trialConsumed,true);
+  assert.equal(staleProfile.trialProfileChanged,true);
+  assert.equal(staleProfile.freePreview,null,'An older preview must never be presented as a result for new birth data');
+  const noSecond=await call('forecast/preview',{},cookie);
+  assert.equal(noSecond.status,409,'No second free preview after profile correction');
 });
