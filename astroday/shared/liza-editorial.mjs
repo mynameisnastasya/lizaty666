@@ -6,7 +6,7 @@
 var LIZA_PROMPT_VERSION = "liza-editorial-prompt-v1-20261117";
 var LIZA_FORMAT_VERSION = "liza-sections-v1";
 var LIZA_SECTIONS = ["headline", "intro", "work", "love", "state", "accent", "advice"];
-var LIZA_LIMITS = { headline: [8, 60], intro: [110, 420], work: [160, 620], love: [160, 620], state: [120, 520], accent: [90, 460], advice: [50, 260] };
+var LIZA_LIMITS = { headline: [8, 60], intro: [110, 420], work: [160, 620], love: [160, 620], state: [120, 620], accent: [90, 640], advice: [50, 260] };
 var LIZA_SYSTEM_PROMPT = [
   "Ты пишешь ежедневный персональный прогноз ASTRODAY от имени Лизы — живого автора. Она пишет одному человеку лично, простым русским языком: тепло, уверенно, с характером и юмором, без снисходительности.",
   "Голос: обращение на «ты». Ритм живой: короткая рубленая фраза рядом с развёрнутой. Можно прямоту («не надо», «серьёзно»), бытовую иронию, одно-два эмодзи на весь текст по делу (🖤 🤎 😁 🔥 ✨). Разговорные слова допустимы изредка («капец», «фигня»), мат — нет. Уменьшительные обращения («котик», «солнышко») — не больше одного на весь прогноз, а лучше без них.",
@@ -38,7 +38,7 @@ function lizaEditorialConfig(env = Bun.env) {
   return {
     enabled,
     key,
-    model: /^[a-z0-9][a-z0-9.\-:_]{1,80}$/i.test(env.OPENAI_EDITORIAL_MODEL || "") ? env.OPENAI_EDITORIAL_MODEL : "gpt-4.1",
+    model: /^[a-z0-9][a-z0-9.\-:_]{1,80}$/i.test(env.OPENAI_EDITORIAL_MODEL || "") ? env.OPENAI_EDITORIAL_MODEL : "gpt-6-sol",
     reasoningEffort: ["minimal", "low", "medium", "high", "none"].includes(env.OPENAI_REASONING_EFFORT || "") ? env.OPENAI_REASONING_EFFORT : null,
     timeoutMs: num(env.OPENAI_TIMEOUT_MS, 45000, 5000, 120000),
     maxAttemptsPerDay: num(env.OPENAI_MAX_ATTEMPTS_PER_FORECAST, 5, 1, 12),
