@@ -647,6 +647,23 @@ async function adminWho(db, telegramId) {
   const r = (await db.unsafe("SELECT c.telegram_username,p.preferred_name,t.handle_key FROM liz_clients c LEFT JOIN liz_birth_profiles p ON p.telegram_id=c.telegram_id LEFT JOIN liz_astro_testers t ON t.verified_telegram_id=c.telegram_id WHERE c.telegram_id=$1", [String(telegramId)]).catch(() => []))[0] || {};
   return [r.preferred_name, r.telegram_username ? "@" + r.telegram_username : null, r.handle_key && r.handle_key !== r.telegram_username ? "[" + r.handle_key + "]" : null, "id " + telegramId].filter(Boolean).join(" · ");
 }
+// Пока ADMIN_NOTIFY_CHAT_ID не задан: показывает в логах группы, где бота недавно видели
+// (id и название группы — не секрет). Сам чат не выбирает: его задаёт владелец переменной.
+async function adminChatCandidates(token) {
+  try {
+    const r = await fetch("https://api.telegram.org/bot" + token + "/getUpdates", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ limit: 100, timeout: 0, allowed_updates: ["message", "my_chat_member", "channel_post"] }), signal: AbortSignal.timeout(8000) });
+    const data = await r.json().catch(() => null);
+    if (!data?.ok) return { error: String(data?.description || "network").slice(0, 80) };
+    const chats = new Map(), moved = new Set();
+    for (const u of data.result || []) for (const m of [u.message, u.my_chat_member, u.channel_post]) {
+      if (!m?.chat || m.chat.type === "private") continue;
+      if (m.migrate_to_chat_id) moved.add(m.chat.id);
+      const id = m.migrate_to_chat_id || m.chat.id;
+      chats.set(id, { id, type: m.migrate_to_chat_id ? "supergroup" : m.chat.type, title: String(m.chat.title || "").slice(0, 60) });
+    }
+    return [...chats.values()].filter((c) => !moved.has(c.id));
+  } catch (e) { return { error: String(e?.message || e).slice(0, 80) }; }
+}
 // Никогда не бросает исключение наружу.
 async function adminNotify(db, kind, html, dedupeKey = null) {
   try {
@@ -659,7 +676,8 @@ async function adminNotify(db, kind, html, dedupeKey = null) {
 }
 async function drainAdminOutbox(db, limit = 12) {
   const token = Bun.env.ADMIN_NOTIFY_BOT_TOKEN, chat = Bun.env.ADMIN_NOTIFY_CHAT_ID;
-  if (!token || !chat) return { skipped: "admin_chat_not_configured" };
+  if (!token) return { skipped: "admin_bot_not_configured" };
+  if (!chat) return { skipped: "admin_chat_not_configured", candidates: await adminChatCandidates(token) };
   await ensureAdminOutbox(db);
   let sent = 0, failed = 0;
   for (let i = 0; i < limit; i++) {
@@ -673,6 +691,7 @@ async function drainAdminOutbox(db, limit = 12) {
     if (data?.ok === true) { sent++; await db.unsafe("UPDATE astroday_admin_outbox SET sent_at=NOW(),last_error=NULL WHERE id=$1", [rows[0].id]); }
     else {
       failed++;
+      if (data?.parameters?.migrate_to_chat_id) console.error("ADMIN_CHAT_MIGRATED set ADMIN_NOTIFY_CHAT_ID=" + data.parameters.migrate_to_chat_id);
       const after = Number(data?.parameters?.retry_after || 0);
       await db.unsafe("UPDATE astroday_admin_outbox SET last_error=$2,next_attempt_at=NOW()+make_interval(secs=>$3::int) WHERE id=$1", [rows[0].id, String(data?.description || "network").slice(0, 120), Math.max(60, after)]);
       if (r?.status === 429 || !data) break;
