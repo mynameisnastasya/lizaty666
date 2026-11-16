@@ -1,0 +1,17 @@
+{
+  "release": {
+    "api": "astroday-api-20261117-liza-openai-r1",
+    "scheduler": "astroday-scheduler-20261117-liza-openai-r1"
+  },
+  "apiSha256": "2b014e0fbef3ffc2d699de104192223669c3f6f588ca2bfb229dbd6ceabf661f",
+  "schedulerSha256": "679db5fce3c2b90f2ee4798b8c7f40d4bc72bbf5d6ab1f6baa158e5c92e82452",
+  "apiWrapperBytes": 91746,
+  "packedBase64": 89692,
+  "daily7Sha256": "a4ee25a17875eced59b1d42c3686e73860edd66e5c09373e94b58491247cd401",
+  "builtAt": "2026-11-16T22:39:54.505Z",
+  "rollback": {
+    "api": "acae37a3-d964-4e2c-a731-9bf12f5accfb",
+    "scheduler": "18e7cf39-8d74-4dcf-8188-1dc6c47da040",
+    "daily7": "790cb27f-089e-48c6-a293-e27e3c285905"
+  }
+}
