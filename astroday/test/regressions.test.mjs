@@ -1,6 +1,6 @@
 // Воспроизведение дефектов развёрнутой версии (original/api.mjs) и проверка исправления (release/api.mjs) на одном сценарии.
 import { test, expect, afterAll } from "bun:test";
-import { Mocks, freshDb, startApi, runScheduler, update, callback, sendUpdate, miniSession, apiPost, registerProfile, waitFor } from "./harness.mjs";
+import { Mocks, freshDb, startApi, runScheduler, update, callback, sendUpdate, miniSession, apiPost, registerProfile, waitFor, initData, SITE } from "./harness.mjs";
 
 const builds = { original: ["original/api.mjs", "original/scheduler.mjs"], release: ["release/api.mjs", "release/scheduler.mjs"] };
 const cleanup = [];
@@ -64,4 +64,14 @@ for (const kind of ["original", "release"]) {
     else { expect(paidMsg).toBe(true); expect(forecastSent).toBe(true); expect(mocks.openai.length).toBeGreaterThan(0); }
   }, 30000);
 }
+test("Mini App: initData с полем signature (новые клиенты Telegram) принимается, подделка — нет", async () => {
+  const { api } = await env("release", 90);
+  const post = async (data) => (await fetch(api.base + "/v1/tg-auth/mini", { method: "POST", headers: { "Content-Type": "application/json", Origin: SITE }, body: JSON.stringify({ initData: data }) })).status;
+  expect(await post(initData("790000001", "old_client"))).toBe(200);
+  expect(await post(initData("790000002", "new_client", 0, "hmac"))).toBe(200);
+  expect(await post(initData("790000003", "new_client2", 0, "excluded"))).toBe(200);
+  const forged = initData("790000004", "x", 0, "hmac").replace("790000004", "790000005");
+  expect(await post(forged)).toBe(401);
+  expect(await post(initData("790000006", "stale", 600, "hmac"))).toBe(401);
+});
 test("сводка", () => { console.log("REGRESSION_SUMMARY " + JSON.stringify(results, null, 1)); });

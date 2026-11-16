@@ -57,6 +57,11 @@ const shared = [
 
 // --- API -----------------------------------------------------------------------
 const apiPatches = [
+  // Новые клиенты Telegram добавляют в initData поле signature (Ed25519). В HMAC-проверке Bot API оно участвует
+  // как обычное поле; старые клиенты его не присылают. Принимаем подпись, если совпала любая из двух строк проверки.
+  ["mini_app_signature_field",
+    'const check = entries.filter(([key]) => key !== "hash" && key !== "signature").sort((a, b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0).map(([key, val]) => key + "=" + val).join(`\n`);\n  const secret = createHmac2("sha256", "WebAppData").update(token).digest();\n  const signature = createHmac2("sha256", secret).update(check).digest("hex");\n  if (!safeEq(hash, signature))\n    return null;',
+    'const checkFor = (skip) => entries.filter(([key]) => !skip.includes(key)).sort((a, b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0).map(([key, val]) => key + "=" + val).join(`\n`);\n  const secret = createHmac2("sha256", "WebAppData").update(token).digest();\n  const signed = (check) => safeEq(hash, createHmac2("sha256", secret).update(check).digest("hex"));\n  if (!signed(checkFor(["hash"])) && !signed(checkFor(["hash", "signature"])))\n    return null;'],
   ["release_marker", "\nconst adJoinButton=", (f) => "\n// ASTRODAY " + RELEASE.api + " (base astroday-api-20261116-join-test-fix)" + f],
   ["callback_today_for_buyers",
     'text:tester?"🖤":"Профиль пока не найден"})}catch(ackErr){console.warn("ASTRO_CALLBACK_ACK_WARN "+String(ackErr))} if(tester){',

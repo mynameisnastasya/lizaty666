@@ -203,12 +203,15 @@ export async function sendUpdate(api, upd) {
   const r = await fetch(api.base + "/v1/telegram/webhook", { method: "POST", headers: { "Content-Type": "application/json", "X-Telegram-Bot-Api-Secret-Token": WEBHOOK_SECRET }, body: JSON.stringify(upd) });
   return { status: r.status, body: await r.json().catch(() => null) };
 }
-export function initData(userId, username, ageSec = 0) {
+// signature: null — старый клиент без поля; "hmac" — поле есть и входит в строку проверки;
+// "excluded" — поле есть, но HMAC посчитан без него.
+export function initData(userId, username, ageSec = 0, signature = null) {
   const params = new URLSearchParams();
   params.set("auth_date", String(Math.floor(Date.now() / 1000) - ageSec));
   params.set("query_id", "AAE" + userId);
   params.set("user", JSON.stringify({ id: Number(userId), first_name: "Тест", username }));
-  const check = [...params.entries()].sort((a, b) => a[0] < b[0] ? -1 : 1).map(([k, v]) => k + "=" + v).join("\n");
+  if (signature) params.set("signature", "zL-ucjNyREiHDE8aihFwpfR9aggP2xiAo3NSpfe-p7IbCisNlDKlo7Kb6G4D0Ao2mBrSgEk4maLSdv6MLIlADQ");
+  const check = [...params.entries()].filter(([k]) => !(signature === "excluded" && k === "signature")).sort((a, b) => a[0] < b[0] ? -1 : 1).map(([k, v]) => k + "=" + v).join("\n");
   const secret = createHmac("sha256", "WebAppData").update(BOT_TOKEN).digest();
   params.set("hash", createHmac("sha256", secret).update(check).digest("hex"));
   return params.toString();

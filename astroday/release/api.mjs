@@ -1446,11 +1446,11 @@ function verifyMiniAppToken(raw, token) {
   const age = Math.floor(Date.now() / 1000) - Number(authDate);
   if (age < -60 || age > 86400)
     return null;
-  const check = entries.filter(([key]) => key !== "hash" && key !== "signature").sort((a, b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0).map(([key, val]) => key + "=" + val).join(`
+  const checkFor = (skip) => entries.filter(([key]) => !skip.includes(key)).sort((a, b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0).map(([key, val]) => key + "=" + val).join(`
 `);
   const secret = createHmac2("sha256", "WebAppData").update(token).digest();
-  const signature = createHmac2("sha256", secret).update(check).digest("hex");
-  if (!safeEq(hash, signature))
+  const signed = (check) => safeEq(hash, createHmac2("sha256", secret).update(check).digest("hex"));
+  if (!signed(checkFor(["hash"])) && !signed(checkFor(["hash", "signature"])))
     return null;
   let user;
   try {
