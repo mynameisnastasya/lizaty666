@@ -51,6 +51,8 @@ test("валидатор ловит: мат, цифры, чужие планет
   expect(p({ sections: [base.sections[0], base.sections[0]] })).toContain("more_sections_than_themes");
   expect(p({ advice: "Вселенная подскажет." }).some((x) => x.startsWith("cliche"))).toBe(true);
   expect(p({ opening: "Настя, Настя, Настя!" })).toContain("name_overused");
+  expect(p({ advice: "Проверь, что ты понял задачу." }, { ...ctx, gender: null })).toContain("gendered_verb_unknown_gender");
+  expect(p({ advice: "Проверь, что ты поняла задачу." }, { ...ctx, gender: "f" })).not.toContain("gendered_verb_unknown_gender");
 });
 
 test("промпт: без мата, без опросов, только факты; схема строгая", () => {
@@ -90,4 +92,11 @@ test("«завтра» — по локальной дате пользовате
   expect(tomorrowOf("Asia/Novosibirsk", at)).toBe("2026-11-20");
   expect(tomorrowOf("America/Los_Angeles", at)).toBe("2026-11-19");
   expect(new Date(zonedToUtc("2026-11-19", 8, 0, "Asia/Novokuznetsk")).toISOString()).toBe("2026-11-19T01:00:00.000Z");
+});
+
+test("лунные сутки: когда начнутся следующие — словами, по местному времени", async () => {
+  const { nextLunarPart } = await import("../../v2/lunar-days.mjs");
+  const seg = { number: 9, startTs: Date.parse("2026-11-17T10:53:44Z") / 1000, endTs: Date.parse("2026-11-18T11:01:14Z") / 1000 };
+  expect(nextLunarPart({ day: "2026-11-18", changesDuringDay: true, lunarDayAtNoonSegment: seg }, "Europe/Moscow")).toBe("середине дня"); // 14:01 МСК
+  expect(nextLunarPart({ day: "2026-11-18", changesDuringDay: true, lunarDayAtNoonSegment: seg }, "Asia/Novosibirsk")).toBe("вечеру"); // 18:01 по Новосибирску
 });

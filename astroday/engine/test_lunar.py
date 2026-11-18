@@ -78,3 +78,22 @@ def test_polar_location_does_not_invent_boundaries():
     for r in cal['days']:
         for s in r['segments']:
             assert s['endTs'] > s['startTs']
+
+
+def test_swiss_fixture_agrees_with_independent_reference():
+    """Swiss Ephemeris output of the deployed candidate vs the independent low-precision reference (tolerance 12 min)."""
+    import json, os
+    fx = json.load(open(os.path.join(os.path.dirname(__file__), '..', 'test', 'fixtures', 'lunar-swiss-msk-20261015.json')))
+    cal = lunar_calendar(P, '2026-10-15', 45, 'Europe/Moscow', 55.7558, 37.6173)
+    assert [d['lunarDayAtNoon'] for d in cal['days']] == fx['lunarDayAtNoon']
+    ref = []
+    for d in cal['days']:
+        for v in d['voidOfCourse']:
+            if v['startUtc'] not in [x[0] for x in ref]:
+                ref.append([v['startUtc'], v['endUtc'], v['lastAspect']['body'], v['lastAspect']['aspect']])
+    assert len(ref) == len(fx['voc'])
+    for r, s in zip(ref, fx['voc']):
+        assert r[2:] == s[2:], (r, s)
+        for i in (0, 1):
+            assert abs(ts(r[i].replace('Z', '+00:00')) - ts(s[i].replace('Z', '+00:00'))) < 12 * 60, (r, s)
+    assert fx['lunarDayAtNoon'][4] == 9  # 19.10 — 9-е лунные сутки (как у А. Булаткиной)

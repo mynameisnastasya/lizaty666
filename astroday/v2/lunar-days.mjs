@@ -37,3 +37,14 @@ export function lunarDayInfo(n) {
   return v ? { number: n, symbol: v[0], keywords: v[1] } : null;
 }
 export function ordinalSutki(n) { return n + "-е лунные сутки"; }
+
+// Когда в эту местную дату начнутся следующие сутки (после полудня) — словами, без цифр.
+export function nextLunarPart(lunar, zone) {
+  const noon = lunar?.lunarDayAtNoonSegment;
+  if (!noon || !lunar?.changesDuringDay) return null;
+  const end = noon.endTs * 1000;
+  const p = Object.fromEntries(new Intl.DateTimeFormat("en-CA", { timeZone: zone, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", hourCycle: "h23" }).formatToParts(new Date(end)).filter((x) => x.type !== "literal").map((x) => [x.type, x.value]));
+  if (p.year + "-" + p.month + "-" + p.day !== lunar.day) return null;
+  const h = Number(p.hour);
+  return h < 15 ? "середине дня" : h < 19 ? "вечеру" : "ночи";
+}

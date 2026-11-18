@@ -6,6 +6,7 @@ import { selectTopics, TOPICS_VERSION } from "./topics.mjs";
 import { writeForecast, PROMPT_VERSION } from "./editorial.mjs";
 import { addressName, grammaticalGender } from "./names.mjs";
 import { dayMaster, jieCaiCalendar, BAZI_VERSION } from "./bazi.mjs";
+import { nextLunarPart } from "./lunar-days.mjs";
 
 export const QUEUE_VERSION = "astroday-queue-v1";
 export const STATES = ["pending", "calculating", "generating", "validating", "ready", "failed", "invalidated"];
@@ -229,7 +230,7 @@ export async function processRow(db, row, deps) {
     // 2. текст
     if (!(await budgetOk(db, deps.dailyRequestBudget || 600))) { const e = Error("openai_daily_budget_reached"); throw e; }
     const name = addressName({ profileName: user.preferred_name, mode: user.address_mode || "original", custom: user.address_value, affectionate: user.address_value });
-    const ctx = { day: row.day, zone: user.time_zone, cityName: lunar.location?.city || user.current_city_name, name, gender: grammaticalGender(user.preferred_name), selection, lunar, voc: lunar.voidOfCourse || [], recentOpenings: await recentOpenings(db, row.telegram_id, row.day) };
+    const ctx = { day: row.day, zone: user.time_zone, cityName: lunar.location?.city || user.current_city_name, name, gender: grammaticalGender(user.preferred_name), selection, lunar: { ...lunar, nextPart: nextLunarPart(lunar, user.time_zone) }, voc: lunar.voidOfCourse || [], recentOpenings: await recentOpenings(db, row.telegram_id, row.day) };
     const res = await deps.writer(ctx, { onUsage: (u) => recordUsage(db, u) });
     await setState(db, row, "validating", { validation: { attempts: res.attempts } });
     if (!res.ok) { await recordUsage(db, null, true); throw Error("validation_failed:" + (res.attempts.at(-1)?.problems || []).slice(0, 4).join(",")); }
