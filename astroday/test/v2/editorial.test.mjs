@@ -101,3 +101,11 @@ test("лунные сутки: когда начнутся следующие �
   expect(nextLunarPart({ day: "2026-11-18", changesDuringDay: true, lunarDayAtNoonSegment: seg }, "Europe/Moscow")).toBe("середине дня"); // 14:01 МСК
   expect(nextLunarPart({ day: "2026-11-18", changesDuringDay: true, lunarDayAtNoonSegment: seg }, "Asia/Novosibirsk")).toBe("вечеру"); // 18:01 по Новосибирску
 });
+
+test("часовой пояс показывается по-русски: город и UTC-смещение, без английских имён зон", async () => {
+  const { utcOffsetLabel } = await import("../../v2/timefmt.mjs");
+  expect(utcOffsetLabel("Asia/Novosibirsk")).toBe("UTC+7");
+  expect(utcOffsetLabel("Europe/Moscow")).toBe("UTC+3");
+  expect(utcOffsetLabel("Asia/Kolkata")).toBe("UTC+5:30");
+  expect(utcOffsetLabel("America/New_York", Date.parse("2026-07-01T12:00:00Z"))).toBe("UTC-4");
+});

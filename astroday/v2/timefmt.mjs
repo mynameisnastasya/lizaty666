@@ -55,3 +55,13 @@ export function formatVoc({ startMs, endMs, zone, cityName, forecastDay }) {
   const msk = "с " + label(startMs, MSK, forecastDay) + " до " + label(endMs, MSK, forecastDay);
   return { line: local + " по твоему времени (" + zoneLabel(zone, cityName) + ")\nпо Москве: " + msk, local, msk };
 }
+
+// «UTC+7», «UTC+5:30» — понятная подпись вместо английского имени зоны IANA
+export function utcOffsetLabel(zone, ms = Date.now()) {
+  try {
+    const p = new Intl.DateTimeFormat("en-US", { timeZone: zone, timeZoneName: "longOffset" }).formatToParts(new Date(ms)).find((x) => x.type === "timeZoneName")?.value || "";
+    const m = /GMT([+-])(\d{2}):(\d{2})/.exec(p);
+    if (!m) return "UTC";
+    return "UTC" + m[1] + Number(m[2]) + (m[3] !== "00" ? ":" + m[3] : "");
+  } catch { return ""; }
+}

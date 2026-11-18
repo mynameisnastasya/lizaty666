@@ -2,7 +2,7 @@
 // лунный календарь, натальная карта, профиль, настройки. Все тексты — на русском, без мата.
 // Модуль не знает о бандле: всё внешнее приходит через deps (db, tg, legacy-функции, воркер).
 import { ensureSchema, loadUser, generationWindow, accessCovers, currentForecast, prioritize, periodStatus, baziFor, syncUsers, lastAccessDay, ZONE_CAPITALS, locationOf } from "./queue.mjs";
-import { localDay, localHM, tomorrowOf, addDays, ruDate, zoneLabel, formatVoc } from "./timefmt.mjs";
+import { localDay, localHM, tomorrowOf, addDays, ruDate, zoneLabel, formatVoc, utcOffsetLabel } from "./timefmt.mjs";
 import { renderJieCaiMessages, stemLabel } from "./bazi.mjs";
 import { nameOptions, addressName, firstName, cleanName } from "./names.mjs";
 import { esc } from "./editorial.mjs";
@@ -131,7 +131,7 @@ export function createBot(deps) {
     const pr = await prefs(id);
     const city = zoneLabel(u?.time_zone, u?.current_city_name);
     const rows = [TIME_CHOICES.slice(0, 3).map((t) => btn((pr.delivery_time === t ? "✅ " : "") + t, "time:" + t)), TIME_CHOICES.slice(3).map((t) => btn((pr.delivery_time === t ? "✅ " : "") + t, "time:" + t)).concat([btn("Другое время", "time:custom")]), [pr.delivery_enabled ? btn("🔕 Отключить рассылку", "time:off") : btn("🔔 Включить рассылку", "time:on")]];
-    const text = (note ? note + "\n\n" : "") + "⏰ <b>ВРЕМЯ ПРОГНОЗОВ</b>\n" + (pr.delivery_enabled ? "Сейчас прогноз приходит каждый день в <b>" + pr.delivery_time + "</b> по времени: " + esc(city) + " (" + esc(u?.time_zone || "") + ")." : "Рассылка выключена. Кнопки «Сегодня» и «Завтра» работают как обычно.") + "\n\nВыбери удобное время:";
+    const text = (note ? note + "\n\n" : "") + "⏰ <b>ВРЕМЯ ПРОГНОЗОВ</b>\n" + (pr.delivery_enabled ? "Сейчас прогноз приходит каждый день в <b>" + pr.delivery_time + "</b> по времени: " + esc(city) + " (" + esc(utcOffsetLabel(u?.time_zone)) + ")." : "Рассылка выключена. Кнопки «Сегодня» и «Завтра» работают как обычно.") + "\n\nВыбери удобное время:";
     return send(id, text, back(rows));
   }
   async function setTime(id, hm) {
@@ -203,7 +203,7 @@ export function createBot(deps) {
     const ready = st.ready?.n || 0, total = Object.values(st).reduce((a, r) => a + r.n, 0);
     const last = lastAccessDay(u.valid_until, u.time_zone);
     const birthTime = u.birth_time_verified ? new Intl.DateTimeFormat("ru-RU", { timeZone: u.birth_timezone, hour: "2-digit", minute: "2-digit" }).format(new Date(u.birth_at_iso)) : "не указано";
-    const lines = ["👤 <b>МОЙ ПРОФИЛЬ</b>", "Обращение: " + esc(nameFor(u) || "без имени"), "Дата рождения: " + esc(ruDate(u.birth_day)) + " " + u.birth_day.slice(0, 4), "Время рождения: " + esc(birthTime), "Город рождения: " + esc(u.birth_city_name || "—"), "Текущий город: " + esc(zoneLabel(u.time_zone, u.current_city_name)) + " (" + esc(u.time_zone) + ")",
+    const lines = ["👤 <b>МОЙ ПРОФИЛЬ</b>", "Обращение: " + esc(nameFor(u) || "без имени"), "Дата рождения: " + esc(ruDate(u.birth_day)) + " " + u.birth_day.slice(0, 4), "Время рождения: " + esc(birthTime), "Город рождения: " + esc(u.birth_city_name || "—"), "Текущий город: " + esc(zoneLabel(u.time_zone, u.current_city_name)) + " (" + esc(utcOffsetLabel(u.time_zone)) + ")",
       "Доступ: " + (last && last >= localDay(u.time_zone) ? (String(u.access_source || "").includes("tester") ? "тестовый" : "оплаченный") + " — по " + esc(ruDate(last)) + " включительно ✅" : "не активен"),
       win ? "Прогнозы на период: готово " + ready + " из " + total + (st.failed ? " (часть пересчитывается)" : "") : ""];
     return send(id, lines.filter(Boolean).join("\n"), back([[btn("💬 Как к тебе обращаться", "name")], [{ text: "✏️ Изменить анкету", web_app: { url: (site || "") + "/app" } }]]));
@@ -234,7 +234,7 @@ export function createBot(deps) {
   async function settings(id) {
     const pr = await prefs(id);
     const u = await loadUser(db, id);
-    const text = "⚙️ <b>НАСТРОЙКИ</b>\nРассылка: " + (pr.delivery_enabled ? "включена, в " + pr.delivery_time : "выключена") + "\nОбращение: " + esc(nameFor(u) || "без имени") + "\nЧасовой пояс: " + esc(u?.time_zone || "—");
+    const text = "⚙️ <b>НАСТРОЙКИ</b>\nРассылка: " + (pr.delivery_enabled ? "включена, в " + pr.delivery_time : "выключена") + "\nОбращение: " + esc(nameFor(u) || "без имени") + "\nЧасовой пояс: " + esc(u?.time_zone ? zoneLabel(u.time_zone, u.current_city_name) + ", " + utcOffsetLabel(u.time_zone) : "—");
     return send(id, text, back([[btn("⏰ Время прогнозов", "time")], [btn("💬 Как к тебе обращаться", "name")], [btn(pr.delivery_enabled ? "🔕 Отключить рассылку" : "🔔 Включить рассылку", pr.delivery_enabled ? "time:off" : "time:on")]]));
   }
 

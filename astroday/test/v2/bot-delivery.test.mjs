@@ -111,6 +111,7 @@ test("время рассылки: кнопка, своё время, отклю
   sent = [];
   await bot.handleUpdate(cb("11", "v2:time"));
   expect(texts()[0]).toContain("ВРЕМЯ ПРОГНОЗОВ");
+  expect(texts()[0]).not.toMatch(/Asia\/|Europe\//);
   await bot.handleUpdate(cb("11", "v2:time:09:00"));
   expect(texts()[1]).toBe("Анастасия, твой прогноз будет приходить каждый день в <b>09:00</b> по времени: Новосибирск 🖤");
   await bot.handleUpdate(cb("11", "v2:time:custom"));

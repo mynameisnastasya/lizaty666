@@ -111,6 +111,17 @@
     return { line: local + " \u043F\u043E \u0442\u0432\u043E\u0435\u043C\u0443 \u0432\u0440\u0435\u043C\u0435\u043D\u0438 (" + zoneLabel(zone, cityName) + `)
 \u043F\u043E \u041C\u043E\u0441\u043A\u0432\u0435: ` + msk, local, msk };
   }
+  function utcOffsetLabel(zone, ms = Date.now()) {
+    try {
+      const p = new Intl.DateTimeFormat("en-US", { timeZone: zone, timeZoneName: "longOffset" }).formatToParts(new Date(ms)).find((x) => x.type === "timeZoneName")?.value || "";
+      const m = /GMT([+-])(\d{2}):(\d{2})/.exec(p);
+      if (!m)
+        return "UTC";
+      return "UTC" + m[1] + Number(m[2]) + (m[3] !== "00" ? ":" + m[3] : "");
+    } catch {
+      return "";
+    }
+  }
 
   // v2/topics.mjs
   var TOPICS_VERSION = "astroday-topics-v1";
@@ -1299,7 +1310,7 @@
       const text = (note ? note + `
 
 ` : "") + `\u23F0 <b>\u0412\u0420\u0415\u041C\u042F \u041F\u0420\u041E\u0413\u041D\u041E\u0417\u041E\u0412</b>
-` + (pr.delivery_enabled ? "\u0421\u0435\u0439\u0447\u0430\u0441 \u043F\u0440\u043E\u0433\u043D\u043E\u0437 \u043F\u0440\u0438\u0445\u043E\u0434\u0438\u0442 \u043A\u0430\u0436\u0434\u044B\u0439 \u0434\u0435\u043D\u044C \u0432 <b>" + pr.delivery_time + "</b> \u043F\u043E \u0432\u0440\u0435\u043C\u0435\u043D\u0438: " + esc(city) + " (" + esc(u?.time_zone || "") + ")." : "\u0420\u0430\u0441\u0441\u044B\u043B\u043A\u0430 \u0432\u044B\u043A\u043B\u044E\u0447\u0435\u043D\u0430. \u041A\u043D\u043E\u043F\u043A\u0438 \xAB\u0421\u0435\u0433\u043E\u0434\u043D\u044F\xBB \u0438 \xAB\u0417\u0430\u0432\u0442\u0440\u0430\xBB \u0440\u0430\u0431\u043E\u0442\u0430\u044E\u0442 \u043A\u0430\u043A \u043E\u0431\u044B\u0447\u043D\u043E.") + `
+` + (pr.delivery_enabled ? "\u0421\u0435\u0439\u0447\u0430\u0441 \u043F\u0440\u043E\u0433\u043D\u043E\u0437 \u043F\u0440\u0438\u0445\u043E\u0434\u0438\u0442 \u043A\u0430\u0436\u0434\u044B\u0439 \u0434\u0435\u043D\u044C \u0432 <b>" + pr.delivery_time + "</b> \u043F\u043E \u0432\u0440\u0435\u043C\u0435\u043D\u0438: " + esc(city) + " (" + esc(utcOffsetLabel(u?.time_zone)) + ")." : "\u0420\u0430\u0441\u0441\u044B\u043B\u043A\u0430 \u0432\u044B\u043A\u043B\u044E\u0447\u0435\u043D\u0430. \u041A\u043D\u043E\u043F\u043A\u0438 \xAB\u0421\u0435\u0433\u043E\u0434\u043D\u044F\xBB \u0438 \xAB\u0417\u0430\u0432\u0442\u0440\u0430\xBB \u0440\u0430\u0431\u043E\u0442\u0430\u044E\u0442 \u043A\u0430\u043A \u043E\u0431\u044B\u0447\u043D\u043E.") + `
 
 \u0412\u044B\u0431\u0435\u0440\u0438 \u0443\u0434\u043E\u0431\u043D\u043E\u0435 \u0432\u0440\u0435\u043C\u044F:`;
       return send(id, text, back(rows));
@@ -1398,7 +1409,7 @@
         "\u0414\u0430\u0442\u0430 \u0440\u043E\u0436\u0434\u0435\u043D\u0438\u044F: " + esc(ruDate(u.birth_day)) + " " + u.birth_day.slice(0, 4),
         "\u0412\u0440\u0435\u043C\u044F \u0440\u043E\u0436\u0434\u0435\u043D\u0438\u044F: " + esc(birthTime),
         "\u0413\u043E\u0440\u043E\u0434 \u0440\u043E\u0436\u0434\u0435\u043D\u0438\u044F: " + esc(u.birth_city_name || "\u2014"),
-        "\u0422\u0435\u043A\u0443\u0449\u0438\u0439 \u0433\u043E\u0440\u043E\u0434: " + esc(zoneLabel(u.time_zone, u.current_city_name)) + " (" + esc(u.time_zone) + ")",
+        "\u0422\u0435\u043A\u0443\u0449\u0438\u0439 \u0433\u043E\u0440\u043E\u0434: " + esc(zoneLabel(u.time_zone, u.current_city_name)) + " (" + esc(utcOffsetLabel(u.time_zone)) + ")",
         "\u0414\u043E\u0441\u0442\u0443\u043F: " + (last && last >= localDay(u.time_zone) ? (String(u.access_source || "").includes("tester") ? "\u0442\u0435\u0441\u0442\u043E\u0432\u044B\u0439" : "\u043E\u043F\u043B\u0430\u0447\u0435\u043D\u043D\u044B\u0439") + " \u2014 \u043F\u043E " + esc(ruDate(last)) + " \u0432\u043A\u043B\u044E\u0447\u0438\u0442\u0435\u043B\u044C\u043D\u043E \u2705" : "\u043D\u0435 \u0430\u043A\u0442\u0438\u0432\u0435\u043D"),
         win ? "\u041F\u0440\u043E\u0433\u043D\u043E\u0437\u044B \u043D\u0430 \u043F\u0435\u0440\u0438\u043E\u0434: \u0433\u043E\u0442\u043E\u0432\u043E " + ready + " \u0438\u0437 " + total + (st.failed ? " (\u0447\u0430\u0441\u0442\u044C \u043F\u0435\u0440\u0435\u0441\u0447\u0438\u0442\u044B\u0432\u0430\u0435\u0442\u0441\u044F)" : "") : ""
       ];
@@ -1438,7 +1449,7 @@
       const text = `\u2699\uFE0F <b>\u041D\u0410\u0421\u0422\u0420\u041E\u0419\u041A\u0418</b>
 \u0420\u0430\u0441\u0441\u044B\u043B\u043A\u0430: ` + (pr.delivery_enabled ? "\u0432\u043A\u043B\u044E\u0447\u0435\u043D\u0430, \u0432 " + pr.delivery_time : "\u0432\u044B\u043A\u043B\u044E\u0447\u0435\u043D\u0430") + `
 \u041E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u0435: ` + esc(nameFor(u) || "\u0431\u0435\u0437 \u0438\u043C\u0435\u043D\u0438") + `
-\u0427\u0430\u0441\u043E\u0432\u043E\u0439 \u043F\u043E\u044F\u0441: ` + esc(u?.time_zone || "\u2014");
+\u0427\u0430\u0441\u043E\u0432\u043E\u0439 \u043F\u043E\u044F\u0441: ` + esc(u?.time_zone ? zoneLabel(u.time_zone, u.current_city_name) + ", " + utcOffsetLabel(u.time_zone) : "\u2014");
       return send(id, text, back([[btn("\u23F0 \u0412\u0440\u0435\u043C\u044F \u043F\u0440\u043E\u0433\u043D\u043E\u0437\u043E\u0432", "time")], [btn("\uD83D\uDCAC \u041A\u0430\u043A \u043A \u0442\u0435\u0431\u0435 \u043E\u0431\u0440\u0430\u0449\u0430\u0442\u044C\u0441\u044F", "name")], [btn(pr.delivery_enabled ? "\uD83D\uDD15 \u041E\u0442\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0440\u0430\u0441\u0441\u044B\u043B\u043A\u0443" : "\uD83D\uDD14 \u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0440\u0430\u0441\u0441\u044B\u043B\u043A\u0443", pr.delivery_enabled ? "time:off" : "time:on")]]));
     }
     async function onText(id, text) {
