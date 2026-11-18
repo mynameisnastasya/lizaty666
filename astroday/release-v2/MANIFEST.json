@@ -1,0 +1,42 @@
+{
+  "release": {
+    "api": "astroday-api-20261118-v2-r1",
+    "scheduler": "astroday-scheduler-20261118-v2-r1",
+    "daily7": "astroday-daily7-20261118-v2-r1"
+  },
+  "base": {
+    "api": "33744dc6f7c9a216d1e32ff56575fc9a5f8384c76e05f9805f7e6f3578b06c32",
+    "scheduler": "c33aa4373821654498fd701ec5335fcdb351051019cbb9f7d3430c0e2c166d8e"
+  },
+  "apiSha256": "db6de6a326231fe5fbe109a02ac53935415950bceea10da32242089dce7dcc91",
+  "schedulerSha256": "99f733282583dbe42fe7b4035e1f5beb06ef924562942ec7ddd40856d327fe4d",
+  "daily7Sha256": "7dbc4f255f9489fb62728bd7f93dae1094caa485e2b42a08a71fcdb96a0f764d",
+  "v2BundleSha256": "1595b9b42f89ba201d914fa6dd64981806d3deb5f1173ecd317379754862fcf4",
+  "builtAt": "2026-11-18T07:51:44.297Z",
+  "bytes": {
+    "api": 426656,
+    "scheduler": 315878,
+    "v2": 168034
+  },
+  "apiChunks": [
+    "5d36f973",
+    "bec57775",
+    "dc1a489f",
+    "e423daf8",
+    "65e8b84d",
+    "0e008c5f",
+    "a5c62903",
+    "59c23e8d",
+    "41d85244",
+    "90b679eb"
+  ],
+  "schedulerChunks": [
+    "9a59c107",
+    "cc18e31d",
+    "3fc7559e",
+    "d5694050",
+    "4758018f",
+    "15685f6f",
+    "246d005c"
+  ]
+}

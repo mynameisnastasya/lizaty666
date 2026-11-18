@@ -47,7 +47,8 @@ test("валидатор ловит: мат, цифры, чужие планет
   expect(p({ advice: "Напиши в комментариях, откликнулось ли." })).toContain("survey_or_cta");
   expect(p({ sections: [{ ...base.sections[0], text: base.sections[0].text + " В любви будет романтика, с деньгами осторожно, здоровье береги, семья поддержит." }] }).some((x) => x.startsWith("too_many_spheres"))).toBe(true);
   expect(p({}, { ...ctx, recentOpenings: ["Настя, сегодня хочется всё и сразу."] })).toContain("repeated_opening");
-  expect(p({ voc_note: "Не начинай новое." })).toContain("voc_note_without_voc");
+  expect(p({ voc_note: "Не начинай новое." })).toContain("voc_note_must_be_empty");
+  expect(p({ advice: "Луна без курса — не спеши." })).toContain("voc_mentioned_without_voc");
   expect(p({ sections: [base.sections[0], base.sections[0]] })).toContain("more_sections_than_themes");
   expect(p({ advice: "Вселенная подскажет." }).some((x) => x.startsWith("cliche"))).toBe(true);
   expect(p({ opening: "Настя, Настя, Настя!" })).toContain("name_overused");

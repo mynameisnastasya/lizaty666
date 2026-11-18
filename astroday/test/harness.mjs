@@ -1,6 +1,7 @@
 // Integration harness: real ASTRODAY code + local PostgreSQL + mocks of Telegram, YooKassa, astro engine, OpenAI.
 import { SQL } from "bun";
 import { createHmac, createHash, randomUUID } from "node:crypto";
+import { fakeEngine as v2FakeEngine, fakeOpenAI as v2FakeOpenAI } from "./v2/fakes.mjs";
 const ROOT = new URL("..", import.meta.url).pathname;
 export const BOT_TOKEN = "123456789:TEST_token_abcdefghijklmnopqrstuvwxyz";
 export const WEBHOOK_SECRET = "w".repeat(40);
@@ -64,6 +65,7 @@ export class Mocks {
         self.astroCalls++;
         if (req.headers.get("authorization") !== "Bearer " + ASTRO_TOKEN) return Response.json({ error: "auth" }, { status: 401 });
         if (self.astroFail > 0) { self.astroFail--; return Response.json({ error: "down" }, { status: 503 }); }
+        if (path.endsWith("/v2/lunar")) return Response.json(await (self.v2engine ||= v2FakeEngine()).lunar(body));
         if (Math.abs(body.birth.latitude) > 66.5 && body.birth.accurateBirthTime) return Response.json({ error: "Cannot determine Placidus houses for these birth coordinates" }, { status: 422 });
         return Response.json(fakeCalc(body));
       }
@@ -114,8 +116,9 @@ export class Mocks {
   }
   succeed(paymentId) { const x = this.yk.get(paymentId); x.status = "succeeded"; x.paid = true; x.confirmation = undefined; return x; }
   cancel(paymentId) { const x = this.yk.get(paymentId); x.status = "canceled"; x.paid = false; return x; }
-  openaiReply(req, body) {
+  async openaiReply(req, body) {
     this.openai.push(body);
+    if (body?.text?.format?.name === "astroday_forecast_v2") { this.v2openai ||= v2FakeOpenAI(); return this.v2openai("x", { body: JSON.stringify(body) }); }
     const mode = this.openaiScript.length ? this.openaiScript.shift() : this.openaiMode;
     if (mode === "429") return Response.json({ error: { type: "rate_limit", code: "rate_limit_exceeded" } }, { status: 429, headers: { "retry-after": "1" } });
     if (mode === "500") return Response.json({ error: { type: "server_error" } }, { status: 500 });

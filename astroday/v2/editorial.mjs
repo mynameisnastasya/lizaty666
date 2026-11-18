@@ -6,7 +6,18 @@ import { factsForPrompt, allowedPlanets, PLANET_RU } from "./topics.mjs";
 import { lunarDayInfo, ordinalSutki } from "./lunar-days.mjs";
 import { ruDate, formatVoc } from "./timefmt.mjs";
 
-export const PROMPT_VERSION = "astroday-liza-v2.1-20261118";
+export const PROMPT_VERSION = "astroday-liza-v2.2-20261118";
+
+// Пояснение к Луне без курса пишет код (без риска перепутать смысл): ротация по дате.
+export const VOC_NOTES = [
+  "В это время не стартуем новое — доделываем начатое и не подписываемся на важное «с разбегу».",
+  "Хороший момент закрыть хвосты, а запуск новых дел и важные покупки лучше отложить.",
+  "Традиционно — время пауз: разбираем, дописываем, наводим порядок, а новое начинаем после.",
+  "Если можно перенести старт, подписание или важное решение — перенеси. Начатое — пожалуйста.",
+  "Это не про «всё пропало», а про «не торопимся»: доделываем, уточняем, новое — позже.",
+  "Рутина и завершение — да, громкие старты — после выхода Луны из этого периода.",
+];
+export function vocNote(day) { const n = Number(String(day).replace(/-/g, "")) || 0; return VOC_NOTES[n % VOC_NOTES.length]; }
 
 export const SYSTEM_PROMPT = `Ты пишешь ежедневный персональный астрологический прогноз от лица Лизы (бренд LIZ_TY666) для одного человека в Telegram.
 
@@ -40,7 +51,7 @@ export const SYSTEM_PROMPT = `Ты пишешь ежедневный персо�
 
 ПРИМЕР НУЖНОЙ ИНТОНАЦИИ (не копируй, только ориентир по ритму):
 «Сегодня Марс давит на твою Венеру — и хочется, чтобы всё решилось вот прям сейчас. Знакомо: в чате три человека думают, а ты уже пишешь „ну всё, решили“ 😅 Но! Твой вариант — это ещё не общий план. Скажи, чего хочешь, и дай людям минуту. Не геройствуем.»
-ЛУНА БЕЗ КУРСА: если передано, что период есть, — одна фраза совета в духе традиции (не торопиться с запуском нового, доделывать начатое). Время не пиши.
+ЛУНА БЕЗ КУРСА: поле voc_note всегда пустая строка — пояснение добавит программа.
 
 Ответ строго по JSON-схеме.`;
 
@@ -74,7 +85,7 @@ export function buildUserPrompt(ctx) {
   lines.push("");
   const ld = ctx.lunar?.lunarDayAtNoon ? lunarDayInfo(ctx.lunar.lunarDayAtNoon) : null;
   lines.push("ЛУННЫЕ СУТКИ: " + (ld ? "есть; традиционный символ — " + ld.symbol + "; темы: " + ld.keywords + (ctx.lunar.changesDuringDay ? "; " + (ctx.lunar.nextPart ? "ближе к " + ctx.lunar.nextPart + " начнутся следующие сутки" : "в течение дня начнутся следующие сутки") + " — не утверждай, что эти сутки весь день" : "") : "нет данных — lunar_note пустая строка"));
-  lines.push("ЛУНА БЕЗ КУРСА В ЭТИ СУТКИ: " + (ctx.voc?.length ? "да" : "нет — voc_note пустая строка"));
+  lines.push("ЛУНА БЕЗ КУРСА В ЭТИ СУТКИ: " + (ctx.voc?.length ? "да (блок со временем и пояснением добавит программа; не пиши про неё)" : "нет") + "; voc_note — пустая строка");
   if (ctx.recentOpenings?.length) {
     lines.push("");
     lines.push("НЕДАВНИЕ ВСТУПЛЕНИЯ (не повторять):");
@@ -152,7 +163,8 @@ export function validateForecast(out, ctx) {
   const max = { quiet: 700, normal: 1500, strong: 2300 }[ctx.selection.intensity] || 1500;
   if (len > max) problems.push("too_long");
   if (len < 120) problems.push("too_short");
-  if (!ctx.voc?.length && out.voc_note) problems.push("voc_note_without_voc");
+  if (out.voc_note) problems.push("voc_note_must_be_empty");
+  if (!ctx.voc?.length && /без курса/i.test(all)) problems.push("voc_mentioned_without_voc");
   if (!ctx.lunar?.lunarDayAtNoon && out.lunar_note) problems.push("lunar_note_without_data");
   return { ok: problems.length === 0, problems: [...new Set(problems)] };
 }
@@ -172,7 +184,7 @@ export function renderForecast(out, ctx) {
   }
   if (ctx.voc?.length) {
     const lines = ctx.voc.map((v) => esc(formatVoc({ startMs: v.startTs * 1000, endMs: v.endTs * 1000, zone: ctx.zone, cityName: ctx.cityName, forecastDay: ctx.day }).line));
-    parts.push("🌙 <b>ЛУНА БЕЗ КУРСА</b>\n" + lines.join("\n") + (out.voc_note ? "\n" + para(out.voc_note) : ""));
+    parts.push("🌙 <b>ЛУНА БЕЗ КУРСА</b>\n" + lines.join("\n") + "\n" + esc(vocNote(ctx.day)));
   }
   parts.push("✨ <b>НА ЧТО ОБРАТИТЬ ВНИМАНИЕ</b>\n" + para(out.advice));
   const html = parts.filter(Boolean).join("\n\n");

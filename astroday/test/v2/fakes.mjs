@@ -51,7 +51,7 @@ export function fakeOpenAI({ mode = "valid", log = [] } = {}) {
     const out = { headline: "День, когда можно " + w, opening: w[0].toUpperCase() + w.slice(1) + " и " + w2 + " — вот как сегодня лучше всего действовать.",
       sections: [{ fact_ids: ids.slice(0, 1), title: "", text: "Ситуация может подтолкнуть к быстрым решениям, но лучше сначала выдохнуть и посмотреть, что на самом деле важно. Если захочется ответить резко, дай себе паузу и вернись к разговору чуть позже — так будет проще договориться." + bad }],
       lunar_note: user.includes("ЛУННЫЕ СУТКИ: есть") ? "Эти сутки традиционно про внимание к себе и аккуратность в делах." : "",
-      voc_note: user.includes("ЛУНА БЕЗ КУРСА В ЭТИ СУТКИ: да") ? "В это время лучше доделывать начатое, а новое запускать позже." : "",
+      voc_note: "",
       advice: "Выбери одно дело и доведи его до конца — без героизма." };
     return new Response(JSON.stringify({ id: "resp_" + log.length, model: body.model, output: [{ type: "message", content: [{ type: "output_text", text: JSON.stringify(out) }] }], usage: { input_tokens: 1200, output_tokens: 400 } }), { status: 200 });
   };
