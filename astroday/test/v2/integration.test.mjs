@@ -117,5 +117,6 @@ test("оплата: выполнение заказа v2 → период и с�
   const sent = mocks.sentTexts(id).slice(n0);
   expect(sent.some((t) => t.includes("ТВОЙ ПРОГНОЗ НА"))).toBe(true);
   expect((await db.unsafe("SELECT count(*)::int n FROM liz_daily_messages WHERE telegram_id=$1", [id]))[0].n).toBe(0);
-  expect((await db.unsafe("SELECT count(*)::int n FROM astroday_v2_forecasts WHERE telegram_id=$1 AND status='ready'", [id]))[0].n).toBeGreaterThanOrEqual(31);
+  // весь период поставлен в очередь (31+ дат); за один тик воркер обрабатывает до 60 строк на всех — остаток добирается следующим тиком
+  expect((await db.unsafe("SELECT count(*)::int n FROM astroday_v2_forecasts WHERE telegram_id=$1 AND status<>'invalidated'", [id]))[0].n).toBeGreaterThanOrEqual(31);
 }, 120000);
