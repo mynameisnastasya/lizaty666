@@ -1,4 +1,4 @@
-// liz-ty666-scheduler.ts — astroday-scheduler-20261117-liza-openai-r1
+// liz-ty666-scheduler.ts — astroday-scheduler-20261118-facts-fix1
 var {SQL } = globalThis.Bun;
 
 // forecast-runtime.ts
@@ -413,7 +413,9 @@ function lizaEditorialConfig(env = Bun.env) {
 // --- факты: кто куда попадает -------------------------------------------------
 function lizaFactPlan(brief) {
   const plan = { intro: [], work: [], love: [], state: [], accent: [] };
-  const moonLine = "сегодня Луна в " + LIZA_SIGN_WORD[brief.moon.sign] + (brief.moon.house !== null ? " акцентирует твой " + LIZA_HOUSE_ORD[brief.moon.house] + " натальный дом — " + LIZA_HOUSE_SPHERE[brief.moon.house] : "") + ".";
+  // This is a daily snapshot, not a position that necessarily lasts all day.
+  // Keep the engine's wording (including its noon / snapshot qualifier).
+  const moonLine = brief.factualSentences[0];
   plan.intro.push({ id: brief.moon.id, sentence: moonLine, meaning: brief.moon.house !== null ? "фокус дня: " + FE_HOUSE_FOCUS[brief.moon.house] : "общий эмоциональный фон дня", kind: "moon" });
   const aspects = brief.selectedAspects || [];
   aspects.forEach((a, i) => {
@@ -511,7 +513,9 @@ function lizaAssemble(brief, plan, v, options = {}) {
   const name = typeof options.preferredName === "string" ? options.preferredName.replace(/[<>\x00-\x1f]/g, "").trim().slice(0, 36) : "";
   const cap = (s) => s ? s[0].toLocaleUpperCase("ru-RU") + s.slice(1) : s;
   const withFacts = (list, text) => [...list.map((f) => f.sentence), text].filter(Boolean).join(" ");
-  const intro = (name ? name + ", " : "") + (name ? plan.intro[0].sentence : cap(plan.intro[0].sentence)) + " " + v.intro;
+  const moonSentence = plan.intro[0].sentence;
+  const addressedMoon = moonSentence.replace(/^(На|В|По)(?= )/u, (word) => word.toLocaleLowerCase("ru-RU"));
+  const intro = (name ? name + ", " + addressedMoon : cap(moonSentence)) + " " + v.intro;
   const lines = [
     lizaDateHeader(brief.day),
     v.headline.toLocaleUpperCase("ru-RU"),

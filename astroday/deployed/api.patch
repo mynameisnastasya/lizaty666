@@ -1,0 +1,231 @@
+===================================================================
+--- a/release/api.mjs	
++++ b/release/api.mjs	
+@@ -1,9 +1,9 @@
+ 
+-// ASTRODAY astroday-api-20261117-liza-openai-r1 (base astroday-api-20261116-join-test-fix)
++// ASTRODAY astroday-api-20261118-claude-polish1 (base astroday-api-20261118-profile-fix1)
+ const adJoinButton={reply_markup:{inline_keyboard:[[{text:"🖤 Я в деле",callback_data:"astroday_join"}]]}};
+ const adTodayButton={reply_markup:{inline_keyboard:[[{text:"🔮 Мой прогноз на сегодня",callback_data:"astroday_today"}],[{text:"🌙 Личный кабинет",web_app:{url:"https://lizty666-stage.up.railway.app/login"}}]]}};
+ async function adJoined(id){return (await db.unsafe("SELECT notifications_enabled FROM astroday_tester_joins WHERE telegram_id=$1",[id]))[0]}
+-async function adCompact(id){return sendBotMessage(id,"Ты уже в ASTRODAY, котик 🖤\nПрогнозы приходят в 07:00 по Кемерово. Можешь посмотреть сегодняшний прямо сейчас 🔮",adTodayButton)}
++async function adCompact(id){return adSendStart(id,true)}
+ async function astrodayStartOnce(id,t){if(await adJoined(id))return adCompact(id);return sendBotMessage(id,"ну чтооо, первооткрыватель 🖤\nЖми «Я в деле» — и погнали смотреть твои прогнозы 🤎",adJoinButton)}
+ async function astrodayJoinOnce(id,t){
+  let joined;
+@@ -35,24 +35,25 @@
+  await tx.unsafe("UPDATE liz_birth_profiles SET consented_to_daily=$2,updated_at=now() WHERE telegram_id=$1",[id,on]);
+  await tx.unsafe("UPDATE liz_tg_consents SET daily_delivery=$2 WHERE telegram_id=$1",[id,on]);
+  });
+- return sendBotMessage(id,on?"Снова на связи 🖤 Прогнозы — в 07:00 по Кемерово.":"На паузе 🖤 Вернуть рассылку — /resume.");
++ return on?adSendStatus(id):sendBotMessage(id,"На паузе 🖤 Вернуть рассылку — /resume.");
+ }
+ async function adCommand(id,username,c){
++ if(c==="/day")return false;
+  if(!["/today","/day","/test","/status","/help","/stop","/resume","/settings","/plans","/trial","/promo","/paysupport","/terms","/join_test","/confirm_test","/activate_test"].includes(c))return false;
+  const t=await astrodayTesterById(id,username);if(!t)return false;
+  if(["/join_test","/confirm_test","/activate_test"].includes(c))await astrodayJoinOnce(id,t);
+  else if(["/today","/day","/test"].includes(c))await astrodayToday(id,t.handle_key);
+  else if(c==="/stop"||c==="/resume")await adToggle(id,c==="/resume");
+- else if(c==="/status"){const j=await adJoined(id);await sendBotMessage(id,!j?"Твой профиль ASTRODAY найден 🖤 Нажми «Я в деле».":j.notifications_enabled?"Твой доступ активен 🖤 Прогноз в 07:00 по Кемерово.":"Прогнозы на паузе 🖤 Вернуть — /resume.",j?adTodayButton:adJoinButton)}
+- else if(c==="/help")await sendBotMessage(id,"/today — прогноз 🔮\n/status — доступ\n/stop — пауза\n/resume — вернуть\n\nКаждое утро в 07:00 по Кемерово 🖤",adTodayButton);
+- else if(c==="/settings")await sendBotMessage(id,"Твоё время прогноза — 07:00 по Кемерово 🖤 Отключить — /stop.");
++ else if(c==="/status"){if(await adJoined(id))await adSendStatus(id);else await sendBotMessage(id,"Твой профиль ASTRODAY найден 🖤 Нажми «Я в деле».",adJoinButton)}
++ else if(c==="/help")await sendBotMessage(id,"/today — прогноз на сегодня\n/day ГГГГ-ММ-ДД — сохранённый прогноз на дату\n/status — доступ и время рассылки\n/stop — пауза\n/resume — вернуть\n\nАнкету и часовой пояс можно проверить в кабинете.",adTodayButton);
++ else if(c==="/settings")await adSendStatus(id);
+  else if(["/plans","/trial","/promo","/paysupport","/terms"].includes(c))await sendBotMessage(id,"Твой доступ согласован с Лизой напрямую 🤎 Повторно платить в боте не нужно.",adTodayButton);
+  else if(await adJoined(id))await adCompact(id);else await sendBotMessage(id,"Жми «Я в деле» 🖤",adJoinButton);
+  return true;
+ }
+-async function astrodayTesterById(id,username){const bound=await db.unsafe("SELECT handle_key FROM liz_astro_testers WHERE verified_telegram_id=$1 LIMIT 1",[id]);if(bound[0])return bound[0];const u=String(username||"").replace(/^@/,"").toLowerCase();const open=await db.unsafe("SELECT handle_key FROM liz_astro_testers WHERE verified_telegram_id IS NULL AND (expected_telegram_id=$1 OR (expected_telegram_id IS NULL AND $2<>'' AND lower(telegram_username)=$2)) AND (trial_end_exclusive::timestamp AT TIME ZONE COALESCE(forecast_zone_assumed,'Asia/Novokuznetsk'))>NOW() LIMIT 2",[id,u]);return open.length===1?open[0]:undefined}
++async function astrodayTesterById(id,username){const bound=await db.unsafe("SELECT handle_key FROM liz_astro_testers WHERE verified_telegram_id=$1 AND (trial_end_exclusive::timestamp AT TIME ZONE COALESCE(forecast_zone_assumed,'Asia/Novokuznetsk'))>NOW() LIMIT 1",[id]);if(bound[0])return bound[0];const u=String(username||"").replace(/^@/,"").toLowerCase();const open=await db.unsafe("SELECT handle_key FROM liz_astro_testers WHERE verified_telegram_id IS NULL AND (expected_telegram_id=$1 OR (expected_telegram_id IS NULL AND $2<>'' AND lower(telegram_username)=$2)) AND (trial_end_exclusive::timestamp AT TIME ZONE COALESCE(forecast_zone_assumed,'Asia/Novokuznetsk'))>NOW() LIMIT 2",[id,u]);return open.length===1?open[0]:undefined}
+ async function astrodaySecondMessage(id){await sendBotMessage(id,"ну всёёё, ты в ASTRODAY 🖤\n\nТеперь тут будут твои личные прогнозы по натальной карте.\n\nКаждое утро будем смотреть, что там планеты нам устроили ахаха 🔮\n\nПрогнозы будут прилетать сами, а если захочешь заглянуть — жми «🔮 Мой прогноз».\n\nИ обязательно замечай, что совпало, а что вообще мимо. Потом будем обсуждать в нашем чате первооткрывателей))\n\nВсё, обнимаю.\nПОГНАЛИ 🤎",{...adTodayButton,disable_notification:false})}
+-async function astrodayTodayCore(id,handle){const parts=Object.fromEntries(new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Novokuznetsk",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date()).filter(x=>x.type!=="literal").map(x=>[x.type,x.value]));const day=parts.year+"-"+parts.month+"-"+parts.day;const rows=await db.unsafe("SELECT body FROM liz_tester_forecasts WHERE handle_key=$1 AND forecast_day=$2::date ORDER BY created_at DESC LIMIT 1",[handle,day]);if(rows[0]?.body)await sendTesterForecast(id,rows[0].body);else await sendBotMessage(id,"Прогноз на сегодня ещё готовится, котик 🖤 Загляни чуть позже.",{disable_notification:false})}
++async function astrodayTodayCore(id,_handle){return adToday(id)}
+ 
+ // @bun
+ // payment-runtime.ts
+@@ -639,7 +640,9 @@
+ // --- факты: кто куда попадает -------------------------------------------------
+ function lizaFactPlan(brief) {
+   const plan = { intro: [], work: [], love: [], state: [], accent: [] };
+-  const moonLine = "сегодня Луна в " + LIZA_SIGN_WORD[brief.moon.sign] + (brief.moon.house !== null ? " акцентирует твой " + LIZA_HOUSE_ORD[brief.moon.house] + " натальный дом — " + LIZA_HOUSE_SPHERE[brief.moon.house] : "") + ".";
++  // This is a daily snapshot, not a position that necessarily lasts all day.
++  // Keep the engine's wording (including its noon / snapshot qualifier).
++  const moonLine = brief.factualSentences[0];
+   plan.intro.push({ id: brief.moon.id, sentence: moonLine, meaning: brief.moon.house !== null ? "фокус дня: " + FE_HOUSE_FOCUS[brief.moon.house] : "общий эмоциональный фон дня", kind: "moon" });
+   const aspects = brief.selectedAspects || [];
+   aspects.forEach((a, i) => {
+@@ -737,7 +740,9 @@
+   const name = typeof options.preferredName === "string" ? options.preferredName.replace(/[<>\x00-\x1f]/g, "").trim().slice(0, 36) : "";
+   const cap = (s) => s ? s[0].toLocaleUpperCase("ru-RU") + s.slice(1) : s;
+   const withFacts = (list, text) => [...list.map((f) => f.sentence), text].filter(Boolean).join(" ");
+-  const intro = (name ? name + ", " : "") + (name ? plan.intro[0].sentence : cap(plan.intro[0].sentence)) + " " + v.intro;
++  const moonSentence = plan.intro[0].sentence;
++  const addressedMoon = moonSentence.replace(/^(На|В|По)(?= )/u, (word) => word.toLocaleLowerCase("ru-RU"));
++  const intro = (name ? name + ", " + addressedMoon : cap(moonSentence)) + " " + v.intro;
+   const lines = [
+     lizaDateHeader(brief.day),
+     v.headline.toLocaleUpperCase("ru-RU"),
+@@ -1957,8 +1962,31 @@
+     await sendBotMessage(id, "Не удалось связать тестовый профиль. Проверь @username или напиши Лизе — чужой профиль мы не привяжем.");
+   return result;
+ }
++// ASTRODAY_TEXT_CLEAN_V1 (2026-11-18): убирает дословно повторённые предложения внутри одного прогноза.
++function adCleanForecast(text) {
++  const src = String(text || "");
++  const isHeader = (t) => t.length > 0 && t.length < 115 && (t.startsWith("🔮") || /^[^\p{Ll}]{0,5}[\p{Lu}\d][^\p{Ll}]*$/u.test(t));
++  const norm = (s) => s.toLowerCase().replace(/ё/g, "е").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
++  let seen = " ";
++  const out = src.split("\n").map((line) => {
++    const t = line.trim();
++    if (!t || isHeader(t)) return line;
++    const parts = t.match(/[^.!?…]+(?:[.!?…]+[»"”)]*|$)/g) || [t];
++    const kept = [];
++    for (const raw of parts) {
++      const s = raw.trim();
++      if (!s) continue;
++      const n = norm(s);
++      if (n.length >= 24 && seen.includes(" " + n + " ")) continue;
++      kept.push(raw);
++      seen += n + " ";
++    }
++    return kept.length ? line.slice(0, line.length - line.trimStart().length) + kept.join("").trim() : line;
++  }).join("\n");
++  return out.replace(/(запомни|спроси себя|подумай): ([А-ЯЁ])(?=[а-яё])/g, (m, w, c) => w + ": " + c.toLowerCase());
++}
+ async function sendTesterForecast(id, text) {
+-  let rest = String(text || "").trim();
++  let rest = adCleanForecast(String(text || "")).trim();
+   if (!rest || rest.length > 20000)
+     return false;
+   while (rest) {
+@@ -2086,7 +2114,7 @@
+       if (body)
+         await sendTesterForecast(id, body);
+       else
+-        await sendBotMessage(id, "На этот день прогноз ещё не готов или тестовый доступ не подтверждён. Начни с /join_test.");
++        await sendBotMessage(id, "На эту дату сохранённого прогноза нет 🖤 Архив доступен за период теста — с 13 ноября по 17 декабря. Прогноз на сегодня — /today.", adKeyboard("today"));
+     }
+   } else if (command === "/join_test")
+     await finishTesterActivation(id, msg.from?.username || null);
+@@ -2127,7 +2155,7 @@
+ // ---------------------------------------------------------------------------
+ // ASTRODAY bot (patch 2026-11-17): общие экраны покупателя, обработка всех кнопок,
+ // повтор апдейта при сбое, прогноз по запросу без блокировки вебхука.
+-// Тестерские сценарии (Я в деле, join_test, /day, контакт) сохранены как были.
++// Тестерская выдача использует ту же проверку актуальности карты, что и кабинет.
+ // ---------------------------------------------------------------------------
+ var AD_SITE = "https://lizty666-stage.up.railway.app";
+ var AD_MENU_ROWS = {
+@@ -2140,7 +2168,7 @@
+   return { reply_markup: { inline_keyboard: rows.map((r) => AD_MENU_ROWS[r]).filter(Boolean) } };
+ }
+ async function adAccount(id) {
+-  const rows = await db.unsafe("SELECT c.notify_enabled,c.chat_started_at,p.telegram_id IS NOT NULL AS has_profile,p.time_zone,p.delivery_hour_local,p.consented_to_daily,p.birth_time_verified,s.valid_until,s.source FROM liz_clients c LEFT JOIN liz_birth_profiles p ON p.telegram_id=c.telegram_id LEFT JOIN liz_subscriptions s ON s.telegram_id=c.telegram_id WHERE c.telegram_id=$1", [id]);
++  const rows = await db.unsafe("SELECT c.notify_enabled,c.chat_started_at,p.telegram_id IS NOT NULL AS has_profile,p.time_zone,p.delivery_hour_local,p.consented_to_daily,p.birth_time_verified,s.valid_until,s.source,EXISTS(SELECT 1 FROM liz_astro_testers t WHERE t.verified_telegram_id=c.telegram_id AND t.consent_status='confirmed_by_account_holder' AND (NOW() AT TIME ZONE 'Asia/Novokuznetsk')::date>=t.trial_start AND (NOW() AT TIME ZONE 'Asia/Novokuznetsk')::date<t.trial_end_exclusive) AS tester_delivery_managed FROM liz_clients c LEFT JOIN liz_birth_profiles p ON p.telegram_id=c.telegram_id LEFT JOIN liz_subscriptions s ON s.telegram_id=c.telegram_id WHERE c.telegram_id=$1", [id]);
+   const a = rows[0] || {};
+   const until = Date.parse(a.valid_until || "");
+   return { ...a, active: Number.isFinite(until) && until > Date.now(), until: Number.isFinite(until) ? new Date(until) : null };
+@@ -2159,13 +2187,31 @@
+   const h = Number(a.delivery_hour_local);
+   return (Number.isInteger(h) ? String(h).padStart(2, "0") : "08") + ":00";
+ }
++function adDeliverySchedule(a) {
++  const zone = a.time_zone || "Europe/Moscow";
++  if (a.tester_delivery_managed) {
++    // Pilot delivery remains a separate job at 07:00 Kemerovo; display its actual
++    // time in the reader's zone, without changing recipients or the cron.
++    const at = forecastDueAt(localForecastDay("Asia/Novokuznetsk"), "Asia/Novokuznetsk", 7);
++    const hour = new Intl.DateTimeFormat("en-GB", { timeZone: zone, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(new Date(at));
++    return hour + " (" + zone + ", тестовое расписание)";
++  }
++  return adHour(a) + " (" + zone + ")";
++}
++function adUntilLabel(a) {
++  // Тестовый доступ хранится как исключающая граница (полночь по Кемерово следующего дня):
++  // показываем последний включительный день, а не следующий.
++  if (a.until && String(a.source || "").includes("tester"))
++    return adDate(new Date(a.until.getTime() - 1), "Asia/Novokuznetsk") + " включительно";
++  return adDate(a.until, a.time_zone);
++}
+ function adSourceLabel(source) {
+   return String(source || "").startsWith("yookassa") ? "оплаченная подписка" : String(source || "").includes("tester") ? "тестовый доступ" : "доступ";
+ }
+ async function adSendStart(id, repeat) {
+   const a = await adAccount(id);
+   if (a.active && a.has_profile)
+-    return sendBotMessage(id, "Ты в ASTRODAY 🖤\n" + (adSourceLabel(a.source) === "тестовый доступ" ? "Тестовый доступ" : "Доступ") + " до " + adDate(a.until, a.time_zone) + ". Прогноз приходит каждый день в " + adHour(a) + " по твоему времени" + (a.notify_enabled && a.consented_to_daily ? "." : ", но сейчас рассылка на паузе — вернуть: /resume."), adKeyboard("today", "cabinet"));
++    return sendBotMessage(id, "Ты в ASTRODAY 🖤\n" + (adSourceLabel(a.source) === "тестовый доступ" ? "Тестовый доступ" : "Доступ") + " до " + adUntilLabel(a) + ". Прогноз приходит каждый день в " + adDeliverySchedule(a) + (a.notify_enabled && a.consented_to_daily ? "." : ", но сейчас рассылка на паузе — вернуть: /resume."), adKeyboard("today", "cabinet"));
+   if (a.has_profile)
+     return sendBotMessage(id, "Анкета у тебя уже есть ✅\nОсталось открыть доступ — и каждое утро сюда будет прилетать личный прогноз по твоей натальной карте.\n\n" + adCatalog() + "\nЭто разовая оплата за выбранный срок, без автосписаний.", adKeyboard("plans", "cabinet"));
+   if (repeat)
+@@ -2176,15 +2222,21 @@
+   const a = await adAccount(id);
+   const lines = [];
+   lines.push(a.has_profile ? "Анкета: заполнена" + (a.birth_time_verified ? " ✅" : " (без точного времени рождения — дома не учитываются)") : "Анкета: не заполнена");
+-  lines.push(a.active ? "Доступ: " + adSourceLabel(a.source) + " до " + adDate(a.until, a.time_zone) + " ✅" : a.until ? "Доступ: закончился " + adDate(a.until, a.time_zone) : "Доступ: ещё не оформлен");
+-  if (a.has_profile) lines.push("Рассылка: " + (a.notify_enabled && a.consented_to_daily ? "включена, в " + adHour(a) + " (" + (a.time_zone || "твой часовой пояс") + ")" : "на паузе — вернуть: /resume"));
++  lines.push(a.active ? "Доступ: " + adSourceLabel(a.source) + " до " + adUntilLabel(a) + " ✅" : a.until ? "Доступ: закончился " + adUntilLabel(a).replace(" включительно", "") : "Доступ: ещё не оформлен");
++  if (a.has_profile) lines.push("Рассылка: " + (a.notify_enabled && a.consented_to_daily ? "включена, в " + adDeliverySchedule(a) : "на паузе — вернуть: /resume"));
+   if (a.active && a.has_profile) {
+     const day = localForecastDay(a.time_zone);
+     const row = (await db.unsafe("SELECT generation_state,status,text_source FROM liz_daily_messages WHERE telegram_id=$1 AND forecast_date=$2::date", [id, day]))[0];
+-    lines.push("Прогноз на сегодня: " + (!row ? "ещё не готовился" : row.status === "sent" ? "отправлен" : row.generation_state === "ready" ? "готов" : row.generation_state === "failed" ? "не получился, я повторю попытку" : "готовится"));
++    // Утренняя рассылка тестеров идёт отдельным заданием и пишет итог в astroday_daily_delivery_claims.
++    const pilotSent = a.tester_delivery_managed && (await db.unsafe("SELECT 1 FROM astroday_daily_delivery_claims c JOIN liz_astro_testers t ON t.handle_key=c.handle_key WHERE t.verified_telegram_id=$1 AND c.forecast_day=(NOW() AT TIME ZONE 'Asia/Novokuznetsk')::date AND c.status='sent' LIMIT 1", [id]).catch(() => [])).length > 0;
++    lines.push("Прогноз на сегодня: " + (pilotSent || row?.status === "sent" ? "отправлен ✅" : !row ? (a.tester_delivery_managed && a.notify_enabled && a.consented_to_daily && Date.now() < Date.parse(forecastDueAt(localForecastDay("Asia/Novokuznetsk"), "Asia/Novokuznetsk", 7)) + 1200000 ? "придёт в " + adDeliverySchedule(a).split(" (")[0] : "открой по кнопке ниже") : row.generation_state === "ready" ? "готов" : row.generation_state === "failed" ? "не получился, я повторю попытку" : "готовится"));
+   }
+   return sendBotMessage(id, lines.join("\n"), a.active ? adKeyboard("today", "cabinet") : adKeyboard(a.has_profile ? "plans" : "cabinet", a.has_profile ? "cabinet" : "plans"));
+ }
++async function adProfileFingerprint(id) {
++  const p = (await db.unsafe("SELECT *,birth_local_date::text AS birth_day FROM liz_birth_profiles WHERE telegram_id=$1", [id]))[0];
++  return p ? profileFingerprint(p) : "";
++}
+ var adTodayInFlight = new Map();
+ function adToday(id) {
+   // Не держим вебхук: генерация может занять до минуты.
+@@ -2195,7 +2247,7 @@
+       if (!a.has_profile) return await sendBotMessage(id, "Сначала заполни анкету рождения — без неё я не посчитаю твою карту 🔮", adKeyboard("cabinet"));
+       if (!a.active) return await sendBotMessage(id, "Ежедневный прогноз открывается с доступом ASTRODAY 🖤", adKeyboard("plans", "cabinet"));
+       const day = localForecastDay(a.time_zone);
+-      const ready = (await db.unsafe("SELECT 1 FROM liz_daily_messages WHERE telegram_id=$1 AND forecast_date=$2::date AND generation_state='ready'", [id, day])).length > 0;
++      const ready = (await db.unsafe("SELECT 1 FROM liz_daily_messages WHERE telegram_id=$1 AND forecast_date=$2::date AND generation_state='ready' UNION ALL SELECT 1 FROM liz_tester_forecasts f JOIN liz_astro_testers t ON t.handle_key=f.handle_key WHERE t.verified_telegram_id=$1 AND f.forecast_day=$2::date AND f.engine_version=$3 AND f.editorial_version=$4 AND f.profile_fingerprint=(SELECT $5::text)", [id, day, FORECAST_ENGINE_VERSION, FORECAST_EDITORIAL_VERSION, await adProfileFingerprint(id)])).length > 0;
+       if (!ready) await sendBotMessage(id, "Секунду, считаю твою карту на сегодня 🔮");
+       const item = await ensureDailyForecast(db, id, day);
+       await sendTesterForecast(id, item.body);
+@@ -2415,15 +2467,11 @@
+       }
+     }
+     if (action === "today") {
+-      const testerDay = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Novokuznetsk", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+-      const testerText = await db.unsafe("SELECT f.body,f.forecast_day::text AS day FROM liz_astro_testers t JOIN liz_tester_forecasts f ON f.handle_key=t.handle_key WHERE t.verified_telegram_id=$1 AND t.consent_status='confirmed_by_account_holder' AND t.trial_start<=$2::date AND t.trial_end_exclusive>$2::date AND f.forecast_day=$2::date ORDER BY f.created_at DESC LIMIT 1", [id, testerDay]);
+-      if (testerText[0]?.body)
+-        return tgJSON({ text: testerText[0].body, day: testerText[0].day, version: "astroday-tester" });
+       if (!profile)
+         return tgJSON({ error: "Сначала заполни анкету рождения." }, 404);
+       try {
+         const item = await ensureDailyForecast(db, id, localForecastDay(profile.time_zone));
+-        return tgJSON({ text: item.body, day: item.day, version: item.editorial_version });
++        return tgJSON({ text: adCleanForecast(item.body), day: item.day, version: item.editorial_version });
+       } catch (e) {
+         return tgJSON({ error: forecastErrorText(e), code: e.code || "forecast_unavailable" }, e.httpStatus === 202 ? 503 : e.httpStatus || 503);
+       }
+@@ -2548,7 +2596,7 @@
+         return await reviewerMonthExport(req);
+       if (req.method === "GET" && path === "/health") {
+         const database = !!db && await schema;
+-        return guarded({ ok: database, role: "astroday_api", release: "astroday-api-20261117-liza-openai-r1", databaseReady: database, externalPaymentsEnabled: (await paymentGate()).ready, editorial: { openaiConfigured: lizaEditorialConfig().enabled, model: lizaEditorialConfig().model, promptVersion: LIZA_PROMPT_VERSION } }, database ? 200 : 503);
++        return guarded({ ok: database, role: "astroday_api", release: "astroday-api-20261118-claude-polish1", databaseReady: database, externalPaymentsEnabled: (await paymentGate()).ready, editorial: { openaiConfigured: lizaEditorialConfig().enabled, model: lizaEditorialConfig().model, promptVersion: LIZA_PROMPT_VERSION } }, database ? 200 : 503);
+       }
+       if (path.startsWith("/v1/web-forecast/"))
+         return guarded({ error: "Legacy email forecast accounts retired; use Telegram" }, 410);
+@@ -2565,7 +2613,7 @@
+       if (req.method === "GET" && path === "/v1/release-readiness") {
+         const gate = await paymentGate();
+         const health = db ? (await db.unsafe("SELECT last_scheduler_tick,last_verified_real_delivery FROM liz_delivery_health WHERE id=1").catch(() => []))[0] : null;
+-        return guarded({ release: "astroday-api-20261117-liza-openai-r1", readyForPublicSales: gate.ready, blockedBy: gate.reasons, editorialOpenAI: lizaEditorialConfig().enabled, lastSchedulerTick: health?.last_scheduler_tick || null, lastConfirmedTelegramDelivery: health?.last_verified_real_delivery || null, note: "Флаги *_VERIFIED больше не используются как доказательство: смотрите фактические отметки времени." });
++        return guarded({ release: "astroday-api-20261118-claude-polish1", readyForPublicSales: gate.ready, blockedBy: gate.reasons, editorialOpenAI: lizaEditorialConfig().enabled, lastSchedulerTick: health?.last_scheduler_tick || null, lastConfirmedTelegramDelivery: health?.last_verified_real_delivery || null, note: "Флаги *_VERIFIED больше не используются как доказательство: смотрите фактические отметки времени." });
+       }
+       if (req.method === "POST" && path === "/v1/testers/claim")
+         return await secureTesterClaim(req, guarded);
