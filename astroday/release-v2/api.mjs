@@ -1787,6 +1787,8 @@
 })();
 
 function astrodayV2Instance() { if (!globalThis.__astrodayV2) globalThis.__astrodayV2 = globalThis.ASTRODAY_V2_RUNTIME.install(Bun.env); return globalThis.__astrodayV2; }
+// Старые конвейеры исключают пользователей v2, только пока v2 включён (ASTRODAY_V2_MODE≠off): выключение мгновенно возвращает их в старую схему.
+function astrodayV2Excl(col) { return globalThis.ASTRODAY_V2_RUNTIME && astrodayV2Instance().active ? " AND NOT EXISTS(SELECT 1 FROM astroday_v2_users v2u WHERE v2u.telegram_id=" + col + " AND v2u.enabled)" : ""; }
 const adJoinButton={reply_markup:{inline_keyboard:[[{text:"🖤 Я в деле",callback_data:"astroday_join"}]]}};
 const adTodayButton={reply_markup:{inline_keyboard:[[{text:"🔮 Мой прогноз на сегодня",callback_data:"astroday_today"}],[{text:"🌙 Личный кабинет",web_app:{url:"https://lizty666-stage.up.railway.app/login"}}]]}};
 async function adJoined(id){return (await db.unsafe("SELECT notifications_enabled FROM astroday_tester_joins WHERE telegram_id=$1",[id]))[0]}

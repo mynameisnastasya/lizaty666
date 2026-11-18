@@ -7,7 +7,7 @@
 - Откат: прежние деплойменты Railway (id ниже) или прежний код загрузчиков. Таблицы v2 можно оставить, они ни на что не влияют.
 
 ## Перед выкладкой
-- [ ] `bun test test/v2/` — 47/47; `python3 -m pytest engine/` — 9/9; `bun test test/*.test.mjs` — 63/70 (те же 7 известных).
+- [ ] `bun test test/v2/` — 48/48; `python3 -m pytest engine/` — 9/9; `bun test test/*.test.mjs` — 63/70 (те же 7 известных).
 - [ ] `bun tools/build-v2.mjs` — SHA в `release-v2/MANIFEST.json`.
 - [ ] Коммит и **push** ветки `astroday-2.0` (нужен доступ записи к `mynameisnastasya/lizaty666` в этой сессии).
 - [ ] `bun tools/package-git-v2.mjs <commit>` → `release-v2/deploy/{api,scheduler}-loader.ts`, код с GitHub по коммиту, проверка SHA, копия в БД.
@@ -33,5 +33,5 @@
 - API: redeploy `6f996b0e-9b18-42e6-a34c-292f0e460feb` (текущий `claude-polish1`) или прежний код загрузчика (`ASTRODAY_API_PKG_*` не удаляются).
 - Scheduler: redeploy `db8dcd2f-eee3-4864-bea7-c7387b15447f` (загрузчик `c33aa437…`).
 - daily7: redeploy `e8964c11-cff1-4a7d-98c4-bb03902d1a42`.
-- Быстрое выключение без деплоя кода: `ASTRODAY_V2_MODE=off` — бот и планировщик ведут себя как раньше. Пользователи v2 возвращаются в старые конвейеры, исключение по `astroday_v2_users` действует только при `enabled`; при необходимости `UPDATE astroday_v2_users SET enabled=false`.
+- Быстрое выключение без деплоя кода: `ASTRODAY_V2_MODE=off` на API и scheduler — бот и планировщик сразу ведут себя как раньше, пользователи v2 возвращаются в старые конвейеры генерации и доставки (тест «выключатель»). Для `daily7` (своей переменной режима нет) дополнительно выполнить `UPDATE astroday_v2_users SET enabled=false` или вернуть прежний деплоймент daily7.
 - Сервис `astroday-engine-v2-candidate` можно удалить, на старый код он не влияет.

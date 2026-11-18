@@ -1786,6 +1786,8 @@
 })();
 
 function astrodayV2Instance() { if (!globalThis.__astrodayV2) globalThis.__astrodayV2 = globalThis.ASTRODAY_V2_RUNTIME.install(Bun.env); return globalThis.__astrodayV2; }
+// Старые конвейеры исключают пользователей v2, только пока v2 включён (ASTRODAY_V2_MODE≠off): выключение мгновенно возвращает их в старую схему.
+function astrodayV2Excl(col) { return globalThis.ASTRODAY_V2_RUNTIME && astrodayV2Instance().active ? " AND NOT EXISTS(SELECT 1 FROM astroday_v2_users v2u WHERE v2u.telegram_id=" + col + " AND v2u.enabled)" : ""; }
 var {SQL } = globalThis.Bun;
 
 // forecast-runtime.ts
@@ -3164,7 +3166,7 @@ function eligibleForDelivery(row, now = new Date) {
 async function prepare(db) {
   if (Bun.env.FORECAST_SERVICE_ENABLED !== "true")
     return { disabled: true };
-  const deadline = Date.now() + 120000, rows = await db.unsafe("SELECT p.telegram_id,p.time_zone FROM liz_birth_profiles p JOIN liz_subscriptions s ON s.telegram_id=p.telegram_id WHERE s.valid_until>NOW() AND NOT EXISTS(SELECT 1 FROM astroday_v2_users v2u WHERE v2u.telegram_id=p.telegram_id AND v2u.enabled) AND NOT EXISTS(SELECT 1 FROM liz_astro_testers t WHERE t.verified_telegram_id=p.telegram_id AND t.consent_status='confirmed_by_account_holder' AND (NOW() AT TIME ZONE p.time_zone)::date>=t.trial_start AND (NOW() AT TIME ZONE p.time_zone)::date<t.trial_end_exclusive AND (NOW() AT TIME ZONE p.time_zone)::date>='2026-11-17'::date) ORDER BY p.telegram_id LIMIT 500");
+  const deadline = Date.now() + 120000, rows = await db.unsafe("SELECT p.telegram_id,p.time_zone FROM liz_birth_profiles p JOIN liz_subscriptions s ON s.telegram_id=p.telegram_id WHERE s.valid_until>NOW()" + astrodayV2Excl("p.telegram_id") + " AND NOT EXISTS(SELECT 1 FROM liz_astro_testers t WHERE t.verified_telegram_id=p.telegram_id AND t.consent_status='confirmed_by_account_holder' AND (NOW() AT TIME ZONE p.time_zone)::date>=t.trial_start AND (NOW() AT TIME ZONE p.time_zone)::date<t.trial_end_exclusive AND (NOW() AT TIME ZONE p.time_zone)::date>='2026-11-17'::date) ORDER BY p.telegram_id LIMIT 500");
   let cursor = 0, ready = 0, failed = 0, waiting = 0;
   await Promise.all([0, 1, 2].map(async () => {
     while (cursor < rows.length && Date.now() < deadline) {
@@ -3188,7 +3190,7 @@ async function deliver(db) {
     return { disabled: true };
   await db.unsafe("UPDATE liz_daily_messages SET status='needs_review',error_code='claim_expired_uncertain' WHERE status='sending' AND claim_at<NOW()-INTERVAL '20 minutes'");
   const start = Bun.env.FORECAST_START_LOCAL_DAY || "2026-11-16";
-  const rows = await db.unsafe("WITH jobs AS (SELECT m.id FROM liz_daily_messages m JOIN liz_subscriptions s ON s.telegram_id=m.telegram_id JOIN liz_clients c ON c.telegram_id=m.telegram_id JOIN liz_birth_profiles p ON p.telegram_id=m.telegram_id WHERE NOT EXISTS(SELECT 1 FROM astroday_v2_users v2u WHERE v2u.telegram_id=m.telegram_id AND v2u.enabled) AND NOT EXISTS(SELECT 1 FROM liz_astro_testers t WHERE t.verified_telegram_id=m.telegram_id AND t.consent_status='confirmed_by_account_holder' AND m.forecast_date>=t.trial_start AND m.forecast_date<t.trial_end_exclusive AND m.forecast_date>='2026-11-17'::date) AND m.status='pending' AND m.generation_state='ready' AND m.engine_version=$1 AND m.editorial_version=$2 AND m.forecast_date>=$3::date AND m.forecast_date=(NOW() AT TIME ZONE p.time_zone)::date AND m.due_at<=NOW() AND m.attempt_count<3 AND s.valid_until>NOW() AND c.notify_enabled=TRUE AND c.chat_started_at IS NOT NULL AND p.consented_to_daily=TRUE ORDER BY m.due_at FOR UPDATE OF m SKIP LOCKED LIMIT 40) UPDATE liz_daily_messages m SET status='sending',attempt_count=attempt_count+1,claim_at=NOW() FROM jobs WHERE m.id=jobs.id RETURNING m.id", [FORECAST_ENGINE_VERSION, FORECAST_EDITORIAL_VERSION, start]);
+  const rows = await db.unsafe("WITH jobs AS (SELECT m.id FROM liz_daily_messages m JOIN liz_subscriptions s ON s.telegram_id=m.telegram_id JOIN liz_clients c ON c.telegram_id=m.telegram_id JOIN liz_birth_profiles p ON p.telegram_id=m.telegram_id WHERE TRUE" + astrodayV2Excl("m.telegram_id") + " AND NOT EXISTS(SELECT 1 FROM liz_astro_testers t WHERE t.verified_telegram_id=m.telegram_id AND t.consent_status='confirmed_by_account_holder' AND m.forecast_date>=t.trial_start AND m.forecast_date<t.trial_end_exclusive AND m.forecast_date>='2026-11-17'::date) AND m.status='pending' AND m.generation_state='ready' AND m.engine_version=$1 AND m.editorial_version=$2 AND m.forecast_date>=$3::date AND m.forecast_date=(NOW() AT TIME ZONE p.time_zone)::date AND m.due_at<=NOW() AND m.attempt_count<3 AND s.valid_until>NOW() AND c.notify_enabled=TRUE AND c.chat_started_at IS NOT NULL AND p.consented_to_daily=TRUE ORDER BY m.due_at FOR UPDATE OF m SKIP LOCKED LIMIT 40) UPDATE liz_daily_messages m SET status='sending',attempt_count=attempt_count+1,claim_at=NOW() FROM jobs WHERE m.id=jobs.id RETURNING m.id", [FORECAST_ENGINE_VERSION, FORECAST_EDITORIAL_VERSION, start]);
   let sent = 0, review = 0, cancelled = 0, retry = 0;
   for (const claim of rows) {
     let cursor = 0;

@@ -120,3 +120,10 @@ test("оплата: выполнение заказа v2 → период и с�
   // весь период поставлен в очередь (31+ дат); за один тик воркер обрабатывает до 60 строк на всех — остаток добирается следующим тиком
   expect((await db.unsafe("SELECT count(*)::int n FROM astroday_v2_forecasts WHERE telegram_id=$1 AND status<>'invalidated'", [id]))[0].n).toBeGreaterThanOrEqual(31);
 }, 120000);
+
+test("выключатель: ASTRODAY_V2_MODE=off мгновенно возвращает пользователей v2 в старый конвейер", async () => {
+  const out = await runScheduler(mocks, DB, "release-v2/scheduler.mjs", { ASTRODAY_V2_MODE: "off" });
+  expect(out).toContain("ASTRODAY_V2_TICK");
+  expect(out).toContain("\"mode\":\"off\"");
+  expect((await db.unsafe("SELECT count(*)::int n FROM liz_daily_messages WHERE telegram_id='702'"))[0].n).toBeGreaterThan(0);
+}, 120000);

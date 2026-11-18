@@ -30,7 +30,9 @@ export async function buildV2Bundle() {
 // v2-ветка выполнения заказа: вместо старого конвейера — период v2 и сегодняшний прогноз сразу.
 const FULFILL_ANCHOR = "        const day = localForecastDay(acc.time_zone);\n        let item;\n";
 const FULFILL_V2 = "        if (globalThis.ASTRODAY_V2_RUNTIME && await astrodayV2Instance().isUser(db, job.telegram_id)) {\n          const v2r = await astrodayV2Instance().firstResult(db, job.telegram_id);\n          console.log(\"V2_FIRST_RESULT \" + JSON.stringify({ order: job.order_id, result: v2r }));\n          stats.done++; await release(\"done\", { day: localForecastDay(acc.time_zone) }); continue;\n        }\n" + FULFILL_ANCHOR;
-const INSTANCE = "\nfunction astrodayV2Instance() { if (!globalThis.__astrodayV2) globalThis.__astrodayV2 = globalThis.ASTRODAY_V2_RUNTIME.install(Bun.env); return globalThis.__astrodayV2; }\n";
+const INSTANCE = "\nfunction astrodayV2Instance() { if (!globalThis.__astrodayV2) globalThis.__astrodayV2 = globalThis.ASTRODAY_V2_RUNTIME.install(Bun.env); return globalThis.__astrodayV2; }\n" +
+  "// Старые конвейеры исключают пользователей v2, только пока v2 включён (ASTRODAY_V2_MODE≠off): выключение мгновенно возвращает их в старую схему.\n" +
+  "function astrodayV2Excl(col) { return globalThis.ASTRODAY_V2_RUNTIME && astrodayV2Instance().active ? \" AND NOT EXISTS(SELECT 1 FROM astroday_v2_users v2u WHERE v2u.telegram_id=\" + col + \" AND v2u.enabled)\" : \"\"; }\n";
 
 export async function build({ write = true } = {}) {
   const apiBase = read("deployed/api.mjs"), schBase = read("deployed/scheduler.mjs");
@@ -93,8 +95,8 @@ function astrodayV2Invite(up) {
     ["    await ensureForecastSchema(db);\n    await db.unsafe(\"INSERT INTO liz_delivery_health", "    await ensureForecastSchema(db);\n    if (globalThis.ASTRODAY_V2_RUNTIME) await astrodayV2Instance().ensure(db);\n    await db.unsafe(\"INSERT INTO liz_delivery_health"],
     ["    console.log(\"ASTRODAY_WORKER_DELIVERY \" + JSON.stringify(await deliver(db)));\n", "    console.log(\"ASTRODAY_WORKER_DELIVERY \" + JSON.stringify(await deliver(db)));\n    if (globalThis.ASTRODAY_V2_RUNTIME) console.log(\"ASTRODAY_V2_TICK \" + JSON.stringify(await astrodayV2Instance().schedulerTick(db, { alert: (t) => adminNotify(db, \"v2_alert\", t) }).catch((e) => ({ error: String(e?.message || e).slice(0, 160) }))));\n"],
     // старые конвейеры не трогают пользователей v2 (иначе двойная генерация и двойная рассылка)
-    ["WHERE s.valid_until>NOW() AND NOT EXISTS(SELECT 1 FROM liz_astro_testers", "WHERE s.valid_until>NOW() AND NOT EXISTS(SELECT 1 FROM astroday_v2_users v2u WHERE v2u.telegram_id=p.telegram_id AND v2u.enabled) AND NOT EXISTS(SELECT 1 FROM liz_astro_testers"],
-    ["JOIN liz_birth_profiles p ON p.telegram_id=m.telegram_id WHERE NOT EXISTS(SELECT 1 FROM liz_astro_testers", "JOIN liz_birth_profiles p ON p.telegram_id=m.telegram_id WHERE NOT EXISTS(SELECT 1 FROM astroday_v2_users v2u WHERE v2u.telegram_id=m.telegram_id AND v2u.enabled) AND NOT EXISTS(SELECT 1 FROM liz_astro_testers"],
+    ["WHERE s.valid_until>NOW() AND NOT EXISTS(SELECT 1 FROM liz_astro_testers", "WHERE s.valid_until>NOW()\" + astrodayV2Excl(\"p.telegram_id\") + \" AND NOT EXISTS(SELECT 1 FROM liz_astro_testers"],
+    ["JOIN liz_birth_profiles p ON p.telegram_id=m.telegram_id WHERE NOT EXISTS(SELECT 1 FROM liz_astro_testers", "JOIN liz_birth_profiles p ON p.telegram_id=m.telegram_id WHERE TRUE\" + astrodayV2Excl(\"m.telegram_id\") + \" AND NOT EXISTS(SELECT 1 FROM liz_astro_testers"],
     [FULFILL_ANCHOR, FULFILL_V2],
   ], "scheduler");
 
