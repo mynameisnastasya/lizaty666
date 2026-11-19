@@ -1,0 +1,28 @@
+name: ASTRODAY cabinet checks
+on:
+  push:
+    branches: [astroday/cabinet-mobile-20261119]
+    paths: ['astroday/cabinet/**', '.github/workflows/astroday-cabinet.yml']
+permissions:
+  contents: read
+jobs:
+  mobile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    defaults:
+      run:
+        working-directory: astroday/cabinet
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install playwright==1.55.0
+      - run: python -m playwright install chromium --with-deps
+      - run: python check.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cabinet-layout
+          path: astroday/cabinet/day-*.png
+          retention-days: 3
