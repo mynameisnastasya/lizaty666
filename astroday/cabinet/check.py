@@ -42,7 +42,7 @@ with sync_playwright() as pw:
   if w==1280:page.screenshot(path='day-desktop.png')
  page.set_viewport_size({'width':390,'height':780})
  nav('chart');loc('#chart').click();expect(loc('#natal')).to_contain_text('Весы')
- nav('profile');expect(loc('#delivery')).to_contain_text('08:35');loc('#deliverySettings summary').click();loc('#scheduleTime').fill('09:47');loc('#scheduleEnabled').uncheck();loc('#saveSchedule').click();expect(loc('#scheduleStatus')).to_have_text('Настройки сохранены.');assert data['written']['deliveryMinute']==47 and not data['written']['dailyConsent']
+ nav('profile');expect(loc('#details')).to_contain_text('14 марта 2001');expect(loc('#delivery')).to_contain_text('Красноярск');expect(loc('#delivery')).to_contain_text('08:35');loc('#deliverySettings summary').click();loc('#scheduleTime').fill('09:47');loc('#scheduleEnabled').uncheck();loc('#saveSchedule').click();expect(loc('#scheduleStatus')).to_have_text('Настройки сохранены.');assert data['written']['deliveryMinute']==47 and not data['written']['dailyConsent']
  nav('access');expect(loc('#subscription')).to_contain_text('17 декабря');page.go_back();expect(loc('#view-profile')).to_be_visible()
  loc('#profileLink').click();expect(loc('#fullName')).to_have_value('Анна');expect(loc('#deliveryHour')).to_have_value('08:35');expect(loc('#marketingConsent')).to_be_checked()
  loc('#city').fill('Красн');loc('#results button').click();loc('#acceptTerms').check();loc('#pdConsent').check();loc('#save').click();expect(loc('#status')).to_contain_text('Анкета сохранена');assert data['written']['deliveryMinute']==35 and data['written']['birthPlaceId']==5
@@ -50,6 +50,7 @@ with sync_playwright() as pw:
  data['fail']=True;goto('/railway-profile');expect(loc('#retry')).to_be_visible();data['fail']=False;loc('#retry').click();expect(loc('#panel')).to_be_visible()
  profile['subscriptionUntil']=None;goto('/app');expect(loc('#preview')).to_be_visible();expect(loc('#today')).to_be_hidden();data['state']='pending';loc('#preview').click();expect(loc('#resultStatus')).to_contain_text('автоматически');data['state']='ready';loc('#preview').click();expect(loc('#forecast')).to_contain_text('ВЕЧЕР')
  profile['registered']=False;goto('/app#chart');expect(loc('#chartProfile')).to_be_visible();expect(loc('#chart')).to_be_hidden();profile['registered']=True
+ profile['trialProfileChanged']=True;goto('/app');expect(loc('#preview')).to_be_disabled();expect(loc('#resultStatus')).to_contain_text('прежней карте');profile['trialProfileChanged']=False
  data['auth']=False;goto('/app#profile');expect(loc('#guest')).to_be_visible();expect(loc('.sidebar')).to_be_hidden();loc('#guest a.button').click();expect(loc('#begin')).to_be_visible();loc('#begin').click();expect(loc('#botlink')).to_be_visible()
  data['auth']=True;page.reload();page.wait_for_url('**/app#profile');expect(loc('#view-profile')).to_be_visible()
  data['auth']=False;goto('/checkout?plan=halfyear');loc('#loginGate a').click();data['auth']=True;page.reload();page.wait_for_url('**/checkout?plan=halfyear');expect(loc('input[value=halfyear]')).to_be_checked();expect(loc('#pay')).to_be_disabled()
