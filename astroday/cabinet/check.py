@@ -37,6 +37,7 @@ with sync_playwright() as pw:
  loc('.source-note summary').click();expect(loc('.source-note p')).to_be_visible()
  for w in [320,390,768,1280]:
   page.set_viewport_size({'width':w,'height':780});assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),w
+  page.evaluate('window.scrollTo(0,0)')
   if w==390:page.screenshot(path='day-mobile.png')
   if w==1280:page.screenshot(path='day-desktop.png')
  page.set_viewport_size({'width':390,'height':780})
@@ -57,6 +58,7 @@ with sync_playwright() as pw:
  data['readyForPublicSales']=False;page.reload();expect(loc('#unavailable')).to_be_visible();expect(loc('#pay')).to_be_disabled()
  page.add_init_script("window.Telegram={WebApp:{initData:'fixture',ready(){},expand(){},isVersionAtLeast:()=>true,BackButton:{hide(){},show(){},onClick(f){window.back=f}},setHeaderColor(){},setBackgroundColor(){},setBottomBarColor(){},openLink(u){window.opened=u}}}")
  goto('/app#chart');expect(loc('html')).to_have_class(re.compile('telegram-mini'));nav('access');loc('#paymentLink').click();assert page.evaluate("window.opened.endsWith('/checkout')");page.evaluate('window.back()');expect(loc('#view-day')).to_be_visible()
+ profile['subscriptionUntil']='2026-12-17T17:00:00Z';goto('/app');expect(loc('#forecast')).to_contain_text('ВЕЧЕР');page.screenshot(path='day-telegram.png');nav('profile');loc('#deliverySettings summary').click();expect(loc('#scheduleTime')).to_be_visible();page.screenshot(path='day-settings.png')
  goto('/checkout?plan=year');expect(loc('#miniGate')).to_be_visible();loc('#external').click();assert page.evaluate("window.opened.endsWith('/checkout?plan=year')")
  assert not errors,errors
  print('Passed: dashboard states, copy, disclosure, tabs, history, chart, profile, delivery, retry, guest sign-in return, preview, checkout, Telegram bridge, breakpoints 320–1280')
