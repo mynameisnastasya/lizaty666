@@ -28,7 +28,8 @@ with sync_playwright() as pw:
   else:raise Exception(k)
   r.fulfill(status=s,json=v)
  ctx.route('**/_api/**',api);ctx.route('https://telegram.org/**',lambda r:r.fulfill(body='',content_type='text/javascript'))
- goto=lambda path:page.goto(origin+path)
+ def goto(path):
+  page.goto('about:blank');page.goto(origin+path)
  loc=lambda css:page.locator(css)
  nav=lambda name:loc('button[data-view='+name+']').click()
  page.clock.set_fixed_time('2026-11-19T03:30:00Z');goto('/app');expect(loc('#forecast')).to_contain_text('ВЕЧЕР');assert data['calls'].count('forecast/today')==1
