@@ -16,6 +16,8 @@ with sync_playwright() as pw:
   elif k=='forecast/me':v=profile;s=503 if data['fail'] else 200
   elif k=='app-status':v={'forecastAvailable':True,'paymentsAvailable':True,'dailyDeliveryAvailable':True}
   elif k in ('forecast/today','forecast/preview'):v=dict(version='astroday-v2',source='astroday_v2_forecasts',day='2026-11-19',status=data['state'],text=text,preview=text)
+  elif k.startswith('forecast/calendar?day='):v={'text':'Прогноз на выбранную дату','events':[],'zone':'Asia/Krasnoyarsk'}
+  elif k.startswith('forecast/calendar'):v={'month':'2026-11','today':'2026-11-19','ranges':[{'lo':'2026-11-13','hi':'2026-11-30'}],'events':[{'time':'2026-11-24 21:53','title':'Полнолуние'}],'report':{'title':'Личная тема','paragraphs':[],'tips':[]},'zone':'Asia/Krasnoyarsk'}
   elif k=='forecast/chart':v={'natal':{'Солнце':'Весы 7.4°'}}
   elif k.startswith('forecast/places'):v={'places':[{'id':5,'name':'Красноярск','label':'Красноярск, Россия'}]}
   elif k in ('forecast/settings','forecast/register'):data['written']=r.request.post_data_json['json'];v={'ok':True}
@@ -34,7 +36,11 @@ with sync_playwright() as pw:
  nav=lambda name:loc('button[data-view='+name+']').click()
  page.clock.set_fixed_time('2026-11-19T03:30:00Z');goto('/app');expect(loc('#forecast')).to_contain_text('ВЕЧЕР');assert data['calls'].count('forecast/today')==1
  loc('#copy').click();assert page.evaluate('navigator.clipboard.readText()')==text
- loc('.source-note summary').click();expect(loc('.source-note p')).to_be_visible()
+ assert loc('.source-note').count()==0 and not any(k.startswith('forecast/calendar') for k in data['calls'])
+ loc('#calendar-shortcut').click();expect(loc('#view-calendar')).to_be_visible()
+ loc('#cal-grid [data-day="2026-11-19"]').click();expect(loc('#cal-day')).to_contain_text('Прогноз на выбранную дату')
+ loc('#cal-day button').click();expect(loc('#cal-day')).to_be_hidden()
+ goto('/app?view=calendar&open=events#calendar');expect(loc('#cal-events .cal-reader')).to_be_visible();expect(loc('#cal-events')).to_contain_text('Полнолуние');nav('day')
  for w in [320,390,768,1280]:
   page.set_viewport_size({'width':w,'height':780});assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),w
   page.evaluate('window.scrollTo(0,0)')
@@ -62,4 +68,4 @@ with sync_playwright() as pw:
  profile['subscriptionUntil']='2026-12-17T17:00:00Z';goto('/app');expect(loc('#forecast')).to_contain_text('ВЕЧЕР');page.screenshot(path='day-telegram.png');nav('profile');loc('#deliverySettings summary').click();expect(loc('#scheduleTime')).to_be_visible();page.screenshot(path='day-settings.png')
  goto('/checkout?plan=year');expect(loc('#miniGate')).to_be_visible();loc('#external').click();assert page.evaluate("window.opened.endsWith('/checkout?plan=year')")
  assert not errors,errors
- print('Passed: dashboard states, copy, disclosure, tabs, history, chart, profile, delivery, retry, guest sign-in return, preview, checkout, Telegram bridge, breakpoints 320–1280')
+ print('Passed: dashboard states, copy, calendar, day selection, monthly events, tabs, history, chart, profile, delivery, retry, guest sign-in return, preview, checkout, Telegram bridge, breakpoints 320–1280')
