@@ -1,0 +1,26 @@
+name: ASTRODAY offline personalized editorial
+on:
+  push:
+    branches: [astroday/offline-monthly-editorial-20261121]
+    paths:
+      - "astroday/v2/offline-editorial.mjs"
+      - "astroday/test/v2/offline-editorial.test.mjs"
+      - ".github/workflows/astroday-offline-editorial.yml"
+  pull_request:
+    branches: [astroday-2.0]
+    paths:
+      - "astroday/v2/offline-editorial.mjs"
+      - "astroday/test/v2/offline-editorial.test.mjs"
+permissions:
+  contents: read
+jobs:
+  offline-editorial:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Node tests (no model API)
+        run: node --test astroday/test/v2/offline-editorial.test.mjs

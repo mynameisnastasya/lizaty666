@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="theme-color" content="#19111d"/>
+<title>ASTRODAY · Лиза</title>
+<style>
+:root{color-scheme:dark;--bg:#170f1b;--bg2:#241826;--surface:#2c202f;--surface2:#3c2a38;--ink:#f8eee7;--sub:#ddcbd0;--muted:#bdacb6;--accent:#f2c7ad;--accent-deep:#cf968f;--gold:#dfc49d;--border:rgba(255,213,185,.18);--shadow:0 14px 56px rgba(5,2,9,.21);--bottom-safe:0px;--top-safe:0px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-width:320px;min-height:100dvh;font:14px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--ink);background:radial-gradient(ellipse 80vw 60vw at 3% 0%,#453044 0,transparent 75%),radial-gradient(ellipse 80vw 70vw at 90% 100%,#302235 0,transparent 78%),var(--bg);-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit}button{cursor:pointer}a{color:var(--accent)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid #f9d7a7;outline-offset:3px}p{margin:.6em 0 1.05em}main{max-width:760px;margin:0 auto;padding:calc(20px + var(--top-safe)) 17px calc(116px + var(--bottom-safe))}
+.app-header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:19px;border-bottom:1px solid var(--border)}.brand{letter-spacing:.18em;text-transform:uppercase;font-size:15px;font-weight:900;color:#ffecdf}.brand .dot{color:#efae9d}.brand small{display:block;font-size:9px;letter-spacing:.29em;font-weight:500;color:#c4a9ad;margin-top:3px}.header-mark{width:36px;height:36px;border:1px solid rgba(255,218,177,.28);border-radius:50%;display:grid;place-items:center;color:#f6d2b0;font-family:Georgia,serif;font-size:23px}
+.hero{isolation:isolate;position:relative;overflow:hidden;margin:18px 0 20px;padding:30px 23px 26px;border-radius:26px;border:1px solid rgba(255,212,180,.31);min-height:250px;background:radial-gradient(ellipse at 75% 18%,rgba(236,172,159,.13),transparent 43%),linear-gradient(133deg,#473045 1%,#2a1c2f 72%,#231829);box-shadow:var(--shadow)}
+.hero:before,.hero:after{content:"";position:absolute;pointer-events:none;border:1px solid rgba(255,221,182,.27);border-radius:50%;transform:rotate(-26deg)}.hero:before{width:233px;height:233px;right:-55px;top:-62px;box-shadow:0 0 0 25px rgba(245,186,172,.035),0 0 0 53px rgba(255,218,185,.025)}.hero:after{width:128px;height:128px;right:17px;top:-6px;border-color:rgba(255,227,191,.14)}
+.sparkles{pointer-events:none;position:absolute;inset:0;background:radial-gradient(circle at 15% 26%,#f9daa9 1px,transparent 2px),radial-gradient(circle at 87% 78%,#fbd6c8 1px,transparent 2px),radial-gradient(circle at 60% 10%,#fbd6c8 1px,transparent 2px);opacity:.57}.hero>*:not(.sparkles){position:relative;z-index:1}.eyebrow{font-size:9px;font-weight:850;letter-spacing:.19em;color:#e9bfb2}.hero h1{font:500 clamp(48px,10vw,75px)/.92 Georgia,"Times New Roman",serif;letter-spacing:-.052em;margin:20px 0 14px;max-width:540px;text-wrap:balance}.hero h1 em{color:#f4cab5;font-weight:400}.hero p{max-width:430px;color:#e2cbd0;font-size:12px;line-height:1.75}.hero-footer{border-top:1px solid var(--border);margin-top:29px;padding-top:15px;font-size:9px;letter-spacing:.17em;color:#cfaea9;text-transform:uppercase}
+.section{display:none;animation:appear .22s ease-out}.section.active{display:block}.section-heading{display:flex;gap:12px;justify-content:space-between;align-items:end;margin:0 3px 14px}.section-heading .small{color:#d4b0ae;font-weight:800;letter-spacing:.14em;font-size:9px;text-transform:uppercase}.section-heading h2{margin:4px 0 0;font:500 37px/1.06 Georgia,"Times New Roman",serif;letter-spacing:-.04em}.section-heading .ornament{font:30px Georgia,serif;color:#dcae9a}
+.panel{border-radius:22px;padding:22px;background:linear-gradient(150deg,rgba(56,39,54,.97),rgba(36,27,41,.97));border:1px solid var(--border);box-shadow:0 8px 25px rgba(12,4,15,.11);margin:13px 0 16px}
+.ribbon{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid rgba(244,192,157,.22);background:rgba(242,194,170,.058);padding:12px 15px;border-radius:12px;margin:12px 0;color:#ebc5b7;font-size:11px}.period{font-weight:750;letter-spacing:.025em}
+.prose{font-size:13px;line-height:1.85;overflow-wrap:anywhere;white-space:pre-wrap;color:#eddae1}.prose b{font-size:13px;color:#ffdfce;font-weight:800}.prose i{font-size:11px;color:#c6b7c0}.prose:empty:after{content:"Здесь появится твой прогноз";color:var(--muted)}
+.prose .hint{color:var(--muted)}.muted{color:var(--muted);font-size:12px}.soft{color:#dec9cf;font-size:12px}
+.alert{border:1px solid rgba(246,189,158,.31);background:rgba(235,161,150,.06);color:#f3d2c5;line-height:1.7;font-size:12px;padding:15px;border-radius:15px;margin:12px 0}.alert[hidden]{display:none}.alert strong{display:block;color:#ffe0d0;margin-bottom:3px}.loading{opacity:.65}.loading:after{content:"";display:inline-block;width:11px;height:11px;margin-left:9px;border:2px solid #d9a69e;border-right-color:transparent;border-radius:50%;animation:spin .8s linear infinite}
+.toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:11px;margin:14px 0}.date-input{border:1px solid var(--border);background:#241b28;color:#f8e7e1;border-radius:13px;padding:11px 13px;min-height:47px;max-width:100%;color-scheme:dark}.primary{min-height:47px;display:inline-flex;align-items:center;justify-content:center;gap:7px;background:#efc4aa;color:#34242f;font-weight:850;border:1px solid #f9dec2;border-radius:12px;padding:10px 17px;box-shadow:0 6px 13px rgba(239,196,170,.12)}.primary:hover{background:#f9d3bb}.subtle-btn{min-height:42px;border:1px solid rgba(245,197,170,.28);background:#372736;color:#f5d4c5;border-radius:12px;padding:9px 14px;font-size:12px}
+.day-strip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin:10px 0 15px}.day{padding:9px 1px;border-radius:11px;background:rgba(240,194,171,.07);border:1px solid transparent;color:#e4ccd1;font-size:11px;min-height:62px;line-height:1.3}.day span{display:block;font-size:9px;color:#c4a9ad;margin-bottom:6px}.day[aria-pressed=true]{background:#efc5ae;color:#322331;font-weight:850;border-color:#ffdac5}.day[aria-pressed=true] span{color:#523947}.day:disabled{opacity:.22;cursor:default}
+.month-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin:16px 0}.month-grid .weekday{font-size:10px;color:#c9adb4;text-align:center}.month-grid .date{border:1px solid rgba(251,209,188,.12);border-radius:10px;min-height:46px;background:rgba(247,198,165,.035);color:#f6dfd6}.month-grid .date:disabled{opacity:.16}.month-grid .date[aria-pressed=true]{background:#ebbbab;color:#2f2130;font-weight:850;border-color:#f9d8c2}.month-grid .date.today:not([aria-pressed=true]){border-color:#e2b5a2}.month-switch{display:flex;gap:10px;justify-content:space-between;align-items:center}.month-switch strong{font:500 27px Georgia,serif}.month-switch button{width:41px;height:41px;border:1px solid var(--border);border-radius:12px;background:#382837;color:#efd3c9}.tip{padding:13px 14px;border-radius:12px;background:rgba(246,196,165,.05);color:#cbb4bf;border:1px solid rgba(246,196,165,.13);font-size:11px}
+.event-header{display:flex;align-items:center;gap:11px;justify-content:space-between;border-bottom:1px solid var(--border);padding:0 0 14px;margin:0 0 7px}.event-header p{font-size:11px;color:#d4b8c0;margin:4px 0}.zone-select{background:#342635;color:#f6dfd8;border:1px solid var(--border);border-radius:9px;padding:9px;font-size:11px;max-width:178px}
+.event{border-bottom:1px solid var(--border)}.event summary{display:flex;align-items:center;gap:12px;cursor:pointer;list-style:none;padding:16px 0}.event summary::-webkit-details-marker{display:none}.event summary .date{flex:0 0 71px;color:#f0bdad;font-size:10px;line-height:1.45}.event summary strong{font-size:13px;font-weight:800;flex:1;line-height:1.35}.event summary .plus{color:#e8b5a1;font-size:21px;transition:transform .2s}.event[open] summary .plus{transform:rotate(45deg)}.event-body{padding:0 3px 20px 83px;font-size:12px;color:#dbc7d0;line-height:1.75}.event-body h4{color:#f0c6b2;margin:15px 0 5px;font-size:11px}.event-body p{margin:4px 0 13px}.event-body li{margin:3px 0}.event-body ul{padding-left:17px}.event-body .caveat{font-size:10px;color:#a998a9;border-left:2px solid #c4908d;padding-left:11px;margin-top:14px}
+.quicklinks{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:13px 0}.quicklinks a{display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:12px;border:1px solid var(--border);background:rgba(242,194,169,.07);font-size:12px;font-weight:700;text-align:center;text-decoration:none}
+.footer-note{font-size:11px;line-height:1.8;color:#ae98aa;margin:19px 5px 0}.nav{position:fixed;inset:auto 0 0;display:flex;justify-content:center;background:rgba(24,17,28,.96);border-top:1px solid rgba(241,200,180,.17);padding:9px 7px calc(10px + max(env(safe-area-inset-bottom,0px),var(--bottom-safe)));backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);z-index:40}.nav-inner{width:100%;max-width:760px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px}.nav button{border:1px solid transparent;background:transparent;color:#bfaab7;font-size:10px;line-height:1.3;padding:7px 1px;min-height:58px;border-radius:13px}.nav button span{display:block;font-size:20px;line-height:1.2;margin-bottom:5px}.nav button[aria-current=page]{color:#ffdcc9;border-color:rgba(235,191,160,.18);background:#493344;font-weight:800}
+@media(max-width:400px){main{padding-left:11px;padding-right:11px}.hero{padding:26px 18px}.panel{padding:18px 14px}.section-heading h2{font-size:33px}.event-body{padding-left:3px}.nav button{font-size:9px}.nav button span{font-size:19px}.day-strip{gap:4px}}@media(min-width:650px){.hero{min-height:300px;padding:44px 35px}.panel{padding:29px}.prose{font-size:14px;line-height:1.86}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.section{animation:none}.loading:after{animation:none}.event summary .plus{transition:none}}
+@keyframes appear{from{opacity:.6;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head><body>
+<main>
+<header class="app-header"><div class="brand">ASTRODAY<span class="dot">.</span> <span style="letter-spacing:0;font-weight:500">Лиза</span><small>Личная астрология</small></div><div class="header-mark" aria-hidden="true">☾</div></header>
+<div id="hero" class="hero"><div class="sparkles"></div><div class="eyebrow">ПЕРСОНАЛЬНЫЙ КОСМОС · ASTRODAY</div><h1>Твоё небо.<br><em>Твои решения.</em></h1><p>Без мистических страшилок. С личными аспектами, Луной и человеческими рекомендациями от Лизы.</p><div class="hero-footer">Твои темы · Твой темп · Твоя карта</div></div>
+<div id="notice" class="alert" role="status" aria-live="polite" hidden></div>
+<section class="section active" id="month-section" aria-labelledby="month-heading">
+ <div class="section-heading"><div><div class="small">01 / Личный период</div><h2 id="month-heading">Мой месяц</h2></div><span class="ornament" aria-hidden="true">✧</span></div>
+ <div class="ribbon"><span class="period" id="period-label">Твой персональный период</span><span>☾</span></div>
+ <article class="panel"><div class="eyebrow">ТВОИ ЛИЧНЫЕ ТЕМЫ</div><div class="prose" id="month-text" aria-live="polite"></div></article>
+ <div class="quicklinks"><a href="#" data-goto="calendar">☷ Календарь дней</a><a href="#" data-goto="events">✦ События месяца</a></div>
+</section>
+<section class="section" id="today-section" aria-labelledby="today-heading">
+ <div class="section-heading"><div><div class="small">02 / День за днём</div><h2 id="today-heading">Мой день</h2></div><span class="ornament" aria-hidden="true">☼</span></div>
+ <div class="panel">
+   <div class="toolbar"><label for="day-input" class="muted">Дата прогноза</label><input class="date-input" type="date" id="day-input" min="2026-11-21" max="2026-12-17" value="2026-11-21"></div>
+   <div id="day-strip" class="day-strip" aria-label="Ближайшие дни"></div>
+   <button type="button" id="day-go" class="primary">☀ Открыть прогноз</button>
+ </div>
+ <article class="panel"><div class="eyebrow">ЛИЧНЫЙ ПРОГНОЗ</div><div class="prose" id="day-text" aria-live="polite"></div></article>
+</section>
+<section class="section" id="calendar-section" aria-labelledby="calendar-heading">
+ <div class="section-heading"><div><div class="small">03 / Твой календарь</div><h2 id="calendar-heading">Календарь</h2></div><span class="ornament" aria-hidden="true">✦</span></div>
+ <div class="panel">
+   <div class="month-switch"><button id="prev-month" aria-label="Предыдущий месяц">‹</button><strong id="month-label">Ноябрь 2026</strong><button id="next-month" aria-label="Следующий месяц">›</button></div>
+   <div id="month-grid" class="month-grid" aria-label="Календарь доступных дней"></div>
+   <p class="tip">Доступны даты подготовленного персонального периода. Выбери день, чтобы прочитать полный прогноз с Луной и рекомендациями.</p>
+ </div>
+</section>
+<section class="section" id="events-section" aria-labelledby="events-heading">
+ <div class="section-heading"><div><div class="small">04 / Небесные события</div><h2 id="events-heading">События месяца</h2></div><span class="ornament" aria-hidden="true">☽</span></div>
+ <div class="panel">
+  <div class="event-header"><div><strong>Ноябрь 2026</strong><p>Планеты, Луна и их символика</p></div><select class="zone-select" id="timezone" aria-label="Часовой пояс событий"><option value="Asia/Ho_Chi_Minh">Вьетнам · +7</option><option value="Asia/Makassar">Бали · +8</option><option value="Europe/Moscow">Москва · +3</option><option value="local">Моё время</option></select></div>
+  <div id="events-list" aria-live="polite" class="muted">События загружаются…</div>
+  <p class="footer-note">События месяца общие для всех, а личное влияние определяется по рассчитанным аспектам и натальной карте.</p>
+ </div>
+</section>
+<section class="section" id="profile-section" aria-labelledby="profile-heading">
+ <div class="section-heading"><div><div class="small">05 / Твой доступ</div><h2 id="profile-heading">Профиль</h2></div><span class="ornament" aria-hidden="true">♧</span></div>
+ <div class="panel">
+   <div class="eyebrow">ПОДПИСКА ASTRODAY</div>
+   <p id="access-note" class="soft" aria-live="polite">Проверяю доступ…</p>
+   <div class="quicklinks"><a href="https://t.me/Lizty666bot" rel="noopener noreferrer">↗ Бот Лизы</a><a href="https://lizty666-stage.up.railway.app/app" rel="noopener noreferrer">↗ Основной кабинет</a></div>
+   <p class="footer-note">Персональные данные и расчёты показываются только после подтверждения входа Telegram. Время рождения не проверено? Натальные дома в таком случае не используются.</p>
+ </div>
+ <div class="panel"><strong>Как устроен прогноз</strong><p class="soft">Это авторская интерпретация астрологических символов, а не гарантированное предсказание событий. Проверяй важные решения по фактам, документам и своим обстоятельствам.</p></div>
+</section>
+<p class="footer-note">ASTRODAY · Лиза. Тексты основаны на персонально сохранённых расчётах. Подробные прогнозы подготовлены на указанный период; за пределами него приложение не показывает придуманные данные.</p>
+</main>
+<nav class="nav" aria-label="Разделы приложения"><div class="nav-inner">
+ <button data-tab="today" aria-current="false" aria-label="Мой день"><span aria-hidden="true">☀</span>Мой день</button>
+ <button data-tab="calendar" aria-current="false" aria-label="Календарь"><span aria-hidden="true">▦</span>Календарь</button>
+ <button data-tab="month" aria-current="page" aria-label="Мой месяц"><span aria-hidden="true">☽</span>Мой месяц</button>
+ <button data-tab="events" aria-current="false" aria-label="События"><span aria-hidden="true">✧</span>События</button>
+ <button data-tab="profile" aria-current="false" aria-label="Профиль"><span aria-hidden="true">♧</span>Профиль</button>
+</div></nav>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script>
+(()=>{"use strict";
+ const tg=window.Telegram&&window.Telegram.WebApp;
+ if(tg){try{tg.ready();tg.expand();tg.setHeaderColor("#19111d");tg.setBackgroundColor("#170f1b");}catch(_e){}}
+ const initData=tg&&tg.initData||"";
+ let DAY_MIN="2026-11-21",DAY_MAX="2026-12-17";
+ const weekdays=["Вс","Пн","Вт","Ср","Чт","Пт","Сб"],shortDays=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
+ const tabs=["today","calendar","month","events","profile"],menu=document.querySelectorAll("[data-tab]"),notice=document.getElementById("notice");
+ const dateInput=document.getElementById("day-input"),eventsList=document.getElementById("events-list"),zoneSelect=document.getElementById("timezone");
+ let active="month",calendarYear=2026,calendarMonth=10,monthLoaded=false,eventsLoaded=false,eventsData=[],currentDate;
+ function ymd(date){return date.getFullYear()+"-"+String(date.getMonth()+1).padStart(2,"0")+"-"+String(date.getDate()).padStart(2,"0");}
+ function dFromISO(s){return new Date(s+"T12:00:00");}
+ function clamp(d){return d<DAY_MIN?DAY_MIN:d>DAY_MAX?DAY_MAX:d;}
+ function periodIndex(year,month){return year*12+month;}
+ function updatePeriod(start,end){
+  if(typeof start!=="string"||typeof end!=="string"||!/^\d{4}-\d{2}-\d{2}$/.test(start)||!/^\d{4}-\d{2}-\d{2}$/.test(end)||start>end)return;
+  DAY_MIN=start;DAY_MAX=end;dateInput.min=start;dateInput.max=end;calendarYear=Number(start.slice(0,4));calendarMonth=Number(start.slice(5,7))-1;
+  const dateFormat=new Intl.DateTimeFormat("ru-RU",{day:"numeric",month:"long",year:"numeric"});
+  document.getElementById("period-label").textContent=dateFormat.format(dFromISO(start))+" — "+dateFormat.format(dFromISO(end));
+  currentDate=clamp(ymd(new Date()));dateInput.value=currentDate;updateStrip();drawMonth();
+ }
+ currentDate=clamp(ymd(new Date()));dateInput.value=currentDate;
+ function notify(msg){notice.hidden=false;notice.textContent=msg;}
+ function clear(){notice.hidden=true;notice.textContent="";}
+ function vibrate(){try{tg&&tg.HapticFeedback&&tg.HapticFeedback.selectionChanged()}catch(_e){}}
+ function adjustSafe(){try{const v=tg&&tg.contentSafeAreaInset||{},safe=tg&&tg.safeAreaInset||{};document.documentElement.style.setProperty("--bottom-safe",Math.max(Number(v.bottom)||0,Number(safe.bottom)||0)+"px");document.documentElement.style.setProperty("--top-safe",Math.max(0,Number(v.top)||0)+"px")}catch(_e){}}
+ adjustSafe();try{tg&&tg.onEvent&&tg.onEvent("contentSafeAreaChanged",adjustSafe)}catch(_e){}
+ function show(tab){if(!tabs.includes(tab))return;active=tab;tabs.forEach(k=>{document.getElementById(k+"-section").classList.toggle("active",k===tab)});menu.forEach(b=>b.setAttribute("aria-current",b.dataset.tab===tab?"page":"false"));vibrate();window.scrollTo({top:0,behavior:"instant"});if(tab==="month"&&!monthLoaded)load("month");if(tab==="today"){if(!monthLoaded)load("month");load("day",dateInput.value);}if(tab==="profile")load("profile");if(tab==="events"&&!eventsLoaded)loadEvents();if(tab==="calendar"){if(!monthLoaded)load("month");drawMonth();}}
+ async function load(section,day){if(!initData){notify("Открой страницу через кнопку внутри Telegram-бота @Lizty666bot, чтобы подтвердить свой профиль и подписку.");return}
+ const element=section==="month"?document.getElementById("month-text"):section==="day"?document.getElementById("day-text"):document.getElementById("access-note");if(section==="month"&&monthLoaded)return;
+ element.classList.add("loading");element.setAttribute("aria-busy","true");
+ try{const r=await fetch("/api/personal",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"omit",body:JSON.stringify({section,day,initData})});const data=await r.json();if(!r.ok)throw Error(data.error||"Не удалось получить прогноз");clear();if(section==="month"){element.innerHTML=data.bodyHtml;updatePeriod(data.periodStart,data.periodEnd);monthLoaded=true}else if(section==="day"){element.innerHTML=data.bodyHtml}else if(section==="profile"){element.textContent=data.accessNote;} }catch(e){notify("Не удалось загрузить: "+String(e.message||e).slice(0,140));}
+ finally{element.classList.remove("loading");element.removeAttribute("aria-busy");}}
+ function updateStrip(){const day=dFromISO(dateInput.value);let html="";for(let delta=-3;delta<=3;delta++){const d=new Date(day);d.setDate(day.getDate()+delta);const iso=ymd(d);const allowed=iso>=DAY_MIN&&iso<=DAY_MAX;html+='<button type="button" class="day" data-day="'+iso+'" aria-pressed="'+String(iso===dateInput.value)+'" '+(allowed?"":"disabled")+"><span>"+weekdays[d.getDay()]+"</span>"+d.getDate()+"</button>";}document.getElementById("day-strip").innerHTML=html;document.querySelectorAll("[data-day]").forEach(b=>b.addEventListener("click",()=>setDay(b.dataset.day,true)));}
+ function setDay(iso,open){dateInput.value=clamp(iso);currentDate=dateInput.value;updateStrip();if(open){show("today");}}
+ dateInput.addEventListener("change",()=>setDay(dateInput.value,false));
+ document.getElementById("day-go").addEventListener("click",()=>load("day",dateInput.value));
+ const monthNames=["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
+ function drawMonth(){const prev=document.getElementById("prev-month"),next=document.getElementById("next-month");document.getElementById("month-label").textContent=monthNames[calendarMonth]+" "+calendarYear;prev.disabled=periodIndex(calendarYear,calendarMonth)<=periodIndex(Number(DAY_MIN.slice(0,4)),Number(DAY_MIN.slice(5,7))-1);next.disabled=periodIndex(calendarYear,calendarMonth)>=periodIndex(Number(DAY_MAX.slice(0,4)),Number(DAY_MAX.slice(5,7))-1);let html=shortDays.map(x=>'<div class="weekday">'+x+"</div>").join("");const first=new Date(calendarYear,calendarMonth,1);const offset=(first.getDay()+6)%7;for(let k=0;k<offset;k++)html+="<span></span>";const total=new Date(calendarYear,calendarMonth+1,0).getDate();for(let d=1;d<=total;d++){const iso=calendarYear+"-"+String(calendarMonth+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");const allowed=iso>=DAY_MIN&&iso<=DAY_MAX;html+='<button type="button" class="date'+(iso===ymd(new Date())?" today":"")+'" data-calendar-date="'+iso+'" aria-pressed="'+String(iso===currentDate)+'" '+(allowed?"":"disabled")+">"+d+"</button>";}document.getElementById("month-grid").innerHTML=html;document.querySelectorAll("[data-calendar-date]").forEach(b=>b.addEventListener("click",()=>setDay(b.dataset.calendarDate,true)));}
+ function shiftMonth(delta){const next=periodIndex(calendarYear,calendarMonth)+delta,min=periodIndex(Number(DAY_MIN.slice(0,4)),Number(DAY_MIN.slice(5,7))-1),max=periodIndex(Number(DAY_MAX.slice(0,4)),Number(DAY_MAX.slice(5,7))-1);if(next<min||next>max)return;calendarYear=Math.floor(next/12);calendarMonth=(next%12+12)%12;drawMonth();}
+ document.getElementById("prev-month").addEventListener("click",()=>shiftMonth(-1));document.getElementById("next-month").addEventListener("click",()=>shiftMonth(1));
+ function el(tag,cls,text){const node=document.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node;}
+ function timeUTC(x){const zone=zoneSelect.value==="local"?Intl.DateTimeFormat().resolvedOptions().timeZone:zoneSelect.value;try{return new Intl.DateTimeFormat("ru-RU",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit",timeZone:zone}).format(new Date(x))}catch(_e){return "Время уточняется"}}
+ function eventSub(container,title,content){const wrap=el("div");wrap.appendChild(el("h4","",title));wrap.appendChild(el("p","",content));container.appendChild(wrap)}
+ function drawEvents(){eventsList.textContent="";if(!eventsData.length){eventsList.textContent="Сейчас нет проверенных данных. Даты и положения планет не придумываем.";return}
+ const frag=document.createDocumentFragment();for(const entry of eventsData){
+ const details=el("details","event"),summary=el("summary"),stamp=el("span","date",timeUTC(entry.atUTC)),heading=el("strong","",entry.title),plus=el("span","plus","＋");plus.setAttribute("aria-hidden","true");summary.append(stamp,heading,plus);details.appendChild(summary);
+ const body=el("div","event-body");body.appendChild(el("p","",entry.essence));eventSub(body,"✧ Астрологический смысл",entry.meaning);eventSub(body,"💼 Работа и деньги",entry.workAndMoney);eventSub(body,"♡ Отношения",entry.relationships);
+ const actions=el("div");actions.appendChild(el("h4","","🔥 Что можно сделать"));const ul=el("ul");for(const item of entry.usefulActions||[])ul.appendChild(el("li","",item));actions.appendChild(ul);body.appendChild(actions);body.appendChild(el("p","caveat",entry.caveat));details.appendChild(body);frag.appendChild(details)}eventsList.appendChild(frag);}
+ async function loadEvents(){eventsLoaded=true;eventsList.textContent="Загружаю проверенный астрокалендарь…";try{const response=await fetch("/api/sky-events",{credentials:"omit"});const data=await response.json();if(!response.ok||!Array.isArray(data.events))throw Error("Нет данных");eventsData=data.events;drawEvents();}catch(_e){eventsLoaded=false;eventsList.textContent="Астрологические события временно недоступны. Попробуй открыть раздел позже.";}}
+ zoneSelect.addEventListener("change",drawEvents);
+ menu.forEach(b=>b.addEventListener("click",()=>show(b.dataset.tab)));
+ document.querySelectorAll("[data-goto]").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();show(a.dataset.goto)}));
+ updateStrip();drawMonth();const requested=new URLSearchParams(location.search).get("tab");show(tabs.includes(requested)?requested:"month");
+})();
+</script>
+</body>
+</html>
