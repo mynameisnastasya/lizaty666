@@ -20,7 +20,7 @@ try{
  await Bun.write("/tmp/astroday-quality-polish.mjs",source);
  const {polishDaily,polishMonthly,QUALITY_VERSION}=await import("/tmp/astroday-quality-polish.mjs");
  if(QUALITY_VERSION!=="astroday-liza-quality-v2-20261121")throw Error("INCORRECT_QUALITY_VERSION");
- const dailyRows=await db.unsafe("SELECT f.telegram_id,f.forecast_date::text AS day,f.generation_key,f.profile_fp,f.body_html,f.status,f.prompt_version,f.facts,f.topics,f.lunar,f.validation FROM astroday_v2_forecasts f JOIN liz_subscriptions s ON s.telegram_id=f.telegram_id AND s.valid_until>NOW() WHERE f.forecast_date BETWEEN $1::date AND $2::date AND f.status='ready' AND f.prompt_version=$3 ORDER BY f.telegram_id,f.forecast_date",[START,DAYEND,PENDING_PROMPT]);
+ const dailyRows=await db.unsafe("SELECT f.telegram_id,f.forecast_date::text AS day,f.generation_key,f.profile_fp,f.body_html,f.status,f.prompt_version,f.facts,f.topics,f.lunar,f.validation FROM astroday_v2_forecasts f JOIN liz_subscriptions s ON s.telegram_id=f.telegram_id AND s.valid_until>NOW() WHERE f.forecast_date BETWEEN $1::date AND $2::date AND f.status='ready' AND (f.forecast_date=$1::date OR f.prompt_version=$3) ORDER BY f.telegram_id,f.forecast_date",[START,DAYEND,PENDING_PROMPT]);
  const originalMonthly=await db.unsafe("SELECT m.telegram_id,m.period_start::text AS period_start,m.period_end::text AS period_end,m.body_html,m.generator_version FROM astroday_monthly_forecasts m JOIN liz_subscriptions s ON s.telegram_id=m.telegram_id AND s.valid_until>NOW() WHERE m.period_start=$1::date AND m.period_end=$2::date ORDER BY m.telegram_id",[START,END]);
  const groups=new Map(),drafts=[],months=[],problems=[];
  for(const row of dailyRows){
