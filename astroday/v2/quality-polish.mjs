@@ -8,8 +8,9 @@ export const QUALITY_VERSION="astroday-liza-quality-v2-20261121";
 const PERSONAL=new Set(["Sun","Moon","Mercury","Venus","Mars"]);
 const LABEL={Sun:"Солнцу",Moon:"Луне",Mercury:"Меркурию",Venus:"Венере",Mars:"Марсу",
 Jupiter:"Юпитеру",Saturn:"Сатурну",Uranus:"Урану",Neptune:"Нептуну",Pluto:"Плутону"};
-const GENITIVE={Sun:"Солнца",Moon:"Луны",Mercury:"Меркурия",Venus:"Венеры",Mars:"Марса",Jupiter:"Юпитера",
-Saturn:"Сатурна",Uranus:"Урана",Neptune:"Нептуна",Pluto:"Плутона"};
+const NOM={Sun:"Солнце",Moon:"Луна",Mercury:"Меркурий",Venus:"Венера",Mars:"Марс",Jupiter:"Юпитер",Saturn:"Сатурн",Uranus:"Уран",Neptune:"Нептун",Pluto:"Плутон"};
+const NATAL_WITH={Sun:"с натальным Солнцем",Moon:"с натальной Луной",Mercury:"с натальным Меркурием",Venus:"с натальной Венерой",Mars:"с натальным Марсом",Jupiter:"с натальным Юпитером",Saturn:"с натальным Сатурном",Uranus:"с натальным Ураном",Neptune:"с натальным Нептуном",Pluto:"с натальным Плутоном"};
+const ASPECT_IN={conjunction:"в соединении",trine:"в трине",sextile:"в секстиле",square:"в квадрате",opposition:"в оппозиции"};
 const ASPECT={conjunction:"соединение",trine:"трин",sextile:"секстиль",square:"квадрат",opposition:"оппозиция"};
 const ASPECT_ACTION={
  conjunction:"Обрати внимание, где две темы пересекаются, и выбери осознанное решение.",
@@ -92,6 +93,7 @@ const THEME={
  action:["Запланируй спокойную прогулку или вечер.","Отмени одну ненужную встречу.","Дай себе время без гаджетов."],
  avoid:"Не требуй от себя объяснить каждую эмоцию немедленно."}
 };
+const DOMAIN_NAMES={self:"личные границы",money:"личные финансы",communication:"общение",home:"дом и опора",love:"отношения и творчество",routine:"привычки и работа",partners:"партнёрство",depth:"доверие и общие ресурсы",horizons:"обучение и планы",career:"карьера",friends:"окружение и друзья",inner:"отдых и внутренний ритм"};
 const HOUSE_ACT={
  1:"оставь в календаре место для собственных желаний",
  2:"проверь бюджет и выбери спокойный способ поддержать себя",
@@ -167,7 +169,7 @@ export function polishDaily(row){
  const exact=moonContacts(f,day).slice(0,2);
  // One or two source-calculated exact personal contacts, if any.
  if(exact.length){
-  const lines=exact.map(c=>"• "+c.at.local.slice(11,16)+" по местному времени: "+ASPECT[c.aspect]+" транзитной Луны к натальному "+LABEL[c.natal]+".");
+  const lines=exact.map(c=>"• "+c.at.local.slice(11,16)+" по местному времени: Луна "+ASPECT_IN[c.aspect]+" "+NATAL_WITH[c.natal]+".");
   const text=lines.join("\n")+" Эти контакты можно использовать как подсказку обратить внимание на "+moonNATAL[exact[0].natal]+".";
   const needle="\n\n<b>ЧТО ВАЖНО</b>";
   if(!html.includes(needle))throw Error("daily_missing_marker");
@@ -219,10 +221,7 @@ const distinctPeaks=(rows,howMany=4)=>{
  }
  return out.sort((a,b)=>a.day.localeCompare(b.day));
 };
-const describeAspect=a=>{
- const title=GENITIVE[a.transit]+" в "+ASPECT[a.aspect]+"е с натальным "+GENITIVE[a.natal];
- return title.charAt(0).toUpperCase()+title.slice(1);
-};
+const describeAspect=a=>NOM[a.transit]+" "+ASPECT_IN[a.aspect]+" "+NATAL_WITH[a.natal];
 const pct=s=>Number(s).toFixed(1).replace(".",",");
 const monthMoon=(rows,hKnown)=>{
  const out=[];
@@ -258,7 +257,7 @@ export function polishMonthly(rows,{start="2026-11-21",end="2026-12-17"}={}){
  const lines=[
  "✨ <b>ЛИЧНЫЙ ПРОГНОЗ НА "+sanitize(dateRu(start).toUpperCase())+" — "+sanitize(dateRu(end).toUpperCase())+"</b>",
  "<b>"+sanitize(main.hook)+"</b>\n"+sanitize(main.focus),
- "<b>ПОЧЕМУ ЭТА ТЕМА ВАЖНА</b>\n"+sanitize("В расчётах этого периода чаще других поднимаются вопросы: "+mainKey.replaceAll("_"," ")+" и "+secondKey.replaceAll("_"," ")+". Не воспринимай это как гарантию события. Лучше посмотреть, что ты сама можешь выбрать и изменить. ")+sanitize(second.focus),
+ "<b>ПОЧЕМУ ЭТА ТЕМА ВАЖНА</b>\n"+sanitize("В расчётах этого периода чаще других поднимаются вопросы: "+DOMAIN_NAMES[mainKey]+" и "+DOMAIN_NAMES[secondKey]+". Не воспринимай это как гарантию события. Лучше посмотреть, что ты сама можешь выбрать и изменить. ")+sanitize(second.focus),
  "<b>ДАТЫ, НА КОТОРЫЕ МОЖНО ОБРАТИТЬ ВНИМАНИЕ</b>"
  ];
  for(const a of peaks){
@@ -269,7 +268,7 @@ export function polishMonthly(rows,{start="2026-11-21",end="2026-12-17"}={}){
   lines.push("🌙 <b>ЛУНА: ДВЕ ПЕРСОНАЛЬНЫЕ ПОДСКАЗКИ</b>");
   for(const x of moons){
    if(x.kind==="house")lines.push("• <b>"+sanitize(dateRu(x.day))+"</b>: около полудня Луна в твоём "+x.house+"-м натальном доме. Можно "+sanitize(HOUSE_ACT[x.house])+".");
-   else lines.push("• <b>"+sanitize(dateRu(x.day))+"</b>: транзитная Луна образует "+ASPECT[x.contact.aspect]+" к натальному "+LABEL[x.contact.natal]+". Это символическая тема про "+sanitize(moonNATAL[x.contact.natal])+".");
+   else lines.push("• <b>"+sanitize(dateRu(x.day))+"</b>: Луна "+ASPECT_IN[x.contact.aspect]+" "+NATAL_WITH[x.contact.natal]+". Это символическая тема про "+sanitize(moonNATAL[x.contact.natal])+".");
   }
  }else lines.push("🌙 <b>ЛУНА БЕЗ ВЫДУМАННЫХ ДОМОВ</b>\nВремя рождения не подтверждено, поэтому натальные дома не называю. Для ориентира оставь лунные сутки и только те аспекты, которые рассчитаны надёжно.");
  const inspired=peaks.some(p=>p.aspect.natal==="Venus")||mainKey==="love"||secondKey==="love"||moons.some(x=>x.house===5||x.house===7);
