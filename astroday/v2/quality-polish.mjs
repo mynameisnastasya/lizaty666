@@ -292,7 +292,7 @@ export function polishMonthly(rows,{start="2026-11-21",end="2026-12-17"}={}){
  lines.push("• <b>"+sanitize(dateRu(a.day))+"</b>. "+sanitize(describeAspect(v))+" (орб "+pct(v.orbDeg)+"° в дневном расчёте). "+sanitize("В астрологической символике это про "+NATAL_TOPIC[v.natal]+". "+ASPECT_ACTION[v.aspect]));
  }
  if(moons.length){
-  lines.push("🌙 <b>ЛУНА: ДВЕ ПЕРСОНАЛЬНЫЕ ПОДСКАЗКИ</b>");
+  lines.push("🌙 <b>ЛУНА И ТВОИ ПЕРСОНАЛЬНЫЕ ПОДСКАЗКИ</b>");
   for(const x of moons){
    if(x.kind==="house")lines.push("• <b>"+sanitize(dateRu(x.day))+"</b>: около полудня Луна в твоём "+x.house+"-м натальном доме. Можно "+sanitize(HOUSE_ACT[x.house])+".");
    else lines.push("• <b>"+sanitize(dateRu(x.day))+"</b>: Луна "+ASPECT_IN[x.contact.aspect]+" "+NATAL_WITH[x.contact.natal]+". Это символическая тема про "+sanitize(moonNATAL[x.contact.natal])+".");
