@@ -35,6 +35,7 @@ const D={
 };
 const P={Sun:"Солнцу",Moon:"Луне",Mercury:"Меркурию",Venus:"Венере",Mars:"Марсу",Jupiter:"Юпитеру",Saturn:"Сатурну",Uranus:"Урану",Neptune:"Нептуну",Pluto:"Плутону"};
 const T={Sun:"Солнце",Moon:"Луна",Mercury:"Меркурий",Venus:"Венера",Mars:"Марс",Jupiter:"Юпитер",Saturn:"Сатурн",Uranus:"Уран",Neptune:"Нептун",Pluto:"Плутон"};
+const NATAL_CASE={Sun:"к натальному Солнцу",Moon:"к натальной Луне",Mercury:"к натальному Меркурию",Venus:"к натальной Венере",Mars:"к натальному Марсу",Jupiter:"к натальному Юпитеру",Saturn:"к натальному Сатурну",Uranus:"к натальному Урану",Neptune:"к натальному Нептуну",Pluto:"к натальному Плутону"};
 const ASP={conjunction:"соединение",sextile:"секстиль",trine:"трин",square:"квадрат",opposition:"оппозиция"};
 const A={
  conjunction:"Это повод заметить, где две темы дня соединяются, и выбрать один понятный шаг.",
@@ -100,7 +101,7 @@ function keyAspects(row){
  const ranked=(row?.topics?.themes||[]).flatMap(t=>t.facts||[]).filter(a=>a&&a.transit!=="Moon"&&a.natal!=="Moon"&&ASP[a.aspect]&&P[a.transit]&&P[a.natal]&&Number.isFinite(Number(a.orbDeg))&&Number(a.orbDeg)<=4);
  return (ranked.length?ranked:aspectsOf(row.facts).filter(a=>a.transit!=="Moon")).slice(0,2);
 }
-const aspectSentence=a=>T[a.transit]+" образует "+ASP[a.aspect]+" к натальному "+P[a.natal]+". В астрологической символике это связывают с темой "+N[a.natal]+". "+A[a.aspect];
+const aspectSentence=a=>T[a.transit]+" образует "+ASP[a.aspect]+" "+NATAL_CASE[a.natal]+". В астрологической символике это связывают с темой "+N[a.natal]+". "+A[a.aspect];
 function moonBlock(row){
  const calc=row.facts||{},h=moonHouse(calc),aspects=moonAspects(calc),lines=[];
  if(h){
@@ -109,7 +110,7 @@ function moonBlock(row){
   lines.push("🔥 "+house.do);
  }
  if(aspects.length){
-  const sentences=aspects.map(a=>"Луна — "+ASP[a.aspect]+" к натальной планете "+T[a.natal]+" ("+fmtOrb(a.orbDeg)+")").join("; ");
+  const sentences=aspects.map(a=>"Луна — "+ASP[a.aspect]+" "+NATAL_CASE[a.natal]+" ("+fmtOrb(a.orbDeg)+")").join("; ");
   lines.push(sentences+". "+A[aspects[0].aspect]);
   const mini=aspects[0].natal;
   lines.push("Попробуй уделить внимание теме: "+N[mini]+". Без необходимости доказывать что-либо миру.");
@@ -177,13 +178,13 @@ export function authorMonthly(rows,{start="2026-11-21",end="2026-12-17"}={}){
  if(windows.length){
   const picks=windows.slice(0,3).map(w=>{
    const a=w.aspect;
-   return "• "+dateRu(w.day)+": "+T[a.transit]+" — "+ASP[a.aspect]+" к натальному "+P[a.natal]+" (орб "+fmtOrb(a.orbDeg)+"). В символике это тема про "+N[a.natal]+".";
+   return "• "+dateRu(w.day)+": "+T[a.transit]+" — "+ASP[a.aspect]+" "+NATAL_CASE[a.natal]+" (орб "+fmtOrb(a.orbDeg)+"). В символике это тема про "+N[a.natal]+".";
   });
   lines.push("<b>ДАТЫ, К КОТОРЫМ МОЖНО ПРИСМОТРЕТЬСЯ</b>\n"+esc(picks.join("\n"))+"\nЭто не гарантии событий, а моменты астрологических аспектов из твоих расчётов.");
  }
  if(h){
   const m=H[h];
-  lines.push("🌙 <b>ЛУНА И ТВОИ ПОВСЕДНЕВНЫЕ ТЕМЫ</b>\n"+esc("В течение периода Луна неоднократно проходила по разным натальным домам. Один из часто встречающихся в расчёте — "+h+"-й: "+m.what+". "+m.do));
+  lines.push("🌙 <b>ЛУНА И ТВОИ ПОВСЕДНЕВНЫЕ ТЕМЫ</b>\n"+esc("В течение периода Луна будет проходить по разным натальным домам. Один из часто встречающихся в расчёте — "+h+"-й: "+m.what+". "+m.do));
  }else lines.push("🌙 <b>ЛУНА И РИТМ</b>\nБез надёжного времени рождения натальные дома мы не определяем. Ориентируйся на личные аспекты к планетам и лунные сутки, а не на выдуманные дома.");
  lines.push("<b>РАБОТА И ДЕНЬГИ</b>\n"+esc("Твои планы заслуживают понятных условий. Проверяй бюджет, сроки, комиссии и статус договорённостей. Если хочется нового направления, проверь его небольшим действием, прежде чем вкладывать большие средства."));
  lines.push("<b>ОТНОШЕНИЯ И ЛИЧНАЯ ЖИЗНЬ</b>\n"+esc("Не строй выводы из одного сообщения или молчания. Подумай, какой формат близости подходит именно тебе, и говори об ожиданиях прямо. Романтику можно создавать самой, а не ждать, пока кто-то догадается."));
