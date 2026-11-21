@@ -26,7 +26,7 @@ test("unknown birth time removes natal houses but keeps reliable personal aspect
  const f=authorDaily(row);
  assert.equal(f.meta.moonHouse,null);
  assert.ok(!/\d+-му натальному дому/.test(f.html));
- assert.ok(f.html.includes("натальной планете Венера"));
+ assert.ok(f.html.includes("к натальной Венере"));
  assert.ok(f.html.includes("9-е лунные сутки"));
 });
 test("no aspects: no imaginary planetary aspect",()=>{
