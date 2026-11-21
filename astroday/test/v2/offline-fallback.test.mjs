@@ -30,7 +30,7 @@ test("offline day authored with verified facts and natal Moon house",()=>{
  assert.equal(r.model,"human-authored-no-api");
  assert.equal(r.usage.input_tokens,0);
  assert.ok(r.html.includes("5-му натальному дому"));
- assert.ok(r.html.includes("твоей натальной Венере"));
+ assert.ok(r.html.includes("к натальной Венере"));
  assert.ok(r.html.includes("12-е лунные сутки"));
  assert.ok(r.html.length>550);
  assert.ok(!r.html.includes("Telegram ID"));
