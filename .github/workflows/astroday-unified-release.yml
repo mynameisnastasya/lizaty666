@@ -27,6 +27,8 @@ jobs:
         run: node --test astroday/test/v2/offline-editorial.test.mjs
       - name: Premium Liza editorial quality
         run: node --test astroday/test/v2/quality-polish.test.mjs
+      - name: Verified offline rescue for future dates (no API)
+        run: node --test astroday/test/v2/offline-fallback.test.mjs
   premium-client:
     runs-on: ubuntu-24.04
     timeout-minutes: 12
