@@ -36,7 +36,7 @@ test("original cabinet can be patched without touching payment routes",()=>{
  const mock='var DASHBOARD_HTML = "<html><head></head><body><div id=\\"forecast\\" class=\\"forecast\\"></div><details id=\\"cal-report\\"></details></body></html>";\n'
    +'Bun.serve({ port: Number(Bun.env.PORT || "3000"), idleTimeout: 60, async fetch(req) {\n'
    +' const url = new URL(req.url), method = req.method, path = url.pathname;\n'
-   +' if(path==="/checkout")return new Response("checkout");\n return new Response("ok");\n});';
+   +' if(path==="/checkout")return new Response("checkout");\n return new Response("ok");\n}});';
  const patched=patchSite(mock);
  assert.doesNotThrow(()=>new Function(patched));
  assert.match(patched,/astroday-premium-global-v2/);
