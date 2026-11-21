@@ -19,6 +19,25 @@ const ASPECT_ACTION={
  square:"При напряжении не спеши с выводами. Сначала разберись, что именно тебя задело.",
  opposition:"Важен баланс: посмотри на своё желание и обстоятельства со стороны."
 };
+const ASPECT_NUANCE={
+ conjunction:["Тема может ощущаться заметнее, но решения всё равно остаются за тобой.","Можно соединить желания и реальный план, не превращая всё в драму."],
+ trine:["Удобный фон, чтобы сделать что-то полезное без лишней спешки.","Если идея давно ждала внимания, начни с небольшого действия."],
+ sextile:["Здесь помогает разговор, инициатива или хорошо сформулированная просьба.","Хороший повод попробовать новый подход, не ставя всё на кон."],
+ square:["Если что-то раздражает, попробуй сначала понять, чего тебе не хватает.","Не обязательно реагировать мгновенно. Можно уточнить условия и вернуться к разговору."],
+ opposition:["Обрати внимание на баланс между своими желаниями и чужими ожиданиями.","Не выбирай крайности раньше, чем проверишь, в чём реальный спор."]
+};
+const PLANET_ADVICE={
+ Sun:"Сверь происходящее со своими целями, а не с чужой оценкой.",
+ Moon:"Назови чувство и выбери простой способ позаботиться о себе.",
+ Mercury:"Проверь переписку и договорённости, особенно там, где важны сроки.",
+ Venus:"Спроси себя, что приносит удовольствие и где тебе нужна взаимность.",
+ Mars:"Дай энергии понятный выход и не превращай усталость в спор.",
+ Jupiter:"Посмотри на планы трезво: что уже проверено, а что пока только вдохновляет?",
+ Saturn:"Проверь обязательства и оставь запас времени на главное.",
+ Uranus:"Если хочется перемен, начни с маленького эксперимента.",
+ Neptune:"Не принимай красивое предположение за факт, даже если очень хочется.",
+ Pluto:"Отдели важные перемены от желания контролировать всё и всех."
+};
 const NATAL_TOPIC={
  Sun:"свои цели, уверенность и право выбирать",
  Moon:"эмоциональную безопасность, привычки и заботу о себе",
@@ -166,7 +185,14 @@ export function polishDaily(row){
  if(h&&html.includes("🌙 <b>ЛУНА В ТВОЁМ ДНЕ</b>")){
   html=html.replace(/(В середине дня по твоему времени Луна в [^.]+\.) В твоей карте это \d+-й дом\. Его тема — [^.]+\./g,"$1");
  }
- const exact=moonContacts(f,day).slice(0,2);
+const used=(v.aspectsUsed||[]).map(tri=>(f.activeAspects||[]).find(x=>Array.isArray(tri)&&[x.transit,x.aspect,x.natal].join(":")===tri.join(":"))).filter(x=>x&&validAspect(x,f));
+ const aspectMessage=(a,i)=>{
+  const sentence=NOM[a.transit]+" "+ASPECT_IN[a.aspect]+" "+NATAL_WITH[a.natal]+".";
+  return sentence+" "+pick(ASPECT_NUANCE[a.aspect],seed+i)+" "+PLANET_ADVICE[a.natal];
+ };
+ if(used[0])html=html.replace(/(<b>ЧТО ВАЖНО<\/b>\n)[^\n]+/,(_match,heading)=>heading+sanitize(aspectMessage(used[0],0)));
+ if(used[1])html=html.replace(/(<b>ЕЩЁ ОДНА ДЕТАЛЬ<\/b>\n)[^\n]+/,(_match,heading)=>heading+sanitize(aspectMessage(used[1],1)));
+  const exact=moonContacts(f,day).slice(0,2);
  // One or two source-calculated exact personal contacts, if any.
  if(exact.length){
   const lines=exact.map(c=>"• "+c.at.local.slice(11,16)+" по местному времени: Луна "+ASPECT_IN[c.aspect]+" "+NATAL_WITH[c.natal]+".");
@@ -235,6 +261,7 @@ const monthMoon=(rows,hKnown)=>{
  for(const x of [...out].sort((a,b)=>b.score-a.score||a.day.localeCompare(b.day))){
   if(chosen.some(y=>Math.abs((Date.parse(y.day)-Date.parse(x.day))/86400000)<6))continue;
   if(x.kind==="house"&&chosen.some(y=>y.house===x.house))continue;
+  if(x.kind==="aspect"&&chosen.some(y=>y.contact?.natal===x.contact.natal))continue;
   chosen.push(x);if(chosen.length===2)break;
  }
  return chosen.sort((a,b)=>a.day.localeCompare(b.day));
@@ -257,7 +284,7 @@ export function polishMonthly(rows,{start="2026-11-21",end="2026-12-17"}={}){
  const lines=[
  "✨ <b>ЛИЧНЫЙ ПРОГНОЗ НА "+sanitize(dateRu(start).toUpperCase())+" — "+sanitize(dateRu(end).toUpperCase())+"</b>",
  "<b>"+sanitize(main.hook)+"</b>\n"+sanitize(main.focus),
- "<b>ПОЧЕМУ ЭТА ТЕМА ВАЖНА</b>\n"+sanitize("В расчётах этого периода чаще других поднимаются вопросы: "+DOMAIN_NAMES[mainKey]+" и "+DOMAIN_NAMES[secondKey]+". Не воспринимай это как гарантию события. Лучше посмотреть, что ты сама можешь выбрать и изменить. ")+sanitize(second.focus),
+ "<b>ПОЧЕМУ ЭТА ТЕМА ВАЖНА</b>\n"+sanitize("В расчётах этого периода чаще других поднимаются вопросы: "+DOMAIN_NAMES[mainKey]+"; "+DOMAIN_NAMES[secondKey]+". Не воспринимай это как гарантию события. Лучше посмотреть, что ты сама можешь выбрать и изменить. ")+sanitize(second.focus),
  "<b>ДАТЫ, НА КОТОРЫЕ МОЖНО ОБРАТИТЬ ВНИМАНИЕ</b>"
  ];
  for(const a of peaks){
