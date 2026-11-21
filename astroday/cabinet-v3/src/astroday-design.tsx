@@ -1,6 +1,7 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {ArrowLeft, ArrowRight, Bell, CalendarDays, Check, ChevronLeft, ChevronRight, CircleHelp, Clock3, Compass, Copy, ExternalLink, Heart, LockKeyhole, Moon, Settings2, ShieldCheck, Sparkles, Sun, UserRound} from "lucide-react";
 import s from "./astroday-design.module.css";
+import {JieCaiExperience} from "../components/JieCaiExperience";
 
 type Tab="day"|"calendar"|"chart"|"profile"|"access";
 const menu:{id:Tab,label:string,icon:typeof Sun}[]=[
@@ -66,7 +67,7 @@ function CalendarPanel({onChoose}:{onChoose:(d:number)=>void}){
    <div className={s.legend}><span><i className={s.legendCurrent}/> Сегодня</span><span><i className={s.legendAvailable}/> Доступно</span><span><i className={s.legendLocked}/> Закрыто</span></div>
   </section><section className={s.card}><div className={s.cardLabel}><NumberDot num={2}/> СОБЫТИЯ МЕСЯЦА</div><div className={s.event}><span>24 ноя</span><div><b>Полнолуние</b><p>Время и знак уточняются по расчётным данным.</p></div><Moon size={18}/></div><div className={s.event}><span>30 ноя</span><div><b>Обзор месяца</b><p>Выделить события, связанные с твоей картой.</p></div><Sparkles size={18}/></div></section></>;
 }
-function TodayPanel({selected,onCalendar}:{selected:number,onCalendar:()=>void}){
+function TodayPanel({selected,onCalendar,onWealth}:{selected:number,onCalendar:()=>void;onWealth:()=>void}){
  const [expanded,setExpanded]=useState(true);
  const [copied,setCopied]=useState(false);
  const display=selected===21;
@@ -76,6 +77,7 @@ function TodayPanel({selected,onCalendar}:{selected:number,onCalendar:()=>void})
  <h2>{display?seed:"Твой прогноз на "+selected+" ноября"}</h2><div className={s.summaryGrid}><div><Moon size={16}/><span>Луна в Овне</span></div><div><Sparkles size={16}/><span>Тема дня · доверие</span></div></div>
  <button className={s.textLink} onClick={onCalendar}>Выбрать другую дату <ArrowRight size={15}/></button>
  </section>
+ <button type="button" className={s.wealthShortcut} onClick={onWealth}><span className={s.wealthIcon}>劫</span><span><strong>Дни Грабителя богатства</strong><small>Твой личный календарь Ба-цзы</small></span><ArrowRight size={19}/></button>
  <section className={s.card}>
   <div className={s.cardLabel}><NumberDot num={1}/> ЛИЧНЫЙ ПРОГНОЗ <span className={s.demoTag}>ДЕМО</span></div>
   {display?<><h3>Не прячь просьбу за «без разницы»</h3>
@@ -104,16 +106,17 @@ export default function AstrodayDesign(){
  const [tab,setTab]=useState<Tab>("day");
  const [selected,setSelected]=useState(21);
  const [info,setInfo]=useState(false);
- function go(t:Tab){setTab(t);try{window.scrollTo({top:0,behavior:"smooth"})}catch{}}
- useEffect(()=>{document.title="ASTRODAY · Новый дизайн · предпросмотр";const tg=(window as any).Telegram?.WebApp;tg?.ready?.();tg?.expand?.();},[]);
+ const [calendarMode,setCalendarMode]=useState<"month"|"wealth">("month");
+ function go(t:Tab){setTab(t);try{window.scrollTo({top:0,behavior:"smooth"});document.querySelector("[data-astroday-scrollpane]")?.scrollTo({top:0,behavior:"smooth"});(window as any).Telegram?.WebApp?.HapticFeedback?.selectionChanged?.()}catch{}}
+ useEffect(()=>{document.title="ASTRODAY · Новый дизайн · предпросмотр";const tg=(window as any).Telegram?.WebApp;tg?.ready?.();tg?.expand?.();tg?.setHeaderColor?.("#100d12");tg?.setBackgroundColor?.("#100d12");const update=()=>{const bottom=Number(tg?.contentSafeAreaInset?.bottom??tg?.safeAreaInset?.bottom??0);document.documentElement.style.setProperty("--astroday-tg-safe-bottom",Math.min(80,Math.max(0,bottom))+"px")};update();tg?.onEvent?.("safeAreaChanged",update);tg?.onEvent?.("contentSafeAreaChanged",update);return()=>{tg?.offEvent?.("safeAreaChanged",update);tg?.offEvent?.("contentSafeAreaChanged",update);document.documentElement.style.removeProperty("--astroday-tg-safe-bottom")}},[]);
  const current=menu.find(x=>x.id===tab)!;
  return <main className={s.root}><div className={s.shell}>
   <header className={s.topbar}><div className={s.brand}><span className={s.brandGlyph}>✦</span><span>ASTRODAY<strong>.</strong><small>ЛИЗА · ЛИЧНЫЙ КОСМОС</small></span></div><div className={s.topActions}><span className={s.previewPill}>ПРЕДПРОСМОТР 3.0</span><button className={s.roundButton} aria-label="О версии" onClick={()=>setInfo(x=>!x)}><CircleHelp size={19}/></button></div></header>
   {info&&<div className={s.infoBar} role="status">Дизайн-версия без подключения реальных персональных данных, платёжных списаний и Telegram-рассылок. Текущий бот не изменён.</div>}
   <div className={s.desktopGrid}><div className={s.desktopIntro}><div className={s.introLine}/><div className={s.eyebrow}>ТИШЕ, ЧЕМ ГОЛОС ЗВЁЗД</div><h2>Здесь начинается <i>твой</i> день.</h2><p>Астрология, в которой красота не мешает ясности. Личные прогнозы, настоящие расчёты, свой ритм.</p><div className={s.introBottom}>ASTRODAY 3.0 / ДИЗАЙН-КОНЦЕПЦИЯ</div></div>
-  <div className={s.appPane}><div className={s.content}>
-   {tab==="day"&&<TodayPanel selected={selected} onCalendar={()=>go("calendar")}/>}
-   {tab==="calendar"&&<><section className={s.hero}><div className={s.heroStars}/><Orbit/><div className={s.overline}>ТВОЁ ВРЕМЯ · ТВОИ ДАТЫ</div><h1>Календарь<span className={s.heroDot}>.</span></h1><p>Личная карта времени на каждый день.</p></section><CalendarPanel onChoose={d=>{setSelected(d);go("day")}}/></>}
+  <div className={s.appPane}><div className={s.content} data-astroday-scrollpane="true">
+   {tab==="day"&&<TodayPanel selected={selected} onCalendar={()=>{setCalendarMode("month");go("calendar")}} onWealth={()=>{setCalendarMode("wealth");go("calendar")}}/>}
+   {tab==="calendar"&&<><div className={s.calendarSwitch} role="group" aria-label="Режим календаря"><button aria-pressed={calendarMode==="month"} onClick={()=>setCalendarMode("month")}><CalendarDays size={15}/> Мой месяц</button><button aria-pressed={calendarMode==="wealth"} onClick={()=>setCalendarMode("wealth")}><Sparkles size={15}/> Грабитель богатства</button></div>{calendarMode==="wealth"?<JieCaiExperience/>:<><section className={s.hero}><div className={s.heroStars}/><Orbit/><div className={s.overline}>ТВОЁ ВРЕМЯ · ТВОИ ДАТЫ</div><h1>Календарь<span className={s.heroDot}>.</span></h1><p>Личная карта времени на каждый день.</p></section><CalendarPanel onChoose={d=>{setSelected(d);go("day")}}/></>}</>}
    {tab==="chart"&&<ChartPanel/>}
    {tab==="profile"&&<ProfilePanel/>}
    {tab==="access"&&<AccessPanel/>}
