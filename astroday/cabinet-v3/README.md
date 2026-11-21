@@ -1,6 +1,22 @@
-# ASTRODAY 3.0 — premium Mini App design prototype
+# ASTRODAY 3.1 — premium Mini App design and BaZi
 
 This directory contains the **source-controlled, isolated front-end design** of ASTRODAY 3.0. It is based on the five existing app areas and is intentionally **not a production release**.
+
+## Public interactive demo (21 November 2026)
+
+- **Live:** https://astroday-liza-v3.floot.app — published isolated Floot project, demo only.
+- **Floot fork:** `abb86812-63e3-467d-b1af-11e2d754037e` — isolated database schema, no production records or provider secrets.
+- **Source:** `src/astroday-design.tsx`, `components/JieCaiExperience.tsx`, `helpers/astrodayBazi.tsx` and CSS modules.
+- **Tests:** `tests/astroday-design.spec.tsx`, `tests/bazi-calendar.spec.ts`, `tests/wealth-ui.spec.tsx`.
+- **Do not treat published demo as Railway's live Mini App.** No real Telegram authorization, personalized subscription access, live planetary positions, payments or push notifications are enabled in this demo.
+
+### BaZi: Дни Грабителя богатства (劫财)
+
+A second view of the existing five-tab calendar renders the deterministic day-stem calculation from `astroday/v2/bazi.mjs`: same element and opposite yin/yang to Day Master (劫财), visible stem as the main signal, branch's principal hidden stem as a softer signal. Civil Gregorian day boundary is midnight; birth at 23:xx is marked as ambiguous. The UI explains its assumptions, displays a named reason for each date, and avoids promising financial losses. The source is a symbolic astrology convention, **not** a forecast of financial outcomes.
+
+### Design decisions from 2026 research
+
+Editorial serif headings, restrained material depth, calm dark theme, soft celestial ornamentation, high-contrast controls, lightweight motion with `prefers-reduced-motion`, responsive month/calendar cards, mobile thumb targets and respect for Telegram's `contentSafeAreaInset`. Avoid excessive blur and decorative animation that reduces readability or FPS.
 
 ## Run it locally
 
@@ -46,4 +62,4 @@ The production integration **must not** turn current demo local state into serve
 
 ### Provenance
 
-Designed on 21 November 2026 in an **isolated Floot fork**, with its own empty database, no production credentials, and no scheduled jobs. TypeScript and three UI regression tests passed there. Sources were copied here so the design can be reviewed and integrated, rather than being trapped in a temporary preview. Publishing/merging this branch by itself does **not** replace the Railway production frontend.
+Designed on 21 November 2026 in an **isolated Floot fork**, with its own empty database, no production credentials, and no scheduled jobs. TypeScript and the three tested spec files passed in Floot on 21 November 2026; the standalone GitHub Vite build has not been independently executed in this turn. Sources were copied here so the design can be reviewed and integrated, rather than being trapped in a temporary preview. Publishing/merging this branch by itself does **not** replace the Railway production frontend.
