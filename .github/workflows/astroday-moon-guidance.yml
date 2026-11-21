@@ -1,0 +1,28 @@
+name: ASTRODAY Moon personal advice checks
+on:
+  push:
+    branches: ["astroday/moon-personal-advice-20261121"]
+    paths:
+      - "astroday/v2/moon-guidance.mjs"
+      - "astroday/v2/topics.mjs"
+      - "astroday/v2/editorial.mjs"
+      - "astroday/test/v2/**"
+      - ".github/workflows/astroday-moon-guidance.yml"
+  pull_request:
+    branches: ["astroday-2.0"]
+    paths:
+      - "astroday/v2/**"
+      - "astroday/test/v2/**"
+permissions:
+  contents: read
+jobs:
+  test-moon:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Verify Moon rules
+        run: bun test astroday/test/v2/moon-guidance.test.mjs
+      - name: Existing editorial regression
+        run: bun test astroday/test/v2/editorial.test.mjs

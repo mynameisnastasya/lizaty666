@@ -1,3 +1,4 @@
+import { selectMoonGuidance } from "./moon-guidance.mjs";
 // ASTRODAY 2.0 — отбор тем дня из расчёта движка.
 // Не пишем про все сферы: 1 главная тема, вторая — только если она сопоставима по силе и про другое.
 // Слабые указания → короткий спокойный прогноз. Тема всегда опирается на конкретные факты расчёта.
@@ -85,8 +86,9 @@ export function selectTopics(calc) {
   const intensity = top >= 3.2 ? "strong" : top >= 1.4 ? "normal" : "quiet";
   const moon = calc.transitingMoon || {};
   const moonFact = { id: "m:moon", sign: moon.sign, house: houseKnown ? (moon.natalHouse ?? null) : null };
+  const moonGuidance = selectMoonGuidance(calc);
   const events = (calc.dayEvents || []).filter((e) => ["new_moon", "full_moon", "planet_station", "planet_sign_ingress"].includes(e.type)).map((e) => ({ id: "e:" + e.type + ":" + (e.body || "") + ":" + (e.toSign || e.motion || e.sign || ""), ...e }));
-  return { version: TOPICS_VERSION, intensity, themes, moon: moonFact, skyEvents: events.slice(0, 2), candidates: cands.slice(0, 8), houseKnown };
+  return { version: TOPICS_VERSION, intensity, themes, moon: moonFact, skyEvents: events.slice(0, 2), candidates: cands.slice(0, 8), houseKnown, moonGuidance };
 }
 
 // Компактное описание фактов для модели (без персональных данных).
@@ -99,7 +101,7 @@ export function factsForPrompt(sel) {
       lines.push("    смысл: " + PLANET_RU[f.transit] + " = " + MEANING[f.transit] + "; " + PLANET_RU[f.natal] + " = " + MEANING[f.natal] + "; " + ASPECT_RU[f.aspect] + " = " + ASPECT_MEANING[f.aspect] + ".");
     }
   }
-  if (sel.moon?.sign) lines.push("[m:moon] Луна днём " + SIGN_RU_IN[sel.moon.sign] + (sel.moon.house ? ", по твоему " + sel.moon.house + " дому (" + DOMAINS[HOUSE_DOMAIN[sel.moon.house]] + ")" : "") + " — фон настроения, не главная тема.");
+  if (sel.moon?.sign) lines.push("[m:moon] Луна в расчёте " + SIGN_RU_IN[sel.moon.sign] + " — личный блок о её натальном доме и аспектах формирует программа. НЕ дублируй лунные рекомендации своими словами и НЕ придумывай событий.");
   for (const e of sel.skyEvents) lines.push("[" + e.id + "] событие неба: " + e.type + " " + (PLANET_RU[e.body] || "") + " " + (e.toSign ? SIGN_RU_IN[e.toSign] : e.motion || ""));
   return lines.join("\n");
 }
