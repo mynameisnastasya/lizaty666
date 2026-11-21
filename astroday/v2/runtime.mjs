@@ -7,6 +7,7 @@ import { createBot, splitHtml } from "./bot.mjs";
 import { deliveryTick } from "./delivery.mjs";
 import { localDay } from "./timefmt.mjs";
 import { LUNAR_VERSION_EXPECTED } from "./versions.mjs";
+import {normalizedOfflineMode} from "./offline-fallback.mjs";
 
 export function configFromEnv(env) {
   const mode = ["off", "allowlist", "all"].includes(env.ASTRODAY_V2_MODE) ? env.ASTRODAY_V2_MODE : "off";
@@ -19,6 +20,8 @@ export function configFromEnv(env) {
     windowDays: Math.min(62, Math.max(2, Number(env.ASTRODAY_V2_WINDOW_DAYS) || 31)),
     dailyRequestBudget: Number(env.ASTRODAY_V2_DAILY_BUDGET) || 600,
     generation: env.ASTRODAY_V2_GENERATION !== "off",
+    // Default off; guarded fallback only after user-provided explicit configuration.
+    offlineMode: normalizedOfflineMode(env.ASTRODAY_V2_OFFLINE_MODE),
     delivery: env.ASTRODAY_V2_DELIVERY === "on",
     enableForAll: mode === "all",
     site: env.ASTRODAY_V2_SITE || "https://lizty666-stage.up.railway.app",
@@ -55,7 +58,7 @@ export function install(env = Bun.env, { fetchImpl = fetch, tg = null, legacy = 
   const engine = engineClient(cfg, fetchImpl);
   const send = tg || telegramClient(cfg, fetchImpl);
   const writer = (ctx, x = {}) => writeForecast(ctx, { apiKey: cfg.apiKey, model: cfg.model, fetchImpl, ...x });
-  const deps = { engine, writer, engineVersion: cfg.engineVersion, lunarVersion: cfg.lunarVersion, dailyRequestBudget: cfg.dailyRequestBudget };
+  const deps = { engine, writer, engineVersion: cfg.engineVersion, lunarVersion: cfg.lunarVersion, dailyRequestBudget: cfg.dailyRequestBudget, offlineMode: cfg.offlineMode };
   const onReady = async (row, r) => {
     if (!row.notify_on_ready) return;
     const parts = splitHtml(r.html);
