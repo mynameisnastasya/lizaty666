@@ -2,6 +2,7 @@ import React, {useEffect, useMemo, useState} from "react";
 import {ArrowLeft, ArrowRight, Bell, CalendarDays, Check, ChevronLeft, ChevronRight, CircleHelp, Clock3, Compass, Copy, ExternalLink, Heart, LockKeyhole, Moon, Settings2, ShieldCheck, Sparkles, Sun, UserRound} from "lucide-react";
 import s from "./astroday-design.module.css";
 import {JieCaiExperience} from "../components/JieCaiExperience";
+import {MonthlySkyEvents} from "../components/MonthlySkyEvents";
 
 type Tab="day"|"calendar"|"chart"|"profile"|"access";
 const menu:{id:Tab,label:string,icon:typeof Sun}[]=[
@@ -65,7 +66,7 @@ function CalendarPanel({onChoose}:{onChoose:(d:number)=>void}){
        <button key={i} className={[s.dayCell,current?s.todayCell:"",!available?s.lockedCell:""].join(" ")} disabled={!available} title={!available?"Нет доступа к дате":"Открыть дневной прогноз"} aria-label={formatDate(ym.y,ym.m,d)+(available?" — открыть":" — недоступно")} onClick={()=>onChoose(d)}>{d}{current&&<span className={s.todayMark}/>}</button>;
    })}</div>
    <div className={s.legend}><span><i className={s.legendCurrent}/> Сегодня</span><span><i className={s.legendAvailable}/> Доступно</span><span><i className={s.legendLocked}/> Закрыто</span></div>
-  </section><section className={s.card}><div className={s.cardLabel}><NumberDot num={2}/> СОБЫТИЯ МЕСЯЦА</div><div className={s.event}><span>24 ноя</span><div><b>Полнолуние</b><p>Время и знак уточняются по расчётным данным.</p></div><Moon size={18}/></div><div className={s.event}><span>30 ноя</span><div><b>Обзор месяца</b><p>Выделить события, связанные с твоей картой.</p></div><Sparkles size={18}/></div></section></>;
+  </section><MonthlySkyEvents year={ym.y} monthZeroBased={ym.m}/></>;;
 }
 function TodayPanel({selected,onCalendar,onWealth}:{selected:number,onCalendar:()=>void;onWealth:()=>void}){
  const [expanded,setExpanded]=useState(true);
