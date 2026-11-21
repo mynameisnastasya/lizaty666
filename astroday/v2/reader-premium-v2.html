@@ -34,11 +34,11 @@ button,input,select{font:inherit}button{cursor:pointer}a{color:var(--accent)}but
 </head><body>
 <main>
 <header class="app-header"><div class="brand">ASTRODAY<span class="dot">.</span> <span style="letter-spacing:0;font-weight:500">Лиза</span><small>Личная астрология</small></div><div class="header-mark" aria-hidden="true">☾</div></header>
-<div id="hero" class="hero"><div class="sparkles"></div><div class="eyebrow">ПЕРСОНАЛЬНЫЙ КОСМОС · 2026</div><h1>Твоё небо.<br><em>Твои решения.</em></h1><p>Без мистических страшилок. С личными аспектами, Луной и человеческими рекомендациями от Лизы.</p><div class="hero-footer">Твои темы · Твой темп · Твоя карта</div></div>
+<div id="hero" class="hero"><div class="sparkles"></div><div class="eyebrow">ПЕРСОНАЛЬНЫЙ КОСМОС · ASTRODAY</div><h1>Твоё небо.<br><em>Твои решения.</em></h1><p>Без мистических страшилок. С личными аспектами, Луной и человеческими рекомендациями от Лизы.</p><div class="hero-footer">Твои темы · Твой темп · Твоя карта</div></div>
 <div id="notice" class="alert" role="status" aria-live="polite" hidden></div>
 <section class="section active" id="month-section" aria-labelledby="month-heading">
  <div class="section-heading"><div><div class="small">01 / Личный период</div><h2 id="month-heading">Мой месяц</h2></div><span class="ornament" aria-hidden="true">✧</span></div>
- <div class="ribbon"><span class="period">21 ноября — 17 декабря 2026</span><span>☾</span></div>
+ <div class="ribbon"><span class="period" id="period-label">Твой персональный период</span><span>☾</span></div>
  <article class="panel"><div class="eyebrow">ТВОИ ЛИЧНЫЕ ТЕМЫ</div><div class="prose" id="month-text" aria-live="polite"></div></article>
  <div class="quicklinks"><a href="#" data-goto="calendar">☷ Календарь дней</a><a href="#" data-goto="events">✦ События месяца</a></div>
 </section>
@@ -92,33 +92,42 @@ button,input,select{font:inherit}button{cursor:pointer}a{color:var(--accent)}but
  const tg=window.Telegram&&window.Telegram.WebApp;
  if(tg){try{tg.ready();tg.expand();tg.setHeaderColor("#19111d");tg.setBackgroundColor("#170f1b");}catch(_e){}}
  const initData=tg&&tg.initData||"";
- const DAY_MIN="2026-11-21",DAY_MAX="2026-12-17";
+ let DAY_MIN="2026-11-21",DAY_MAX="2026-12-17";
  const weekdays=["Вс","Пн","Вт","Ср","Чт","Пт","Сб"],shortDays=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
  const tabs=["today","calendar","month","events","profile"],menu=document.querySelectorAll("[data-tab]"),notice=document.getElementById("notice");
  const dateInput=document.getElementById("day-input"),eventsList=document.getElementById("events-list"),zoneSelect=document.getElementById("timezone");
- let active="month",calendarMonth=10,monthLoaded=false,eventsLoaded=false,eventsData=[],currentDate;
+ let active="month",calendarYear=2026,calendarMonth=10,monthLoaded=false,eventsLoaded=false,eventsData=[],currentDate;
  function ymd(date){return date.getFullYear()+"-"+String(date.getMonth()+1).padStart(2,"0")+"-"+String(date.getDate()).padStart(2,"0");}
  function dFromISO(s){return new Date(s+"T12:00:00");}
  function clamp(d){return d<DAY_MIN?DAY_MIN:d>DAY_MAX?DAY_MAX:d;}
+ function periodIndex(year,month){return year*12+month;}
+ function updatePeriod(start,end){
+  if(typeof start!=="string"||typeof end!=="string"||!/^\d{4}-\d{2}-\d{2}$/.test(start)||!/^\d{4}-\d{2}-\d{2}$/.test(end)||start>end)return;
+  DAY_MIN=start;DAY_MAX=end;dateInput.min=start;dateInput.max=end;calendarYear=Number(start.slice(0,4));calendarMonth=Number(start.slice(5,7))-1;
+  const dateFormat=new Intl.DateTimeFormat("ru-RU",{day:"numeric",month:"long",year:"numeric"});
+  document.getElementById("period-label").textContent=dateFormat.format(dFromISO(start))+" — "+dateFormat.format(dFromISO(end));
+  currentDate=clamp(ymd(new Date()));dateInput.value=currentDate;updateStrip();drawMonth();
+ }
  currentDate=clamp(ymd(new Date()));dateInput.value=currentDate;
  function notify(msg){notice.hidden=false;notice.textContent=msg;}
  function clear(){notice.hidden=true;notice.textContent="";}
  function vibrate(){try{tg&&tg.HapticFeedback&&tg.HapticFeedback.selectionChanged()}catch(_e){}}
  function adjustSafe(){try{const v=tg&&tg.contentSafeAreaInset||{},safe=tg&&tg.safeAreaInset||{};document.documentElement.style.setProperty("--bottom-safe",Math.max(Number(v.bottom)||0,Number(safe.bottom)||0)+"px");document.documentElement.style.setProperty("--top-safe",Math.max(0,Number(v.top)||0)+"px")}catch(_e){}}
  adjustSafe();try{tg&&tg.onEvent&&tg.onEvent("contentSafeAreaChanged",adjustSafe)}catch(_e){}
- function show(tab){if(!tabs.includes(tab))return;active=tab;tabs.forEach(k=>{document.getElementById(k+"-section").classList.toggle("active",k===tab)});menu.forEach(b=>b.setAttribute("aria-current",b.dataset.tab===tab?"page":"false"));vibrate();window.scrollTo({top:0,behavior:"instant"});if(tab==="month"&&!monthLoaded)load("month");if(tab==="today")load("day",dateInput.value);if(tab==="profile")load("profile");if(tab==="events"&&!eventsLoaded)loadEvents();if(tab==="calendar")drawMonth();}
+ function show(tab){if(!tabs.includes(tab))return;active=tab;tabs.forEach(k=>{document.getElementById(k+"-section").classList.toggle("active",k===tab)});menu.forEach(b=>b.setAttribute("aria-current",b.dataset.tab===tab?"page":"false"));vibrate();window.scrollTo({top:0,behavior:"instant"});if(tab==="month"&&!monthLoaded)load("month");if(tab==="today"){if(!monthLoaded)load("month");load("day",dateInput.value);}if(tab==="profile")load("profile");if(tab==="events"&&!eventsLoaded)loadEvents();if(tab==="calendar"){if(!monthLoaded)load("month");drawMonth();}}
  async function load(section,day){if(!initData){notify("Открой страницу через кнопку внутри Telegram-бота @Lizty666bot, чтобы подтвердить свой профиль и подписку.");return}
  const element=section==="month"?document.getElementById("month-text"):section==="day"?document.getElementById("day-text"):document.getElementById("access-note");if(section==="month"&&monthLoaded)return;
  element.classList.add("loading");element.setAttribute("aria-busy","true");
- try{const r=await fetch("/api/personal",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"omit",body:JSON.stringify({section,day,initData})});const data=await r.json();if(!r.ok)throw Error(data.error||"Не удалось получить прогноз");clear();if(section==="month"){element.innerHTML=data.bodyHtml;monthLoaded=true}else if(section==="day"){element.innerHTML=data.bodyHtml}else if(section==="profile"){element.textContent=data.accessNote;} }catch(e){notify("Не удалось загрузить: "+String(e.message||e).slice(0,140));}
+ try{const r=await fetch("/api/personal",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"omit",body:JSON.stringify({section,day,initData})});const data=await r.json();if(!r.ok)throw Error(data.error||"Не удалось получить прогноз");clear();if(section==="month"){element.innerHTML=data.bodyHtml;updatePeriod(data.periodStart,data.periodEnd);monthLoaded=true}else if(section==="day"){element.innerHTML=data.bodyHtml}else if(section==="profile"){element.textContent=data.accessNote;} }catch(e){notify("Не удалось загрузить: "+String(e.message||e).slice(0,140));}
  finally{element.classList.remove("loading");element.removeAttribute("aria-busy");}}
  function updateStrip(){const day=dFromISO(dateInput.value);let html="";for(let delta=-3;delta<=3;delta++){const d=new Date(day);d.setDate(day.getDate()+delta);const iso=ymd(d);const allowed=iso>=DAY_MIN&&iso<=DAY_MAX;html+='<button type="button" class="day" data-day="'+iso+'" aria-pressed="'+String(iso===dateInput.value)+'" '+(allowed?"":"disabled")+"><span>"+weekdays[d.getDay()]+"</span>"+d.getDate()+"</button>";}document.getElementById("day-strip").innerHTML=html;document.querySelectorAll("[data-day]").forEach(b=>b.addEventListener("click",()=>setDay(b.dataset.day,true)));}
  function setDay(iso,open){dateInput.value=clamp(iso);currentDate=dateInput.value;updateStrip();if(open){show("today");}}
  dateInput.addEventListener("change",()=>setDay(dateInput.value,false));
  document.getElementById("day-go").addEventListener("click",()=>load("day",dateInput.value));
  const monthNames=["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
- function drawMonth(){const prev=document.getElementById("prev-month"),next=document.getElementById("next-month");document.getElementById("month-label").textContent=monthNames[calendarMonth]+" 2026";prev.disabled=calendarMonth===10;next.disabled=calendarMonth===11;let html=shortDays.map(x=>'<div class="weekday">'+x+"</div>").join("");const first=new Date(2026,calendarMonth,1);const offset=(first.getDay()+6)%7;for(let k=0;k<offset;k++)html+="<span></span>";const total=new Date(2026,calendarMonth+1,0).getDate();for(let d=1;d<=total;d++){const iso="2026-"+String(calendarMonth+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");const allowed=iso>=DAY_MIN&&iso<=DAY_MAX;html+='<button type="button" class="date'+(iso===ymd(new Date())?" today":"")+'" data-calendar-date="'+iso+'" aria-pressed="'+String(iso===currentDate)+'" '+(allowed?"":"disabled")+">"+d+"</button>";}document.getElementById("month-grid").innerHTML=html;document.querySelectorAll("[data-calendar-date]").forEach(b=>b.addEventListener("click",()=>setDay(b.dataset.calendarDate,true)));}
- document.getElementById("prev-month").addEventListener("click",()=>{calendarMonth=10;drawMonth()});document.getElementById("next-month").addEventListener("click",()=>{calendarMonth=11;drawMonth()});
+ function drawMonth(){const prev=document.getElementById("prev-month"),next=document.getElementById("next-month");document.getElementById("month-label").textContent=monthNames[calendarMonth]+" "+calendarYear;prev.disabled=periodIndex(calendarYear,calendarMonth)<=periodIndex(Number(DAY_MIN.slice(0,4)),Number(DAY_MIN.slice(5,7))-1);next.disabled=periodIndex(calendarYear,calendarMonth)>=periodIndex(Number(DAY_MAX.slice(0,4)),Number(DAY_MAX.slice(5,7))-1);let html=shortDays.map(x=>'<div class="weekday">'+x+"</div>").join("");const first=new Date(calendarYear,calendarMonth,1);const offset=(first.getDay()+6)%7;for(let k=0;k<offset;k++)html+="<span></span>";const total=new Date(calendarYear,calendarMonth+1,0).getDate();for(let d=1;d<=total;d++){const iso=calendarYear+"-"+String(calendarMonth+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");const allowed=iso>=DAY_MIN&&iso<=DAY_MAX;html+='<button type="button" class="date'+(iso===ymd(new Date())?" today":"")+'" data-calendar-date="'+iso+'" aria-pressed="'+String(iso===currentDate)+'" '+(allowed?"":"disabled")+">"+d+"</button>";}document.getElementById("month-grid").innerHTML=html;document.querySelectorAll("[data-calendar-date]").forEach(b=>b.addEventListener("click",()=>setDay(b.dataset.calendarDate,true)));}
+ function shiftMonth(delta){const next=periodIndex(calendarYear,calendarMonth)+delta,min=periodIndex(Number(DAY_MIN.slice(0,4)),Number(DAY_MIN.slice(5,7))-1),max=periodIndex(Number(DAY_MAX.slice(0,4)),Number(DAY_MAX.slice(5,7))-1);if(next<min||next>max)return;calendarYear=Math.floor(next/12);calendarMonth=(next%12+12)%12;drawMonth();}
+ document.getElementById("prev-month").addEventListener("click",()=>shiftMonth(-1));document.getElementById("next-month").addEventListener("click",()=>shiftMonth(1));
  function el(tag,cls,text){const node=document.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node;}
  function timeUTC(x){const zone=zoneSelect.value==="local"?Intl.DateTimeFormat().resolvedOptions().timeZone:zoneSelect.value;try{return new Intl.DateTimeFormat("ru-RU",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit",timeZone:zone}).format(new Date(x))}catch(_e){return "Время уточняется"}}
  function eventSub(container,title,content){const wrap=el("div");wrap.appendChild(el("h4","",title));wrap.appendChild(el("p","",content));container.appendChild(wrap)}
