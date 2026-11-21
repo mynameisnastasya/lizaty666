@@ -3,7 +3,7 @@ import {SQL} from "bun";
 import {createHmac,timingSafeEqual} from "node:crypto";
 const db=new SQL(Bun.env.DATABASE_URL||"",{max:4});
 const BOT=Bun.env.TELEGRAM_BOT_TOKEN||"";
-const VERSION="astroday-monthly-reader-v2";
+const VERSION="astroday-monthly-reader-v3";
 const limit=10000;
 const PAGE=await Bun.file("/tmp/astroday-reader-v2.html").text();
 function json(value,status=200){return new Response(JSON.stringify(value),{status,headers:{"Content-Type":"application/json; charset=utf-8","Cache-Control":"private,no-store","X-Content-Type-Options":"nosniff","X-Frame-Options":"SAMEORIGIN"}})}
@@ -26,7 +26,11 @@ function verify(initData){
  }catch{return null}
 }
 function safe(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/&lt;(\/?(?:b|i|strong|em))&gt;/gi,"<$1>")}
-const dayOK=d=>typeof d==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(d)&&d>="2026-11-21"&&d<="2026-12-17";
+const dayOK=d=>{
+ if(typeof d!=="string"||!/^\d{4}-\d{2}-\d{2}$/.test(d)||d<"2026-11-21"||d>"2036-12-31")return false;
+ const date=new Date(d+"T12:00:00Z");
+ return Number.isFinite(date.getTime())&&date.toISOString().slice(0,10)===d;
+};
 console.log("ASTRODAY_MONTHLY_READER_READY",JSON.stringify({version:VERSION,db:!!Bun.env.DATABASE_URL,botConfigured:!!BOT}));
 Bun.serve({port:Number(Bun.env.PORT||3000),async fetch(req){
  const path=new URL(req.url).pathname;
@@ -57,12 +61,12 @@ Bun.serve({port:Number(Bun.env.PORT||3000),async fetch(req){
   const sub=await db.unsafe("SELECT valid_until FROM liz_subscriptions WHERE telegram_id=$1 AND valid_until>NOW() LIMIT 1",[id]);
   if(!sub.length)return json({error:"Для персонального прогноза нужен действующий доступ."},403);
   if(body.section==="month"){
-   const m=await db.unsafe("SELECT body_html FROM astroday_monthly_forecasts WHERE telegram_id=$1 AND period_start='2026-11-21' AND period_end='2026-12-17' LIMIT 1",[id]);
+   const m=await db.unsafe("SELECT body_html,period_start::text AS period_start,period_end::text AS period_end FROM astroday_monthly_forecasts WHERE telegram_id=$1 AND period_end>=CURRENT_DATE ORDER BY period_start ASC LIMIT 1",[id]);
    if(!m.length)return json({error:"Месячный прогноз ещё не подготовлен."},404);
-   return json({bodyHtml:safe(m[0].body_html),version:VERSION});
+   return json({bodyHtml:safe(m[0].body_html),periodStart:m[0].period_start,periodEnd:m[0].period_end,version:VERSION});
   }
   if(body.section==="day"){
-   const day=dayOK(body.day)?body.day:"2026-11-21";
+   const day=dayOK(body.day)?body.day:new Date().toISOString().slice(0,10);
    const d=await db.unsafe("SELECT body_html FROM astroday_v2_forecasts WHERE telegram_id=$1 AND forecast_date=$2::date AND status='ready' AND body_html IS NOT NULL LIMIT 1",[id,day]);
    if(!d.length)return json({error:"Прогноз на выбранную дату ещё недоступен."},404);
    return json({bodyHtml:safe(d[0].body_html),day});
