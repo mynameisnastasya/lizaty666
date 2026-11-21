@@ -3,10 +3,11 @@
 // Любой текст проходит validateForecast(); непрошедший никогда не сохраняется как ready.
 import { findProfanity } from "./profanity.mjs";
 import { factsForPrompt, allowedPlanets, PLANET_RU } from "./topics.mjs";
+import { renderMoonGuidance } from "./moon-guidance.mjs";
 import { lunarDayInfo, ordinalSutki } from "./lunar-days.mjs";
 import { ruDate, formatVoc } from "./timefmt.mjs";
 
-export const PROMPT_VERSION = "astroday-liza-v2.2-20261118";
+export const PROMPT_VERSION = "astroday-liza-v2.3-moon-personal-20261121";
 
 // Пояснение к Луне без курса пишет код (без риска перепутать смысл): ротация по дате.
 export const VOC_NOTES = [
@@ -48,6 +49,7 @@ export const SYSTEM_PROMPT = `Ты пишешь ежедневный персо�
 ДЛИНА зависит от силы дня (поле intensity): quiet — коротко и спокойно (2–4 предложения в одном разделе); normal — один раздел 4–7 предложений, второй раздел только если есть вторая тема; strong — до двух разделов по 5–8 предложений. Не растягивай слабый аспект до большого события.
 
 ЛУННЫЙ БЛОК: если переданы лунные сутки — 1–2 предложения о традиционной символике этих суток своими словами, мягко и практично, без мистики и запугивания. Номер и время не пиши — их вставит программа. Не пиши канцелярских оборотов вроде «символ части дня».
+ПОЛОЖЕНИЕ ТРАНЗИТНОЙ ЛУНЫ В НАТАЛЬНОМ ДОМЕ И ЕЁ АСПЕКТЫ К ЛИЧНЫМ ПЛАНЕТАМ: отдельные персональные рекомендации формирует программа по проверенным данным движка. НЕ придумывай и НЕ повторяй их самостоятельно. Без времени рождения дома не упоминай; неточная натальная Луна не используется. Никаких «тебе вчера позвонил бывший», «сегодня встретишь любовь», «у тебя появится ребёнок» — вместо этого рекомендации о возможной теме и свободном выборе.
 
 ПРИМЕР НУЖНОЙ ИНТОНАЦИИ (не копируй, только ориентир по ритму):
 «Сегодня Марс давит на твою Венеру — и хочется, чтобы всё решилось вот прям сейчас. Знакомо: в чате три человека думают, а ты уже пишешь „ну всё, решили“ 😅 Но! Твой вариант — это ещё не общий план. Скажи, чего хочешь, и дай людям минуту. Не геройствуем.»
@@ -160,7 +162,8 @@ export function validateForecast(out, ctx) {
   const norm = (s) => String(s || "").toLowerCase().replace(/ё/g, "е").replace(/[^\p{L}\s]/gu, "").split(/\s+/).filter(Boolean).slice(0, 5).join(" ");
   for (const r of ctx.recentOpenings || []) if (norm(r) && (norm(r) === norm(out.opening) || norm(r) === norm(out.headline))) problems.push("repeated_opening");
   const len = (out.sections || []).reduce((a, s) => a + s.text.length, 0);
-  const max = { quiet: 700, normal: 1500, strong: 2300 }[ctx.selection.intensity] || 1500;
+  const baseMax = { quiet: 700, normal: 1500, strong: 2300 }[ctx.selection.intensity] || 1500;
+  const max = baseMax - (ctx.selection.moonGuidance?.hasPersonalGuidance ? 400 : 0);
   if (len > max) problems.push("too_long");
   if (len < 120) problems.push("too_short");
   if (out.voc_note) problems.push("voc_note_must_be_empty");
@@ -179,6 +182,8 @@ export function renderForecast(out, ctx) {
   parts.push("<b>" + para(out.headline).toUpperCase() + "</b>");
   parts.push(para(out.opening));
   for (const s of out.sections) parts.push((s.title ? "<b>" + para(s.title).toUpperCase() + "</b>\n" : "") + para(s.text));
+  const moonGuidance = renderMoonGuidance(ctx.selection?.moonGuidance);
+  if (moonGuidance) parts.push("🌙 <b>ЛУНА И ТВОЯ НАТАЛЬНАЯ КАРТА</b>\n" + para(moonGuidance));
   if (ctx.lunar?.lunarDayAtNoon) {
     parts.push("🌙 <b>" + esc(ordinalSutki(ctx.lunar.lunarDayAtNoon).toUpperCase()) + "</b>" + (out.lunar_note ? "\n" + para(out.lunar_note) : ""));
   }

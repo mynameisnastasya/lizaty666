@@ -1,0 +1,27 @@
+name: ASTRODAY personalized editorial QA
+on:
+  push:
+    branches: [astroday/offline-monthly-editorial-20261121]
+    paths:
+      - "astroday/v2/quality-polish.mjs"
+      - "astroday/v2/quality-release-20261121.ts"
+      - "astroday/test/v2/quality-polish.test.mjs"
+      - ".github/workflows/astroday-quality-review.yml"
+  pull_request:
+    branches: [astroday-2.0]
+    paths:
+      - "astroday/v2/quality-polish.mjs"
+      - "astroday/test/v2/quality-polish.test.mjs"
+permissions:
+  contents: read
+jobs:
+  editorial-quality:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Tests for human-authored personal Moon and month forecasts
+        run: node --test astroday/test/v2/quality-polish.test.mjs
