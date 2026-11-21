@@ -132,7 +132,7 @@ export function authorDaily(row){
  "🔮 <b>ТВОЙ ПРОГНОЗ НА "+esc(dateRu(day).toUpperCase())+"</b>",
  "<b>"+esc(headline)+"</b>",
  esc(intro),
- "<b>ЧТО ВАЖНО</b>\n"+esc(ap.length?aspectSentence(ap[0]):"В расчёте дня нет необходимости объявлять грандиозные перемены. Главная тема сейчас — "+H[h||10].what+". Можно прожить её спокойно и без спешки."),
+ "<b>ЧТО ВАЖНО</b>\n"+esc(ap.length?aspectSentence(ap[0]):"В расчёте дня нет необходимости объявлять грандиозные перемены. Главная тема сейчас — "+theme.title.toLowerCase()+". Можно прожить её спокойно и без спешки."),
  "<b>ТВОЙ ШАГ</b>\n"+esc(theme.do)+"\n⛔ "+esc(theme.no)
  ];
  if(moon)parts.push("🌙 <b>ЛУНА В ТВОЁМ ДНЕ</b>\n"+esc(moon));
