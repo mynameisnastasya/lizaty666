@@ -1,0 +1,30 @@
+name: ASTRODAY V3 Reader & Cabinet Safety
+on:
+  push:
+    branches: [astroday/offline-monthly-editorial-20261121]
+    paths:
+      - "astroday/v2/monthly-reader.ts"
+      - "astroday/v2/reader-premium-v2.html"
+      - "astroday/v2/cabinet-integration-v2.mjs"
+      - "astroday/test/v2/reader-v3.integration.test.mjs"
+      - ".github/workflows/astroday-reader-v3.yml"
+  pull_request:
+    branches: [astroday-2.0]
+    paths:
+      - "astroday/v2/monthly-reader.ts"
+      - "astroday/v2/reader-premium-v2.html"
+      - "astroday/v2/cabinet-integration-v2.mjs"
+      - "astroday/test/v2/reader-v3.integration.test.mjs"
+permissions:
+  contents: read
+jobs:
+  reader-v3:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Test V3 premium reader, security and original cabinet compatibility
+        run: node --test astroday/test/v2/reader-v3.integration.test.mjs
