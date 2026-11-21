@@ -1,0 +1,46 @@
+name: ASTRODAY unified release verification
+on:
+  push:
+    branches: [astroday/unified-liza-release-20261121]
+  pull_request:
+    paths:
+      - "astroday/v2/**"
+      - "astroday/cabinet-v3/**"
+      - ".github/workflows/astroday-unified-release.yml"
+permissions:
+  contents: read
+jobs:
+  backend-editorial:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Personal lunar aspects and natal houses
+        run: bun test astroday/test/v2/moon-guidance.test.mjs
+      - name: Existing editorial and fallback regression
+        run: bun test astroday/test/v2/editorial.test.mjs
+      - name: Offline day and month narratives
+        run: node --test astroday/test/v2/offline-editorial.test.mjs
+      - name: Premium Liza editorial quality
+        run: node --test astroday/test/v2/quality-polish.test.mjs
+  premium-client:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: astroday/cabinet-v3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: TypeScript and production build
+        run: npm run build
+      - name: Calendar, BaZi and mobile UI regression
+        run: npm run test
