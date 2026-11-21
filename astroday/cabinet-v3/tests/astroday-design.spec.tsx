@@ -1,4 +1,5 @@
 import React from "react";
+import {describe,it,expect,afterEach} from "vitest";
 import {cleanup, fireEvent, render, screen, within} from "@testing-library/react";
 import AstrodayDesign from "../src/astroday-design";
 
@@ -23,9 +24,9 @@ describe("ASTRODAY 3.0 design navigation",()=>{
     const nav=openPage();
     fireEvent.click(nav.getByRole("button",{name:"Календарь"}));
     const current=screen.getByRole("button",{name:/21 ноября 2026.*открыть/});
-    expect((current as HTMLButtonElement).disabled).toBeFalse();
+    expect((current as HTMLButtonElement).disabled).toBe(false);
     const locked=screen.getByRole("button",{name:/16 ноября 2026.*недоступно/});
-    expect((locked as HTMLButtonElement).disabled).toBeTrue();
+    expect((locked as HTMLButtonElement).disabled).toBe(true);
     fireEvent.click(screen.getByRole("button",{name:/23 ноября 2026.*открыть/}));
     expect(screen.getByText("Твой прогноз на 23 ноября")).toBeTruthy();
   });
@@ -36,6 +37,6 @@ describe("ASTRODAY 3.0 design navigation",()=>{
     fireEvent.click(screen.getByRole("button",{name:"Сохранить настройки"}));
     expect(screen.getByRole("status").textContent).toContain("в этом предпросмотре");
     fireEvent.click(nav.getByRole("button",{name:"Доступ"}));
-    expect((screen.getByRole("button",{name:/Оплата в демо отключена/}) as HTMLButtonElement).disabled).toBeTrue();
+    expect((screen.getByRole("button",{name:/Оплата в демо отключена/}) as HTMLButtonElement).disabled).toBe(true);
   });
 });
