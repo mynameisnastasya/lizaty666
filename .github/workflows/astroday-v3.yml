@@ -1,0 +1,34 @@
+name: ASTRODAY 3.1 design and BaZi checks
+on:
+  push:
+    branches: [astroday/design-v3-20261121]
+    paths:
+      - "astroday/cabinet-v3/**"
+      - ".github/workflows/astroday-v3.yml"
+  pull_request:
+    branches: [astroday/cabinet-mobile-20261119]
+    paths:
+      - "astroday/cabinet-v3/**"
+      - ".github/workflows/astroday-v3.yml"
+permissions:
+  contents: read
+jobs:
+  design-bazi:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: astroday/cabinet-v3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: astroday/cabinet-v3/package.json
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Build
+        run: npm run build
+      - name: Unit and UI tests
+        run: npm test
