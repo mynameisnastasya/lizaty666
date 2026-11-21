@@ -7,6 +7,7 @@ import { writeForecast, PROMPT_VERSION } from "./editorial.mjs";
 import { addressName, grammaticalGender } from "./names.mjs";
 import { dayMaster, jieCaiCalendar, BAZI_VERSION } from "./bazi.mjs";
 import { nextLunarPart } from "./lunar-days.mjs";
+import {makeOfflineForecast,normalizedOfflineMode,isOpenAIQuotaFailure} from "./offline-fallback.mjs";
 
 export const QUEUE_VERSION = "astroday-queue-v1";
 export const STATES = ["pending", "calculating", "generating", "validating", "ready", "failed", "invalidated"];
@@ -213,6 +214,16 @@ async function recentOpenings(db, id, day) {
   return r.flatMap((x) => [x.h, x.o]).filter(Boolean);
 }
 
+async function saveVerifiedOffline(db,row,calc,lunar,selection,deps){
+ const result=makeOfflineForecast({row,calc,lunar,topics:selection,engineVersion:deps.engineVersion});
+ const updated=await db.unsafe(
+  "UPDATE astroday_v2_forecasts SET status='ready',lease_until=NULL,error=NULL,model_output=$4::jsonb,body_html=$5,validation=$6::jsonb,model=$7,openai_response_id=NULL,input_tokens=0,output_tokens=0,prompt_version=$8,updated_at=NOW() WHERE telegram_id=$1 AND forecast_date=$2::date AND generation_key=$3 AND status IN ('generating','validating') RETURNING 1",
+  [row.telegram_id,row.day,row.generation_key,JSON.stringify(result.modelOutput),result.html,JSON.stringify(result.validation),result.model,result.promptVersion]
+ );
+ if(updated.length!==1){const e=Error("offline_row_changed_or_delivered");e.stop=true;throw e;}
+ return {status:"ready",html:result.html,offline:true};
+}
+
 export async function processRow(db, row, deps) {
   try {
     const user = await loadUser(db, row.telegram_id);
@@ -227,11 +238,22 @@ export async function processRow(db, row, deps) {
     const lunar = row.lunar || await lunarFor(db, deps, user, row.day);
     const selection = selectTopics(calc);
     await setState(db, row, "generating", { facts: calc, lunar, topics: selection, engine_version: calc.version, lunar_version: deps.lunarVersion });
-    // 2. текст
-    if (!(await budgetOk(db, deps.dailyRequestBudget || 600))) { const e = Error("openai_daily_budget_reached"); throw e; }
+    // 2. текст: offline mode is explicit and disabled by default.
+    const offlineMode=normalizedOfflineMode(deps.offlineMode);
+    if(offlineMode==="only")return saveVerifiedOffline(db,row,calc,lunar,selection,deps);
+    if(!(await budgetOk(db,deps.dailyRequestBudget||600))){
+      if(offlineMode==="when-exhausted")return saveVerifiedOffline(db,row,calc,lunar,selection,deps);
+      throw Error("openai_daily_budget_reached");
+    }
     const name = addressName({ profileName: user.preferred_name, mode: user.address_mode || "original", custom: user.address_value, affectionate: user.address_value });
     const ctx = { day: row.day, zone: user.time_zone, cityName: lunar.location?.city || user.current_city_name, name, gender: grammaticalGender(user.preferred_name), selection, lunar: { ...lunar, nextPart: nextLunarPart(lunar, user.time_zone) }, voc: lunar.voidOfCourse || [], recentOpenings: await recentOpenings(db, row.telegram_id, row.day) };
-    const res = await deps.writer(ctx, { onUsage: (u) => recordUsage(db, u) });
+    let res;
+    try{res=await deps.writer(ctx,{onUsage:(u)=>recordUsage(db,u)});}
+    catch(e){
+      if(offlineMode==="when-exhausted"&&isOpenAIQuotaFailure(e))
+        return saveVerifiedOffline(db,row,calc,lunar,selection,deps);
+      throw e;
+    }
     await setState(db, row, "validating", { validation: { attempts: res.attempts } });
     if (!res.ok) { await recordUsage(db, null, true); throw Error("validation_failed:" + (res.attempts.at(-1)?.problems || []).slice(0, 4).join(",")); }
     const last = res.attempts.at(-1);
