@@ -3,7 +3,7 @@
 // Этот блок формирует код, не языковая модель: без выдуманных событий и аспектов.
 export const MOON_GUIDANCE_VERSION = "astroday-moon-personal-v1";
 export const MOON_PERSONAL_PLANETS = Object.freeze(["Sun", "Moon", "Mercury", "Venus", "Mars"]);
-const PLANET_LABEL = Object.freeze({ Sun: "Солнцу", Moon: "Луне", Mercury: "Меркурию", Venus: "Венере", Mars: "Марсу" });
+const NATAL_PHRASE = Object.freeze({ Sun: "твоему натальному Солнцу", Moon: "твоей натальной Луне", Mercury: "твоему натальному Меркурию", Venus: "твоей натальной Венере", Mars: "твоему натальному Марсу" });
 const ASPECT_LABEL = Object.freeze({ conjunction: "соединение", sextile: "секстиль", square: "квадрат", trine: "трин", opposition: "оппозиция" });
 // Лунный фон подвижен. При отсутствии отдельного точного события не делаем далеко идущих выводов по широким орбам.
 const MAX_MOON_ORB = 3;
@@ -38,7 +38,7 @@ const MOOD = Object.freeze({
   sextile: "Есть повод самой сделать небольшой шаг навстречу нужному результату.",
 });
 const validHouse=(value)=>Number.isInteger(Number(value)) && Number(value)>=1 && Number(value)<=12 ? Number(value) : null;
-const toFinite=(n)=>typeof n==="number"&&Number.isFinite(n)?n:Number.isFinite(Number(n))?Number(n):null;
+const toFinite=(n)=>(n===null||n===undefined||n==="")?null:(typeof n==="number"&&Number.isFinite(n)?n:Number.isFinite(Number(n))?Number(n):null);
 
 /**
  * calc is an engine /v2/forecast payload at 12:00 in the user's local time.
@@ -81,7 +81,7 @@ export function renderMoonGuidance(g){
   lines.push("🔥 "+h.action);
  }
  if(g.aspects?.length){
-  const details=g.aspects.map(a=>"Луна — "+ASPECT_LABEL[a.aspect]+" к твоему натальному "+PLANET_LABEL[a.planet]).join("; ");
+  const details=g.aspects.map(a=>"Луна — "+ASPECT_LABEL[a.aspect]+" к "+NATAL_PHRASE[a.planet]).join("; ");
   const first=g.aspects[0];
   lines.push(details+".");
   lines.push(MOOD[first.aspect]+" "+ASPECT_ACTION[first.planet]);
