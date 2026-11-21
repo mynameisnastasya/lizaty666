@@ -66,7 +66,7 @@ function CalendarPanel({onChoose}:{onChoose:(d:number)=>void}){
        <button key={i} className={[s.dayCell,current?s.todayCell:"",!available?s.lockedCell:""].join(" ")} disabled={!available} title={!available?"Нет доступа к дате":"Открыть дневной прогноз"} aria-label={formatDate(ym.y,ym.m,d)+(available?" — открыть":" — недоступно")} onClick={()=>onChoose(d)}>{d}{current&&<span className={s.todayMark}/>}</button>;
    })}</div>
    <div className={s.legend}><span><i className={s.legendCurrent}/> Сегодня</span><span><i className={s.legendAvailable}/> Доступно</span><span><i className={s.legendLocked}/> Закрыто</span></div>
-  </section><MonthlySkyEvents year={ym.y} monthZeroBased={ym.m}/></>;;
+  </section><MonthlySkyEvents year={ym.y} monthZeroBased={ym.m}/></>;
 }
 function TodayPanel({selected,onCalendar,onWealth}:{selected:number,onCalendar:()=>void;onWealth:()=>void}){
  const [expanded,setExpanded]=useState(true);
