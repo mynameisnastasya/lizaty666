@@ -35,10 +35,10 @@ test("пятый дом + точные аспекты к личным плане
  expect(moon.aspects[0].planet).toBe("Venus");
  expect(moon.aspects[1].planet).toBe("Mars");
  const t=renderMoonGuidance(moon);
- expect(t).toContain("твоему натальному Венере");
+ expect(t).toContain("твоей натальной Венере");
  expect(t).toContain("твоему натальному Марсу");
  expect(t).not.toContain("Юпитеру");
- expect(t).not.toContain("твоему натальному Луне");
+ expect(t).not.toContain("твоей натальной Луне");
 });
 test("без времени рождения: натальные дома и ненадёжную натальную Луну не выдаём",()=>{
  const calc={...original,houseKnown:false,natalMoonReliable:false,
@@ -53,7 +53,7 @@ test("без времени рождения: натальные дома и н�
  const sel=selectTopics(calc);
  expect(sel.moonGuidance.house).toBe(null);
  const prompt=buildUserPrompt({day:"2026-11-21",name:null,gender:null,selection:sel,lunar:{lunarDayAtNoon:9},voc:[]});
- expect(prompt).toContain("дома не учитываются");
+ expect(prompt).toContain("не упоминай дома");
 });
 test("без времени и без точных личных аспектов — остаётся лунный день из лунного модуля",()=>{
  const sel=selectTopics({...original,houseKnown:false,natalMoonReliable:false,activeAspects:[]});
