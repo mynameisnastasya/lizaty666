@@ -35,7 +35,7 @@ test("bad anchors fail rather than ship a half-integrated app", () => {
 
 test("interface copy spans login, profile, dashboard and checkout", () => {
   const entry=[
-    'let DASHBOARD_HTML=\'<head></head><details class="astro-help"></details>\';',
+    'let DASHBOARD_HTML=\'<head></head><p class="muted" style="margin-top:30px"></p>\';',
     'let LOGIN_HTML=\'<head></head><section class="card"></section>\';',
     'let PROFILE_HTML=\'<head></head><div class="warning" id="availability"></div>\';',
     'let CHECKOUT_HTML=\'<head></head><section id="miniGate"></section>\';',
