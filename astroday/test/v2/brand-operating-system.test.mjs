@@ -5,7 +5,7 @@ test("public guide explains method, paid value and limitations", () => {
   expect(PUBLIC_PAGE).toContain("Шесть шагов без догадок");
   expect(PUBLIC_PAGE).toContain("Персональные исходные данные");
   expect(PUBLIC_PAGE).toContain("не являются научно");
-  expect(PUBLIC_PAGE).toContain("Автоматических списаний нет");
+  expect(PUBLIC_PAGE).toContain("без автоматических списаний");
 });
 
 test("guide links are real existing product routes", () => {
