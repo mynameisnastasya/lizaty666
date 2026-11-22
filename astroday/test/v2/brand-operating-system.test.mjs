@@ -35,10 +35,10 @@ test("bad anchors fail rather than ship a half-integrated app", () => {
 
 test("interface copy spans login, profile, dashboard and checkout", () => {
   const entry=[
-    'let DASHBOARD_HTML=\'<head></head><p class="muted" style="margin-top:30px"></p>\';',
-    'let LOGIN_HTML=\'<head></head><section class="card"></section>\';',
-    'let PROFILE_HTML=\'<head></head><div class="warning" id="availability"></div>\';',
-    'let CHECKOUT_HTML=\'<head></head><section id="miniGate"></section>\';',
+    'let DASHBOARD_HTML=\'<html><head></head><body><main></main></body></html>\';',
+    'let LOGIN_HTML=\'<html><head></head><body><main></main></body></html>\';',
+    'let PROFILE_HTML=\'<html><head></head><body><main></main></body></html>\';',
+    'let CHECKOUT_HTML=\'<html><head></head><body><main></main></body></html>\';',
     'let astrodayOnboardingCopyV1=(html,path)=>html;',
     RUNTIME_PATCH,
     'return [DASHBOARD_HTML,LOGIN_HTML,PROFILE_HTML,CHECKOUT_HTML];'
