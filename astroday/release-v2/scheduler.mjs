@@ -948,12 +948,12 @@
     const capped = addDays(today, windowDays - 1);
     return { start: today, end: last < capped ? last : capped, accessEnd: last };
   }
-  async function invalidateStale(db, id, { profileFp, engineVersion, lunarVersion }, fromDay) {
+  async function invalidateStale(db, id, { profileFp, engineVersion, lunarVersion, promptVersion }, fromDay) {
     const r = await db.unsafe(`UPDATE astroday_v2_forecasts SET status='invalidated', lease_until=NULL, updated_at=NOW()
      WHERE telegram_id=$1 AND forecast_date>=$2::date AND status<>'invalidated'
-       AND (profile_fp<>$3 OR engine_version IS DISTINCT FROM $4 OR lunar_version IS DISTINCT FROM $5)
+       AND forecast_date<$2::date+3 AND (profile_fp<>$3 OR engine_version IS DISTINCT FROM $4 OR lunar_version IS DISTINCT FROM $5 OR prompt_version IS DISTINCT FROM $6)
        AND NOT EXISTS(SELECT 1 FROM astroday_v2_deliveries d WHERE d.telegram_id=$1 AND d.forecast_date=astroday_v2_forecasts.forecast_date AND d.status IN ('sent','sending','review'))
-     RETURNING forecast_date`, [id, fromDay, profileFp, engineVersion, lunarVersion]);
+     RETURNING forecast_date`, [id, fromDay, profileFp, engineVersion, lunarVersion, promptVersion]);
     return r.length;
   }
   async function enqueueRange(db, user, { start, end, key, model, engineVersion, lunarVersion, today }) {
@@ -984,7 +984,7 @@
         continue;
       out.users++;
       const key = generationKey({ profileFp: chartFingerprint(user), engineVersion: cfg.engineVersion, lunarVersion: cfg.lunarVersion, model: cfg.model });
-      out.invalidated += await invalidateStale(db, id, { profileFp: chartFingerprint(user), engineVersion: cfg.engineVersion, lunarVersion: cfg.lunarVersion }, win.start);
+      out.invalidated += await invalidateStale(db, id, { profileFp: chartFingerprint(user), engineVersion: cfg.engineVersion, lunarVersion: cfg.lunarVersion, promptVersion: PROMPT_VERSION }, win.start);
       out.enqueued += await enqueueRange(db, user, { ...win, key, model: cfg.model, engineVersion: cfg.engineVersion, lunarVersion: cfg.lunarVersion, today: win.start });
       out.bazi += await ensureBazi(db, user, win.start, win.accessEnd);
     }
