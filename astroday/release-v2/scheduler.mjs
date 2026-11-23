@@ -622,6 +622,11 @@
     for (const s of out.sections)
       parts.push((s.title ? "<b>" + para(s.title).toUpperCase() + `</b>
 ` : "") + para(s.text));
+    const aspectFacts = (ctx.selection?.themes || []).flatMap((t) => t.facts || []).filter((f) => f.aspect && ASPECT_MEANING[f.aspect]).slice(0, 2);
+    if (aspectFacts.length) {
+      const meanings = aspectFacts.map((f) => "• " + esc(ASPECT_RU[f.aspect] + " (" + PLANET_RU[f.transit] + " / " + PLANET_RU[f.natal] + "): " + ASPECT_MEANING[f.aspect] + "; " + MEANING[f.transit] + ", " + MEANING[f.natal] + "."));
+      parts.push("🔎 <b>ЧТО ОЗНАЧАЮТ АСПЕКТЫ</b>\n" + meanings.join("\n"));
+    }
     if (ctx.lunar?.lunarDayAtNoon) {
       parts.push("\uD83C\uDF19 <b>" + esc(ordinalSutki(ctx.lunar.lunarDayAtNoon).toUpperCase()) + "</b>" + (out.lunar_note ? `
 ` + para(out.lunar_note) : ""));
