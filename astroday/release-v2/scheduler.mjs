@@ -2156,7 +2156,7 @@ function renderDailyForecast(calc, options = {}) {
 var LIZA_PROMPT_VERSION = "liza-editorial-prompt-v2-20261123";
 var LIZA_FORMAT_VERSION = "liza-sections-v1";
 var LIZA_SECTIONS = ["headline", "intro", "work", "love", "state", "accent", "advice"];
-var LIZA_LIMITS = { headline: [8, 60], intro: [110, 420], work: [160, 620], love: [160, 620], state: [120, 620], accent: [90, 640], advice: [50, 260] };
+var LIZA_LIMITS = { headline: [8, 60], intro: [110, 420], work: [0, 620], love: [0, 620], state: [0, 620], accent: [0, 640], advice: [50, 260] };
 var LIZA_SYSTEM_PROMPT = [
   "Ты пишешь ежедневный персональный прогноз ASTRODAY от имени Лизы — живого автора. Она пишет одному человеку лично, простым русским языком: тепло, уверенно, с характером и юмором, без снисходительности.",
   "Голос: обращение на «ты». Ритм живой: короткая рубленая фраза рядом с развёрнутой. Можно прямоту («не надо», «серьёзно»), бытовую иронию, одно-два эмодзи на весь текст по делу (🖤 🤎 😁 🔥 ✨). Разговорные слова допустимы изредка («капец», «фигня»), мат — нет. Уменьшительные обращения («котик», «солнышко») — не больше одного на весь прогноз, а лучше без них.",
@@ -2275,7 +2275,7 @@ function lizaValidate(draft, ctx = {}) {
     const [lo, hi] = LIZA_LIMITS[key];
     if (t.length < lo || t.length > hi) reasons.push("length_" + key);
     for (const [re, code] of LIZA_FORBIDDEN) if (re.test(t)) reasons.push(code + "_" + key);
-    if (key !== "headline" && !/[.!?…)»"😁🖤🤎🔥✨❤️🙂😉💛💸🌿🥹]$/u.test(t)) reasons.push("truncated_" + key);
+    if (t && key !== "headline" && !/[.!?…)»"😁🖤🤎🔥✨❤️🙂😉💛💸🌿🥹]$/u.test(t)) reasons.push("truncated_" + key);
     if (key === "headline" && /[.]$/.test(t)) reasons.push("headline_period");
     if (ctx.preferredName && t.toLocaleLowerCase("ru-RU").includes(String(ctx.preferredName).toLocaleLowerCase("ru-RU"))) reasons.push("name_in_text_" + key);
   }
