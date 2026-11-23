@@ -375,7 +375,7 @@
   }
 
   // v2/editorial.mjs
-  var PROMPT_VERSION = "astroday-liza-v2.2-20261118";
+  var PROMPT_VERSION = "astroday-liza-v2.3-20261123";
   var VOC_NOTES = [
     "\u0412 \u044D\u0442\u043E \u0432\u0440\u0435\u043C\u044F \u043D\u0435 \u0441\u0442\u0430\u0440\u0442\u0443\u0435\u043C \u043D\u043E\u0432\u043E\u0435 \u2014 \u0434\u043E\u0434\u0435\u043B\u044B\u0432\u0430\u0435\u043C \u043D\u0430\u0447\u0430\u0442\u043E\u0435 \u0438 \u043D\u0435 \u043F\u043E\u0434\u043F\u0438\u0441\u044B\u0432\u0430\u0435\u043C\u0441\u044F \u043D\u0430 \u0432\u0430\u0436\u043D\u043E\u0435 \xAB\u0441 \u0440\u0430\u0437\u0431\u0435\u0433\u0443\xBB.",
     "\u0425\u043E\u0440\u043E\u0448\u0438\u0439 \u043C\u043E\u043C\u0435\u043D\u0442 \u0437\u0430\u043A\u0440\u044B\u0442\u044C \u0445\u0432\u043E\u0441\u0442\u044B, \u0430 \u0437\u0430\u043F\u0443\u0441\u043A \u043D\u043E\u0432\u044B\u0445 \u0434\u0435\u043B \u0438 \u0432\u0430\u0436\u043D\u044B\u0435 \u043F\u043E\u043A\u0443\u043F\u043A\u0438 \u043B\u0443\u0447\u0448\u0435 \u043E\u0442\u043B\u043E\u0436\u0438\u0442\u044C.",
@@ -557,7 +557,7 @@
       problems.push("more_sections_than_themes");
     const allowedSpheres = new Set((ctx.selection.themes || []).flatMap((t) => DOMAIN_SPHERE[t.domain] || []));
     const extra = Object.entries(SPHERES).filter(([k, re]) => re.test((out.sections || []).map((s) => s.text).join(" ") + " " + out.advice) && !allowedSpheres.has(k)).map(([k]) => k);
-    if (extra.length >= 2)
+    if (extra.length >= 3)
       problems.push("too_many_spheres:" + extra.join(","));
     if (ctx.name) {
       const n = (all.match(new RegExp(ctx.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g")) || []).length;
