@@ -1076,6 +1076,13 @@
     const r = await db.unsafe("SELECT model_output->>'headline' AS h, model_output->>'opening' AS o FROM astroday_v2_forecasts WHERE telegram_id=$1 AND status='ready' AND forecast_date BETWEEN $2::date-7 AND $2::date+7 AND forecast_date<>$2::date ORDER BY abs(forecast_date-$2::date) LIMIT 8", [id, day]);
     return r.flatMap((x) => [x.h, x.o]).filter(Boolean);
   }
+  async function recentForecastSamples(db, id, day) {
+    const rows = await db.unsafe("SELECT model_output FROM astroday_v2_forecasts WHERE telegram_id=$1 AND status=$3 AND forecast_date<$2::date AND forecast_date>=$2::date-14 AND model_output IS NOT NULL ORDER BY forecast_date DESC LIMIT 10", [id, day, "ready"]);
+    return rows.map((r) => {
+      const o = r.model_output || {};
+      return [o.headline, ...(Array.isArray(o.sections) ? o.sections.map((s) => s?.text || "") : []), o.advice].filter((v) => typeof v === "string" && v.trim()).join(" ").slice(0, 1000);
+    }).filter(Boolean);
+  }
   async function processRow(db, row, deps) {
     try {
       const user = await loadUser(db, row.telegram_id);
@@ -1099,7 +1106,7 @@
         throw e;
       }
       const name = addressName({ profileName: user.preferred_name, mode: user.address_mode || "original", custom: user.address_value, affectionate: user.address_value });
-      const ctx = { day: row.day, zone: user.time_zone, cityName: lunar.location?.city || user.current_city_name, name, gender: grammaticalGender(user.preferred_name), selection, lunar: { ...lunar, nextPart: nextLunarPart(lunar, user.time_zone) }, voc: lunar.voidOfCourse || [], recentOpenings: await recentOpenings(db, row.telegram_id, row.day) };
+      const ctx = { day: row.day, zone: user.time_zone, cityName: lunar.location?.city || user.current_city_name, name, gender: grammaticalGender(user.preferred_name), selection, lunar: { ...lunar, nextPart: nextLunarPart(lunar, user.time_zone) }, voc: lunar.voidOfCourse || [], recentOpenings: await recentOpenings(db, row.telegram_id, row.day), recentSummaries: await recentForecastSamples(db, row.telegram_id, row.day) };
       const res = await deps.writer(ctx, { onUsage: (u) => recordUsage(db, u) });
       await setState(db, row, "validating", { validation: { attempts: res.attempts } });
       if (!res.ok) {
