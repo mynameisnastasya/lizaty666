@@ -1,7 +1,7 @@
 // ASTRODAY · авторская редактура Лизы, 24.11.2026.
 // Текст и все варианты написаны вручную, без ИИ API и внешних генераторов.
 // Расчётная часть не меняется: используем только факты verified_v2.
-export const VERSION="liza-authorial-offline-v3-20261124";
+export const VERSION="liza-authorial-offline-v4-moon-house-20261124";
 const sig={
  Aries:["Овен","♈","Овне","Овна"],Taurus:["Телец","♉","Тельце","Тельца"],
  Gemini:["Близнецы","♊","Близнецах","Близнецов"],Cancer:["Рак","♋","Раке","Рака"],
@@ -198,26 +198,87 @@ function nameFromRow(row){
  const n=typeof row.preferred_name==="string"?row.preferred_name.trim():"";
  return /^[А-Яа-яЁё -]{2,30}$/.test(n)?n:"";
 }
+function trustedMoonHouse(facts,house){
+ return facts.houseKnown===true&&facts.houseSystem==="placidus"&&validHouse(house)?Number(house):null;
+}
+function houseAtIngress(facts,event){
+ if(event.toSign&&!sig[event.toSign])return null;
+ const h=trustedMoonHouse(facts,event.natalHouse);
+ if(h)return h;
+ const cusps=facts.natalProfile?.houseCusps;
+ if(facts.houseKnown!==true||facts.houseSystem!=="placidus"||!Array.isArray(cusps)||cusps.length!==12||cusps.some(c=>!Number.isFinite(Number(c))))return null;
+ const signs=Object.keys(sig),n=signs.indexOf(event.toSign);
+ if(n<0)return null;
+ const a=(n*30+0.00001)%360;
+ for(let i=0;i<12;i++){
+  const left=Number(cusps[i]),right=Number(cusps[(i+1)%12]);
+  const width=((right-left)%360+360)%360;
+  if(((a-left)%360+360)%360<width)return i+1;
+ }
+ return null;
+}
 function lunarSection(facts){
  const out=[],m=facts.transitingMoon;
- if(m&&sig[m.sign]){out.push("На местный полдень "+moonMood[m.sign]);}
+ if(!m||!sig[m.sign])throw Error("moon_sign_missing");
+ const h=trustedMoonHouse(facts,m.natalHouse),hr=Number(facts.representativeLocalHour);
+ const at=Number.isInteger(hr)&&hr>=0&&hr<=23?String(hr).padStart(2,"0")+":00":"12:00";
+ out.push("Положение на "+at+" по твоему местному времени: Луна в "+sig[m.sign][2]+".");
+ if(facts.houseKnown===true){
+  if(!h)throw Error("verified_moon_house_missing");
+  out.push("🏠 Луна в твоём "+h+"-м натальном доме (Плацидус). "+houses[h][0]+" "+houses[h][1]);
+ }else{
+  out.push("🏠 Натальный дом Луны не указан: без подтверждённого времени рождения его нельзя надёжно рассчитать.");
+ }
+ out.push(moonMood[m.sign]);
  const ingress=(facts.dayEvents||[]).filter(e=>e.type==="moon_sign_ingress"&&e.toSign&&sig[e.toSign]&&asHour(e.at?.local));
- for(const e of ingress.slice(0,2))out.push("В "+asHour(e.at.local)+" по твоему местному времени Луна переходит в "+sig[e.toSign][2]+". Ритм дня может заметно поменяться.");
- for(const e of (facts.dayEvents||[]).filter(x=>x.type==="new_moon"&&sig[x.sign]&&asHour(x.at?.local)).slice(0,1))out.push("В "+asHour(e.at.local)+" по твоему местному времени новолуние в "+sig[e.sign][2]+". В астрологической символике это начало нового лунного цикла. Не обязательно начинать новую жизнь к ужину: выбери одно посильное намерение.");
+ for(const e of ingress.slice(0,2)){
+  const ih=houseAtIngress(facts,e);
+  out.push("В "+asHour(e.at.local)+" Луна переходит в "+sig[e.toSign][2]+". "+(ih?"В момент перехода она попадает в твой "+ih+"-й натальный дом. ":"")+(ih?houses[ih][0]+" ":"")+"После перехода акцент дня может измениться.");
+ }
  return out.join("\n");
 }
+function lunarEventHouse(facts,e){
+ const h=trustedMoonHouse(facts,e.natalHouse);
+ if(h)return h;
+ if(facts.houseKnown!==true)return null;
+ const lon=e.moonLongitude??e.longitude??e.moon?.longitude??null;
+ if(!Number.isFinite(Number(lon))||lon===null||!Array.isArray(facts.natalProfile?.houseCusps))return null;
+ const cusps=facts.natalProfile.houseCusps,a=(Number(lon)%360+360)%360;
+ for(let i=0;i<12;i++){
+  const width=((Number(cusps[(i+1)%12])-Number(cusps[i]))%360+360)%360;
+  if(((a-Number(cusps[i]))%360+360)%360<width)return i+1;
+ }
+ return null;
+}
+const confirmedEclipse=e=>e.type==="lunar_eclipse"||e.type==="solar_eclipse"||e.isEclipse===true||e.eclipse===true||e.eclipseType==="lunar"||e.eclipseType==="solar";
+const isLunarEclipse=e=>e.type==="lunar_eclipse"||e.eclipseType==="lunar"||((e.type==="full_moon")&&(e.eclipse===true||e.isEclipse===true));
+const isSolarEclipse=e=>e.type==="solar_eclipse"||e.eclipseType==="solar"||((e.type==="new_moon")&&(e.eclipse===true||e.isEclipse===true));
+function moonPhaseText(facts,e){
+ const h=lunarEventHouse(facts,e);
+ const phase=isLunarEclipse(e)?"Лунное затмение":isSolarEclipse(e)?"Солнечное затмение":e.type==="full_moon"?"Полнолуние":"Новолуние";
+ const z=sig[e.sign];
+ let out="Точный момент: "+asHour(e.at.local)+" по твоему местному времени. "+phase+(z?" в "+z[2]:" (знак в расчёте не указан)")+".";
+ if(e.type==="full_moon"||isLunarEclipse(e))if(z&&oppositeSign[e.sign])out+=" Луна напротив Солнца в "+sig[oppositeSign[e.sign]][2]+".";
+ if(h)out+="\n🏠 <b>Луна в "+h+"-м натальном доме в момент "+(isLunarEclipse(e)?"лунного затмения":isSolarEclipse(e)?"солнечного затмения":e.type==="full_moon"?"полнолуния":"новолуния")+"</b>\n"+esc(houses[h][0]+" "+houses[h][1]);
+ else out+="\n🏠 "+(facts.houseKnown===true?"Точный дом Луны в момент события не подтверждён расчётом. Указывать его наугад нельзя.":"Натальный дом Луны без точного времени рождения достоверно не определяется.");
+ return {text:out,house:h,phase};
+}
+function newMoonSection(facts){
+ const e=(facts.dayEvents||[]).find(x=>["new_moon","solar_eclipse"].includes(x.type)&&asHour(x.at?.local));
+ if(!e)return null;
+ const p=moonPhaseText(facts,e);
+ return {text:p.text+"\n"+(isSolarEclipse(e)?"В астрологической трактовке это особое новолуние. Не принимай резкие решения только из-за названия события.":"Новолуние символически связывают с новым циклом. Не обязательно начинать с глобальной революции, достаточно одного намерения."),house:p.house,eclipse:isSolarEclipse(e)};
+}
 function fullMoonSection(facts){
- const ev=(facts.dayEvents||[]).find(e=>e.type==="full_moon"&&asHour(e.at?.local));
+ const ev=(facts.dayEvents||[]).find(e=>["full_moon","lunar_eclipse"].includes(e.type)&&asHour(e.at?.local));
  if(!ev)return null;
- if(!sig[ev.sign]||!oppositeSign[ev.sign])return {text:"В "+asHour(ev.at.local)+" по твоему местному времени наступает полнолуние. Без подтверждённого знака точную трактовку здесь лучше не придумывать.",house:null};
+ const moon=moonPhaseText(facts,ev);
+ let out=moon.text+"\n";
+ out+=ev.sign==="Gemini"?"Это ось слов, фактов и убеждений. Есть что прояснить? Поговори прямо, без телепатии и драмы.\n":moonAxis[ev.sign]?"В астрологической трактовке заметнее тема "+moonAxis[ev.sign]+". Не делай категоричных выводов без фактов.\n":"Трактовку знака здесь нельзя подтвердить без дополнительного расчёта.\n";
  const sun=facts.natalProfile?.natalPositions?.Sun?.sign;
- const house=(facts.houseKnown===true&&ev.houseSystem==="placidus"&&validHouse(ev.natalHouse))?Number(ev.natalHouse):null;
- let out="Точное время: "+asHour(ev.at.local)+" по твоему местному времени. Полнолуние в "+sig[ev.sign][2]+": Луна напротив Солнца в "+sig[oppositeSign[ev.sign]][2]+".\n";
- out+=ev.sign==="Gemini"?"В астрологической символике это момент, когда становятся заметнее противоречия между тем, что мы говорим, и тем, во что верим. Не повод рушить всё разом. Повод честно поговорить.\n":"В астрологической трактовке может стать заметнее тема "+moonAxis[ev.sign]+". Здесь лучше подвести итоги и назвать проблему, а не обещать себе, что после этой ночи изменится абсолютно всё.\n";
  if(sig[sun])out+="\n"+sig[sun][1]+" <b>Твой солнечный знак: "+sig[sun][0]+"</b>\n"+esc(ev.sign==="Gemini"?sunMoon[sun]:sunMoonElse[sun])+"\n";
- if(house)out+="\n🏠 <b>Твой "+house+"-й натальный дом</b>\n"+esc(houses[house][0]+" "+houses[house][1]);
- else out+="\n🏠 Натальный дом здесь не указан: без подтверждённого времени рождения точное положение по домам было бы выдумкой. А мы с тобой не за этим пришли.";
- return {text:out,house};
+ if(isLunarEclipse(ev))out+="\nЭто именно лунное затмение согласно данным о событии, а не просто полнолуние.";
+ return {text:out,house:moon.house,eclipse:isLunarEclipse(ev)};
 }
 export function renderForecast(row){
  if(!/^20\d\d-\d\d-\d\d$/.test(row.day||""))throw Error("invalid_date");
@@ -233,7 +294,7 @@ export function renderForecast(row){
  const title=pick([...copy.title,...(moreTitles[theme.domain]||[])],key,3),intro=pick(copy.intro,key,9),scene=pick(copy.scene,key,16),action=pick(copy.action,key,23),caution=pick(copy.caution,key,13);
  const opening=(who?who+", "+intro[0].toLocaleLowerCase("ru-RU")+intro.slice(1):intro);
  const lunar=lunarSection(facts);
- const full=fullMoonSection(facts);
+ const full=fullMoonSection(facts),newMoon=newMoonSection(facts);
  const exact=first.exactToday?(facts.dayEvents||[]).find(e=>e.type==="exact_personal_aspect"&&e.transit===first.transit&&e.natal===first.natal&&e.aspect===first.aspect&&asHour(e.at?.local)):null;
  const exactNote=exact?" Точный момент этого личного аспекта по твоему времени: "+asHour(exact.at.local)+".":first.exactToday?" По расчёту этот аспект становится точным сегодня.":"";
  const aspectMain=primary.sentence+" "+primary.human+exactNote;
@@ -246,7 +307,8 @@ export function renderForecast(row){
  "🔮 <b>ЕЖЕДНЕВКА · "+dateRu(row.day)+"</b>",
  "<b>"+esc(title)+"</b>",
  esc(opening),
- full?"🌕 <b>ПОЛНОЛУНИЕ · ЛИЧНО ДЛЯ ТЕБЯ</b>\n"+full.text:"",
+ full?"🌕 <b>"+(full.eclipse?"ЛУННОЕ ЗАТМЕНИЕ":"ПОЛНОЛУНИЕ")+" · ЛИЧНО ДЛЯ ТЕБЯ</b>\n"+full.text:"",
+ newMoon?"🌑 <b>"+(newMoon.eclipse?"СОЛНЕЧНОЕ ЗАТМЕНИЕ":"НОВОЛУНИЕ")+" · ЛИЧНО ДЛЯ ТЕБЯ</b>\n"+newMoon.text:"",
  lunar?"🌙 <b>ЛУННЫЙ РИТМ</b>\n"+esc(lunar):"",
  "✨ <b>ЧТО ПОКАЗЫВАЕТ ТВОЯ КАРТА</b>\n"+esc(aspectMain)+extra,
  houseParagraph?"🏠 <b>ГДЕ ЭТО В ТВОЕЙ КАРТЕ</b>\n"+esc(houseParagraph):"",
@@ -259,8 +321,8 @@ export function renderForecast(row){
  if(/undefined|null|NaN|\[object Object\]/.test(html))throw Error("render_artifact");
  const opened=(html.match(/<b>/g)||[]).length,closed=(html.match(/<\/b>/g)||[]).length;
  if(opened!==closed||/<\/?(?!b\b)[a-z]/i.test(html))throw Error("broken_html");
- if(full&&facts.houseKnown===false&&/<b>Твой \d+-й натальный дом<\/b>/.test(html))throw Error("invented_house");
- const output={headline:title,opening,sections:[{title:"Лунный ритм",text:lunar},{title:"Полнолуние",text:full?full.text.replace(/<[^>]*>/g,""):""},{title:"Главный аспект",text:aspectMain},{title:"Натальный дом",text:houseParagraph},{title:"Дополнительная тема",text:aspectSecondary},{title:"Возможные проявления",text:scene}],advice:action,lunar_note:lunar,voc_note:"",source:"liza-authored-offline-no-ai-api",version:VERSION,factIds:[first.id,...(otherFact?[otherFact.id]:[])]};
- return {html,output,version:VERSION,headline:title,fullmoon:!!full,fullmoonHouse:full?.house??null};
+ if(facts.houseKnown===false&&/Луна в твоём \d+-м натальном доме|<b>Луна в \d+-м натальном доме/.test(html))throw Error("invented_moon_house");
+ const output={headline:title,opening,sections:[{title:"Лунный ритм",text:lunar},{title:"Полнолуние",text:full?full.text.replace(/<[^>]*>/g,""):""},{title:"Новолуние",text:newMoon?newMoon.text.replace(/<[^>]*>/g,""):""},{title:"Главный аспект",text:aspectMain},{title:"Натальный дом",text:houseParagraph},{title:"Дополнительная тема",text:aspectSecondary},{title:"Возможные проявления",text:scene}],advice:action,lunar_note:lunar,voc_note:"",source:"liza-authored-offline-no-ai-api",version:VERSION,factIds:[first.id,...(otherFact?[otherFact.id]:[])]};
+ return {html,output,version:VERSION,headline:title,fullmoon:!!full,fullmoonHouse:full?.house??null,newMoon:!!newMoon,moonHouse:trustedMoonHouse(facts,facts.transitingMoon?.natalHouse)};
 }
 export default {renderManualForecast:renderForecast,VERSION};
