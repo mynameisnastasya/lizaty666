@@ -2153,7 +2153,7 @@ function renderDailyForecast(calc, options = {}) {
 // Математика (планеты, дома, аспекты, время) приходит ТОЛЬКО из расчётного движка.
 // Модель пишет трактовку разделов; факты вставляются кодом из проверенного расчёта.
 // ---------------------------------------------------------------------------
-var LIZA_PROMPT_VERSION = "liza-editorial-prompt-v1-20261117";
+var LIZA_PROMPT_VERSION = "liza-editorial-prompt-v2-20261123";
 var LIZA_FORMAT_VERSION = "liza-sections-v1";
 var LIZA_SECTIONS = ["headline", "intro", "work", "love", "state", "accent", "advice"];
 var LIZA_LIMITS = { headline: [8, 60], intro: [110, 420], work: [160, 620], love: [160, 620], state: [120, 620], accent: [90, 640], advice: [50, 260] };
