@@ -580,6 +580,22 @@
     for (const r of ctx.recentOpenings || [])
       if (norm(r) && (norm(r) === norm(out.opening) || norm(r) === norm(out.headline)))
         problems.push("repeated_opening");
+    const currentBody = [...(out.sections || []).map((s) => s.text || ""), out.advice || ""].join(" ");
+    const fourgrams = (str) => {
+      const words = String(str || "").toLowerCase().replace(/ё/g, "е").match(/[а-я]{4,}/g) || [];
+      return new Set(words.slice(0, 400).map((_, i) => i + 4 <= words.length ? words.slice(i, i + 4).join(" ") : "").filter(Boolean));
+    };
+    const nowPhrases = fourgrams(currentBody);
+    for (const past of (ctx.recentSummaries || []).slice(0, 7)) {
+      const oldPhrases = fourgrams(past);
+      if (nowPhrases.size < 12 || oldPhrases.size < 12) continue;
+      let common = 0;
+      for (const p of nowPhrases) if (oldPhrases.has(p)) common++;
+      if (common >= 8 && common / Math.min(nowPhrases.size, oldPhrases.size) > 0.28) {
+        problems.push("repeated_recent_scenario");
+        break;
+      }
+    }
     const len = (out.sections || []).reduce((a, s) => a + s.text.length, 0);
     const max = { quiet: 700, normal: 1500, strong: 2300 }[ctx.selection.intensity] || 1500;
     if (len > max)
