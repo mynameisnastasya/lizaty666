@@ -5,6 +5,9 @@ export const VERSION = "astroday-local-editor-v2-20261123";
 const planets = {Sun:"Солнце",Moon:"Луна",Mercury:"Меркурий",Venus:"Венера",Mars:"Марс",Jupiter:"Юпитер",Saturn:"Сатурн",Uranus:"Уран",Neptune:"Нептун",Pluto:"Плутон"};
 const natal = {Sun:"натальному Солнцу",Moon:"натальной Луне",Mercury:"натальному Меркурию",Venus:"натальной Венере",Mars:"натальному Марсу",Jupiter:"натальному Юпитеру",Saturn:"натальному Сатурну",Uranus:"натальному Урану",Neptune:"натальному Нептуну",Pluto:"натальному Плутону"};
 const sign = {Aries:"Овне",Taurus:"Тельце",Gemini:"Близнецах",Cancer:"Раке",Leo:"Льве",Virgo:"Деве",Libra:"Весах",Scorpio:"Скорпионе",Sagittarius:"Стрельце",Capricorn:"Козероге",Aquarius:"Водолее",Pisces:"Рыбах"};
+const ingress = {Aries:"Овна",Taurus:"Тельца",Gemini:"Близнецов",Cancer:"Рака",Leo:"Льва",Virgo:"Девы",Libra:"Весов",Scorpio:"Скорпиона",Sagittarius:"Стрельца",Capricorn:"Козерога",Aquarius:"Водолея",Pisces:"Рыб"};
+const transitForm = {Sun:"Транзитное",Moon:"Транзитная",Venus:"Транзитная"};
+const natalInstr = {Sun:"натальным Солнцем",Moon:"натальной Луной",Mercury:"натальным Меркурием",Venus:"натальной Венерой",Mars:"натальным Марсом",Jupiter:"натальным Юпитером",Saturn:"натальным Сатурном",Uranus:"натальным Ураном",Neptune:"натальным Нептуном",Pluto:"натальным Плутоном"};
 const aspect = {trine:"трин",sextile:"секстиль",square:"квадрат",opposition:"оппозиция",conjunction:"соединение"};
 const meaning = {trine:"мягкая возможность согласовать две темы",sextile:"возможность, которой полезно воспользоваться сознательно",square:"напряжение, где помогает пересмотр привычного действия",opposition:"необходимость увидеть две стороны, прежде чем выбирать",conjunction:"усиление темы, которая может привлечь больше внимания"};
 const planetFocus = {Sun:"личные цели и чувство собственного направления",Moon:"повседневные реакции и потребность в безопасности",Mercury:"мысли, документы и общение",Venus:"ценности, симпатии и удовольствие",Mars:"инициатива, усилия и умение действовать",Jupiter:"расширение планов и горизонтов",Saturn:"дисциплина, пределы и ответственность",Uranus:"желание перемен и самостоятельности",Neptune:"воображение, идеалы и ясность границ",Pluto:"контроль, глубина и необходимость пересмотра"};
@@ -29,11 +32,13 @@ function hash(s){let h=2166136261;for(const c of String(s)){h^=c.codePointAt(0);
 const choose=(a,n)=>a[n%a.length];
 const dayLabel=s=>{const [y,m,d]=s.split("-").map(Number);const months=["ЯНВАРЯ","ФЕВРАЛЯ","МАРТА","АПРЕЛЯ","МАЯ","ИЮНЯ","ИЮЛЯ","АВГУСТА","СЕНТЯБРЯ","ОКТЯБРЯ","НОЯБРЯ","ДЕКАБРЯ"];return d+" "+months[m-1]+" "+y};
 const localTime=ev=>ev?.at?.local?.slice(11,16)||null;
-function aspectSentence(f){
+function aspectSentence(f, secondary=false){
  if(!f||!planets[f.transit]||!natal[f.natal]||!aspect[f.aspect])return "";
- const prefix="Транзитный "+planets[f.transit]+" образует "+aspect[f.aspect]+" к "+natal[f.natal]+".";
- const text=" В астрологической трактовке это "+meaning[f.aspect]+": "+planetFocus[f.transit]+" встречаются с темой «"+planetFocus[f.natal]+"».";
- return prefix+text+(f.exactToday?" Аспект становится точным в этот день.":" Это часть текущего астрологического фона, а не обязательно событие именно сегодня.");
+ const adj=transitForm[f.transit]||"Транзитный";
+ const relation=f.aspect==="conjunction"?" с "+natalInstr[f.natal]:" к "+natal[f.natal];
+ const prefix=adj+" "+planets[f.transit]+" образует "+aspect[f.aspect]+relation+".";
+ const about=secondary?" Этот фон затрагивает темы «"+planetFocus[f.transit]+"» и «"+planetFocus[f.natal]+"».":" В астрологической трактовке это "+meaning[f.aspect]+". Он связывает «"+planetFocus[f.transit]+"» и «"+planetFocus[f.natal]+"».";
+ return prefix+about+(f.exactToday?" Точный аспект приходится на этот день.":secondary?"":" Это влияние не означает обязательного события.");
 }
 function moonLine(facts,seed){
  const moon=facts?.transitingMoon;
@@ -49,7 +54,7 @@ function moonEvents(facts){
  for(const ev of events.slice(0,3)){
    const at=localTime(ev);
    if(!at)continue;
-   if(ev.type==="moon_sign_ingress"&&sign[ev.toSign])texts.push("В "+at+" по местному времени Луна переходит в "+sign[ev.toSign]+": общий символический акцент может сместиться в течение дня.");
+   if(ev.type==="moon_sign_ingress"&&ingress[ev.toSign])texts.push("В "+at+" по местному времени Луна переходит в знак "+ingress[ev.toSign]+": символический акцент дня может измениться.");
    if(ev.type==="full_moon")texts.push("В "+at+" по местному времени наступает полнолуние. В традиционной астрологической трактовке это повод подвести промежуточные итоги.");
    if(ev.type==="new_moon")texts.push("В "+at+" по местному времени наступает новолуние. Его обычно связывают с возможностью начать небольшой новый этап.");
  }
@@ -68,16 +73,16 @@ export function renderManualForecast(row){
  const opening=choose(style.open,key>>>2);
  const example=choose(style.examples,key>>>5);
  const advice=choose(style.advice,key>>>9);
- const open2="Варианты ниже — лишь примеры того, как можно применить эту тему; их не нужно специально искать в своей жизни.";
+ const open2="";
  const m=moonLine(facts,key>>3);
  const moonParts=[m,...moonEvents(facts)].filter(Boolean);
- const sub=sFact && aspectSentence(sFact) ? "Ещё один акцент: "+aspectSentence(sFact) : "";
+ const sub=sFact && aspectSentence(sFact,true) ? "Ещё один акцент: "+aspectSentence(sFact,true) : "";
  const name=typeof row.preferred_name==="string"&&/^[А-Яа-яЁё -]{2,28}$/.test(row.preferred_name.trim())?row.preferred_name.trim():"";
- const intro=(name?name+", ":"")+opening;
- const lines=["🔮 <b>ASTRODAY · "+dayLabel(row.day)+"</b>","<b>"+escapeHtml(title.toUpperCase())+"</b>",escapeHtml(intro),moonParts.length?"🌙 <b>ЛУННЫЙ РИТМ</b>\n"+moonParts.map(escapeHtml).join("\n"):"","✨ <b>ЧТО ПОКАЗЫВАЕТ КАРТА</b>\n"+escapeHtml(aspectSentence(pFact)),sub?escapeHtml(sub):"","🧭 <b>КАК ЭТО МОЖЕТ ПРОЯВИТЬСЯ</b>\n"+escapeHtml(example)+" "+escapeHtml(open2),"🖤 <b>МОЙ СОВЕТ</b>\n"+escapeHtml(advice)];
+ const intro=(name?name+", "+opening[0].toLocaleLowerCase("ru-RU")+opening.slice(1):opening);
+ const lines=["🔮 <b>ASTRODAY · "+dayLabel(row.day)+"</b>","<b>"+escapeHtml(title.toUpperCase())+"</b>",escapeHtml(intro),moonParts.length?"🌙 <b>ЛУННЫЙ РИТМ</b>\n"+moonParts.map(escapeHtml).join("\n"):"","✨ <b>ЧТО ПОКАЗЫВАЕТ КАРТА</b>\n"+escapeHtml(aspectSentence(pFact)),sub?escapeHtml(sub):"","🧭 <b>КАК ЭТО МОЖЕТ ПРОЯВИТЬСЯ</b>\n"+escapeHtml(example),"🖤 <b>МОЙ СОВЕТ</b>\n"+escapeHtml(advice)];
  const html=lines.filter(Boolean).join("\n\n");
  if(html.length<500||html.length>3600)throw Error("text_out_of_bounds:"+html.length);
  if(/<\/?(?!b\b)[a-z]/i.test(html))throw Error("unsupported_html");
- const output={headline:title,opening:intro,sections:[{title:"Лунный ритм",text:moonParts.join(" ")},{title:"Главный аспект",text:aspectSentence(pFact)},{title:"Дополнительная тема",text:sub},{title:"Возможные проявления",text:example+" "+open2}],advice,lunar_note:"",voc_note:"",source:"chatgpt_authored_offline",version:VERSION,factIds:[pFact.id,...(sFact?[sFact.id]:[])]};
+ const output={headline:title,opening:intro,sections:[{title:"Лунный ритм",text:moonParts.join(" ")},{title:"Главный аспект",text:aspectSentence(pFact)},{title:"Дополнительная тема",text:sub},{title:"Возможные проявления",text:example}],advice,lunar_note:"",voc_note:"",source:"chatgpt_authored_offline",version:VERSION,factIds:[pFact.id,...(sFact?[sFact.id]:[])]};
  return {html,output,version:VERSION};
 }
