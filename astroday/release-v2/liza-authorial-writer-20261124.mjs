@@ -298,7 +298,7 @@ export function renderForecast(row){
  const title=pick([...copy.title,...(moreTitles[theme.domain]||[])],key,3),intro=pick(copy.intro,key,9),scene=pick(copy.scene,key,16),action=pick(copy.action,key,23),caution=pick(copy.caution,key,13);
  const opening=(who?who+", "+intro[0].toLocaleLowerCase("ru-RU")+intro.slice(1):intro);
  const full=fullMoonSection(facts),newMoon=newMoonSection(facts);
- const lunar=lunarSection(facts,full?.house??new?.house??null);
+ const lunar=lunarSection(facts,full?.house??newMoon?.house??null);
  const exact=first.exactToday?(facts.dayEvents||[]).find(e=>e.type==="exact_personal_aspect"&&e.transit===first.transit&&e.natal===first.natal&&e.aspect===first.aspect&&asHour(e.at?.local)):null;
  const exactNote=exact?" Точный момент этого личного аспекта по твоему времени: "+asHour(exact.at.local)+".":first.exactToday?" По расчёту этот аспект становится точным сегодня.":"";
  const aspectMain=primary.sentence+" "+primary.human+exactNote;
