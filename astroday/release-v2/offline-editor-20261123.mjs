@@ -37,7 +37,7 @@ function aspectSentence(f, secondary=false){
  const adj=transitForm[f.transit]||"Транзитный";
  const relation=f.aspect==="conjunction"?" с "+natalInstr[f.natal]:" к "+natal[f.natal];
  const prefix=adj+" "+planets[f.transit]+" образует "+aspect[f.aspect]+relation+".";
- const about=secondary?" Этот фон затрагивает темы «"+planetFocus[f.transit]+"» и «"+planetFocus[f.natal]+"».":" В астрологической трактовке это "+meaning[f.aspect]+". Он связывает «"+planetFocus[f.transit]+"» и «"+planetFocus[f.natal]+"».";
+ const about=secondary?" Этот фон затрагивает темы «"+planetFocus[f.transit]+"» и «"+planetFocus[f.natal]+"».":" В астрологической трактовке это "+meaning[f.aspect]+". Этот аспект связывает «"+planetFocus[f.transit]+"» и «"+planetFocus[f.natal]+"».";
  return prefix+about+(f.exactToday?" Точный аспект приходится на этот день.":secondary?"":" Это влияние не означает обязательного события.");
 }
 function moonLine(facts,seed){
