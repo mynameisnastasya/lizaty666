@@ -100,6 +100,20 @@ const domains={
  action:["Оставь себе немного времени без чужих требований и разберись с одним вопросом.","Перенеси необязательный разговор, если сейчас для него нет сил и внимания."],
  caution:["Не выдавай тревогу за безошибочную интуицию.","Не пытайся восстановиться, продолжая без остановки решать чужие проблемы."]}
 };
+const moreTitles={
+ self:["ТВОИ ЖЕЛАНИЯ ТОЖЕ УЧИТЫВАЮТСЯ","НЕ НАДО СТАНОВИТЬСЯ УДОБНОЙ ДЛЯ ВСЕХ","ЧТО ТЫ ВЫБИРАЕШЬ САМА?"],
+ money:["ПОКУПКА НЕ ДОЛЖНА ЛЕЧИТЬ НАСТРОЕНИЕ","ПЕРЕСЧИТАЙ СВОИ РЕСУРСЫ","СЕГОДНЯ НЕ ДЕНЬ ДЛЯ РАЗМЫТЫХ ОБЕЩАНИЙ"],
+ communication:["ОДНО СЛОВО МОЖЕТ МНОГОЕ ПРОЯСНИТЬ","НЕ ДОДУМЫВАЙ ЗА ДРУГОГО","СЛУШАЙ, ЧТО СКАЗАЛИ, А НЕ ЧТО ПОКАЗАЛОСЬ"],
+ home:["НЕМНОГО ПОКОЯ БЕЗ ЧУВСТВА ВИНЫ","ЧУЖОЙ БЫТ НЕ ДОЛЖЕН БЫТЬ ТВОЕЙ ПРОБЛЕМОЙ","УДОБНЫЙ ДОМ НАЧИНАЕТСЯ С ЧЕСТНОГО РАЗГОВОРА"],
+ love:["НЕ НАДО ИГРАТЬ В «ДОГАДАЙСЯ САМ»","ЛЮБОВЬ НЕ ТРЕБУЕТ ЭКЗАМЕНОВ","СИМПАТИЯ ЕСТЬ. А ДОГОВОРЁННОСТИ?"],
+ routine:["СДЕЛАЙ ВАЖНОЕ, ОСТАЛЬНОЕ ПОДВИНЕТСЯ","НЕ ПРИКИДЫВАЙСЯ РОБОТОМ","ДЕЛ МНОГО, А ТЫ У СЕБЯ ОДНА"],
+ partners:["ПОРА ОБСУДИТЬ ОЖИДАНИЯ","ОДИН РАЗГОВОР ВМЕСТО ДЕСЯТИ ОБИД","СЛОВО «ВМЕСТЕ» НЕ ОЗНАЧАЕТ «МОЛЧА»"],
+ depth:["КОНТРОЛЬ НЕ ЗАМЕНЯЕТ ДОВЕРИЯ","ПРОВЕРЬ ФАКТЫ, ПРЕЖДЕ ЧЕМ РЕВНОВАТЬ","ТАМ, ГДЕ НЕУДОБНО, ИЩИ СУТЬ"],
+ horizons:["ПЛАНЫ ХОРОШИ, КОГДА В НИХ ЕСТЬ ДАТЫ","НОВЫЙ ПУТЬ НАЧИНАЕТСЯ НЕ С ПАНИКИ","ХОЧЕТСЯ БОЛЬШЕГО? ДАВАЙ КОНКРЕТНО"],
+ career:["РАБОТА НЕ ОБЯЗАНА СЪЕДАТЬ ВСЮ ЖИЗНЬ","КТО ВООБЩЕ ЗА ЧТО ОТВЕЧАЕТ?","СРОКИ И ПРАВИЛА СЕЙЧАС ВАЖНЕЕ ВПЕЧАТЛЕНИЯ"],
+ friends:["ДРУЖБА БЕЗ ТЕЛЕПАТИЧЕСКИХ ТЕСТОВ","В ОБЩИХ ДЕЛАХ НУЖНЫ ОБЩИЕ ПРАВИЛА","НЕ СОГЛАШАЙСЯ ЗА ВСЕХ СРАЗУ"],
+ inner:["ТЫ МОЖЕШЬ НЕ ОТВЕЧАТЬ МГНОВЕННО","ПАУЗА НЕ ОЗНАЧАЕТ ПРОИГРЫШ","ДАЖЕ У МЫСЛЕЙ БЫВАЕТ ВЫХОДНОЙ"]
+};
 const houses={
  1:["Тут главное не чужие ожидания, а то, как ты сама себя видишь.","Посмотри, где ты соглашаешься на роль, из которой уже выросла. Изменения в образе жизни начинаются с честного «мне так не подходит»."],
  2:["Фокус на личных деньгах, самооценке и том, что даёт тебе опору.","Пересмотри расходы или договорённость о вознаграждении. Ценность твоего времени тоже стоит учитывать."],
@@ -188,13 +202,16 @@ export function renderForecast(row){
  const other=otherFact?aspectCopy(otherFact):null;
  const copy=domains[theme.domain]||domains.self;
  const key=hash(row.day+"|"+row.telegram_id+"|"+first.id),who=nameFromRow(row);
- const title=pick(copy.title,key,3),intro=pick(copy.intro,key,9),scene=pick(copy.scene,key,16),action=pick(copy.action,key,23),caution=pick(copy.caution,key,13);
+ const title=pick([...copy.title,...(moreTitles[theme.domain]||[])],key,3),intro=pick(copy.intro,key,9),scene=pick(copy.scene,key,16),action=pick(copy.action,key,23),caution=pick(copy.caution,key,13);
  const opening=(who?who+", "+intro[0].toLocaleLowerCase("ru-RU")+intro.slice(1):intro);
  const lunar=lunarSection(facts);
  const full=fullMoonSection(facts);
  const exact=first.exactToday?(facts.dayEvents||[]).find(e=>e.type==="exact_personal_aspect"&&e.transit===first.transit&&e.natal===first.natal&&e.aspect===first.aspect&&asHour(e.at?.local)):null;
  const exactNote=exact?" Точный момент этого личного аспекта по твоему времени: "+asHour(exact.at.local)+".":first.exactToday?" По расчёту этот аспект становится точным сегодня.":"";
  const aspectMain=primary.sentence+" "+primary.human+exactNote;
+ const primaryHouse=facts.houseKnown===true&&validHouse(first.transitHouse)?Number(first.transitHouse):null;
+ const natalHouse=facts.houseKnown===true&&validHouse(first.natalHouse)?Number(first.natalHouse):null;
+ const houseParagraph=primaryHouse?"В расчёте транзитный "+planets[first.transit][0]+" находится в твоём "+primaryHouse+"-м натальном доме. "+houses[primaryHouse][0]+" "+houses[primaryHouse][1]:natalHouse?"Натальная планета, к которой идёт аспект, находится в твоём "+natalHouse+"-м доме. "+houses[natalHouse][0]+" "+houses[natalHouse][1]:"";
  const aspectSecondary=other?other.sentence+" "+other.human:"";
  const extra=other?"\n\n<b>И ЕЩЁ ОДИН НЮАНС</b>\n"+esc(aspectSecondary):"";
  const sections=[
@@ -204,6 +221,7 @@ export function renderForecast(row){
  full?"🌕 <b>ПОЛНОЛУНИЕ · ЛИЧНО ДЛЯ ТЕБЯ</b>\n"+full.text:"",
  lunar?"🌙 <b>ЛУННЫЙ РИТМ</b>\n"+esc(lunar):"",
  "✨ <b>ЧТО ПОКАЗЫВАЕТ ТВОЯ КАРТА</b>\n"+esc(aspectMain)+extra,
+ houseParagraph?"🏠 <b>ГДЕ ЭТО В ТВОЕЙ КАРТЕ</b>\n"+esc(houseParagraph):"",
  "👀 <b>КАК ЭТО МОЖЕТ ПРОЯВИТЬСЯ</b>\n"+esc(scene),
  "🖤 <b>ЧТО Я СОВЕТУЮ</b>\n"+esc(action),
  "⚠️ <b>ЧЕГО ЛУЧШЕ НЕ ДЕЛАТЬ</b>\n"+esc(caution)
@@ -214,7 +232,7 @@ export function renderForecast(row){
  const opened=(html.match(/<b>/g)||[]).length,closed=(html.match(/<\/b>/g)||[]).length;
  if(opened!==closed||/<\/?(?!b\b)[a-z]/i.test(html))throw Error("broken_html");
  if(full&&facts.houseKnown===false&&/<b>Твой \d+-й натальный дом<\/b>/.test(html))throw Error("invented_house");
- const output={headline:title,opening,sections:[{title:"Лунный ритм",text:lunar},{title:"Полнолуние",text:full?full.text.replace(/<[^>]*>/g,""):""},{title:"Главный аспект",text:aspectMain},{title:"Дополнительная тема",text:aspectSecondary},{title:"Возможные проявления",text:scene}],advice:action,lunar_note:lunar,voc_note:"",source:"liza-authored-offline-no-ai-api",version:VERSION,factIds:[first.id,...(otherFact?[otherFact.id]:[])]};
+ const output={headline:title,opening,sections:[{title:"Лунный ритм",text:lunar},{title:"Полнолуние",text:full?full.text.replace(/<[^>]*>/g,""):""},{title:"Главный аспект",text:aspectMain},{title:"Натальный дом",text:houseParagraph},{title:"Дополнительная тема",text:aspectSecondary},{title:"Возможные проявления",text:scene}],advice:action,lunar_note:lunar,voc_note:"",source:"liza-authored-offline-no-ai-api",version:VERSION,factIds:[first.id,...(otherFact?[otherFact.id]:[])]};
  return {html,output,version:VERSION,headline:title,fullmoon:!!full,fullmoonHouse:full?.house??null};
 }
 export default {renderManualForecast:renderForecast,VERSION};
