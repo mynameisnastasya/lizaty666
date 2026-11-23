@@ -467,6 +467,11 @@
       for (const r of ctx.recentOpenings.slice(0, 7))
         lines.push("- " + r);
     }
+    if (ctx.recentSummaries?.length) {
+      lines.push("");
+      lines.push("ПРОГНОЗЫ ЗА ПРЕДЫДУЩИЕ ДНИ: не повторяй бытовые сюжеты и советы другими словами. При одинаковых аспектах можно прямо сказать, что тема продолжается.");
+      for (const s of ctx.recentSummaries.slice(0, 10)) lines.push("- " + s.slice(0, 700));
+    }
     return lines.join(`
 `);
   }
