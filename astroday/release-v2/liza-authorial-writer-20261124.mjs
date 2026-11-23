@@ -1,7 +1,7 @@
 // ASTRODAY · авторская редактура Лизы, 24.11.2026.
 // Текст и все варианты написаны вручную, без ИИ API и внешних генераторов.
 // Расчётная часть не меняется: используем только факты verified_v2.
-export const VERSION="liza-authorial-offline-v4-moon-house-20261124";
+export const VERSION="liza-authorial-offline-v5-liza-voice-20261124";
 const sig={
  Aries:["Овен","♈","Овне","Овна"],Taurus:["Телец","♉","Тельце","Тельца"],
  Gemini:["Близнецы","♊","Близнецах","Близнецов"],Cancer:["Рак","♋","Раке","Рака"],
@@ -191,7 +191,11 @@ function aspectCopy(f){
  const A=planets[f.transit],B=planets[f.natal];
  const gram=f.aspect==="conjunction"?B[2]:B[1];
  const sentence=A[0]+" образует "+asp[f.aspect][0]+" "+gram+".";
- const human="Если перевести с астрологического на человеческий, здесь переплетаются "+A[3]+" и "+B[3]+". "+asp[f.aspect][1];
+ const human=pick([
+ "Здесь встречаются две вполне земные темы: "+A[3]+" и "+B[3]+". ",
+ "В одной истории сходятся "+A[3]+" и "+B[3]+". ",
+ "На повестке сразу два сюжета: "+A[3]+" и "+B[3]+". "
+ ],hash(String(f.id||f.transit+f.aspect+f.natal)),7)+asp[f.aspect][1];
  return {sentence,human,summary:sentence+" "+human};
 }
 function nameFromRow(row){
@@ -217,7 +221,7 @@ function houseAtIngress(facts,event){
  }
  return null;
 }
-function lunarSection(facts){
+function lunarSection(facts,majorEventHouse=null){
  const out=[],m=facts.transitingMoon;
  if(!m||!sig[m.sign])throw Error("moon_sign_missing");
  const h=trustedMoonHouse(facts,m.natalHouse),hr=Number(facts.representativeLocalHour);
@@ -225,7 +229,7 @@ function lunarSection(facts){
  out.push("Положение на "+at+" по твоему местному времени: Луна в "+sig[m.sign][2]+".");
  if(facts.houseKnown===true){
   if(!h)throw Error("verified_moon_house_missing");
-  out.push("🏠 Луна в твоём "+h+"-м натальном доме (Плацидус). "+houses[h][0]+" "+houses[h][1]);
+  out.push("🏠 Луна в твоём "+h+"-м натальном доме (Плацидус). "+(majorEventHouse===h?"Этот же дом будет задействован в главном лунном событии дня, его значение разбираем выше.":houses[h][0]+" "+houses[h][1]));
  }else{
   out.push("🏠 Натальный дом Луны не указан: без подтверждённого времени рождения его нельзя надёжно рассчитать.");
  }
@@ -233,7 +237,7 @@ function lunarSection(facts){
  const ingress=(facts.dayEvents||[]).filter(e=>e.type==="moon_sign_ingress"&&e.toSign&&sig[e.toSign]&&asHour(e.at?.local));
  for(const e of ingress.slice(0,2)){
   const ih=houseAtIngress(facts,e);
-  out.push("В "+asHour(e.at.local)+" Луна переходит в "+sig[e.toSign][2]+". "+(ih?"В момент перехода она попадает в твой "+ih+"-й натальный дом. ":"")+(ih?houses[ih][0]+" ":"")+"После перехода акцент дня может измениться.");
+  out.push("В "+asHour(e.at.local)+" Луна переходит в знак "+sig[e.toSign][3]+". "+(ih?"В момент перехода Луна в твоём "+ih+"-м натальном доме. "+(ih===h?"Значит, тема дома сохраняется, а настроение знака меняется.":houses[ih][0]+" "+houses[ih][1]):"Время рождения не подтверждено, поэтому дом перехода не придумываем.")+" "+moonMood[e.toSign]);
  }
  return out.join("\n");
 }
@@ -293,16 +297,16 @@ export function renderForecast(row){
  const key=hash(row.day+"|"+row.telegram_id+"|"+first.id),who=nameFromRow(row);
  const title=pick([...copy.title,...(moreTitles[theme.domain]||[])],key,3),intro=pick(copy.intro,key,9),scene=pick(copy.scene,key,16),action=pick(copy.action,key,23),caution=pick(copy.caution,key,13);
  const opening=(who?who+", "+intro[0].toLocaleLowerCase("ru-RU")+intro.slice(1):intro);
- const lunar=lunarSection(facts);
  const full=fullMoonSection(facts),newMoon=newMoonSection(facts);
+ const lunar=lunarSection(facts,full?.house??new?.house??null);
  const exact=first.exactToday?(facts.dayEvents||[]).find(e=>e.type==="exact_personal_aspect"&&e.transit===first.transit&&e.natal===first.natal&&e.aspect===first.aspect&&asHour(e.at?.local)):null;
  const exactNote=exact?" Точный момент этого личного аспекта по твоему времени: "+asHour(exact.at.local)+".":first.exactToday?" По расчёту этот аспект становится точным сегодня.":"";
  const aspectMain=primary.sentence+" "+primary.human+exactNote;
  const primaryHouse=facts.houseKnown===true&&validHouse(first.transitHouse)?Number(first.transitHouse):null;
  const natalHouse=facts.houseKnown===true&&validHouse(first.natalHouse)?Number(first.natalHouse):null;
- const houseParagraph=primaryHouse?"В расчёте транзитный "+planets[first.transit][0]+" находится в твоём "+primaryHouse+"-м натальном доме. "+houses[primaryHouse][0]+" "+houses[primaryHouse][1]:natalHouse?"Натальная планета, к которой идёт аспект, находится в твоём "+natalHouse+"-м доме. "+houses[natalHouse][0]+" "+houses[natalHouse][1]:"";
+ const houseParagraph=primaryHouse?"Сейчас "+planets[first.transit][0]+" проходит по твоему "+primaryHouse+"-му натальному дому. "+houses[primaryHouse][0]+" "+houses[primaryHouse][1]:natalHouse?"Натальная планета, к которой идёт аспект, находится в "+natalHouse+"-м доме твоей карты. "+houses[natalHouse][0]+" "+houses[natalHouse][1]:"";
  const aspectSecondary=other?other.sentence+" "+other.human:"";
- const extra=other?"\n\n<b>И ЕЩЁ ОДИН НЮАНС</b>\n"+esc(aspectSecondary):"";
+ const extra=other?"\n\n<b>Ещё один личный аспект</b>\n"+esc(aspectSecondary):"";
  const sections=[
  "🔮 <b>ЕЖЕДНЕВКА · "+dateRu(row.day)+"</b>",
  "<b>"+esc(title)+"</b>",
@@ -310,11 +314,11 @@ export function renderForecast(row){
  full?"🌕 <b>"+(full.eclipse?"ЛУННОЕ ЗАТМЕНИЕ":"ПОЛНОЛУНИЕ")+" · ЛИЧНО ДЛЯ ТЕБЯ</b>\n"+full.text:"",
  newMoon?"🌑 <b>"+(newMoon.eclipse?"СОЛНЕЧНОЕ ЗАТМЕНИЕ":"НОВОЛУНИЕ")+" · ЛИЧНО ДЛЯ ТЕБЯ</b>\n"+newMoon.text:"",
  lunar?"🌙 <b>ЛУННЫЙ РИТМ</b>\n"+esc(lunar):"",
- "✨ <b>ЧТО ПОКАЗЫВАЕТ ТВОЯ КАРТА</b>\n"+esc(aspectMain)+extra,
+ "✨ <b>ЧТО ЗАДЕВАЕТ ТВОЮ КАРТУ</b>\n"+esc(aspectMain)+extra,
  houseParagraph?"🏠 <b>ГДЕ ЭТО В ТВОЕЙ КАРТЕ</b>\n"+esc(houseParagraph):"",
- "👀 <b>КАК ЭТО МОЖЕТ ПРОЯВИТЬСЯ</b>\n"+esc(scene),
- "🖤 <b>ЧТО Я СОВЕТУЮ</b>\n"+esc(action),
- "⚠️ <b>ЧЕГО ЛУЧШЕ НЕ ДЕЛАТЬ</b>\n"+esc(caution)
+ "👀 "+esc(scene),
+ "💛 <b>Сегодня хорошо:</b> "+esc(action),
+ "‼️ <b>Сегодня особенно важно:</b> "+esc(caution)
  ].filter(Boolean);
  const html=sections.join("\n\n");
  if(html.length<650||html.length>3850)throw Error("html_size:"+html.length);
