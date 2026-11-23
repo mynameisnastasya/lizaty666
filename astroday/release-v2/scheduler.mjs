@@ -1647,10 +1647,11 @@
       const parts = splitHtml(f.body_html);
       const ids2 = [];
       let state = "sent", err = null;
-      for (const part of parts) {
+      for (let i = 0; i < parts.length; i++) {
+        const part = parts[i];
         let r;
         try {
-          r = await tg("sendMessage", { chat_id: id, text: part, parse_mode: "HTML", disable_web_page_preview: true });
+          r = await tg("sendMessage", { chat_id: id, text: part, parse_mode: "HTML", disable_notification: false, disable_web_page_preview: true, ...(i === parts.length - 1 ? { reply_markup: { inline_keyboard: [[{ text: "⚙️ Настроить рассылку", callback_data: "v2:time" }, { text: "🔕 Отключить", callback_data: "v2:time:off" }]] } } : {}) });
         } catch {
           state = "review";
           err = "outcome_unknown";
