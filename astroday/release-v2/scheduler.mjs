@@ -2307,21 +2307,12 @@ function lizaAssemble(brief, plan, v, options = {}) {
   const moonSentence = plan.intro[0].sentence;
   const addressedMoon = moonSentence.replace(/^(На|В|По)(?= )/u, (word) => word.toLocaleLowerCase("ru-RU"));
   const intro = (name ? name + ", " + addressedMoon : cap(moonSentence)) + " " + v.intro;
-  const lines = [
-    lizaDateHeader(brief.day),
-    v.headline.toLocaleUpperCase("ru-RU"),
-    intro,
-    "🔥  ДЕЛА, УЧЁБА И ДЕНЬГИ",
-    withFacts(plan.work, v.work),
-    "❤️  ЛЮБОВЬ И ОТНОШЕНИЯ",
-    withFacts(plan.love, v.love),
-    "🌙  ТВОЁ СОСТОЯНИЕ",
-    v.state,
-    "✨  ЕЩЁ ОДИН АСТРОАКЦЕНТ",
-    withFacts(plan.accent, v.accent),
-    "🖤  МОЙ СОВЕТ НА СЕГОДНЯ",
-    (name ? name + ", " + v.advice[0].toLocaleLowerCase("ru-RU") + v.advice.slice(1) : v.advice)
-  ];
+  const lines = [lizaDateHeader(brief.day), v.headline.toLocaleUpperCase("ru-RU"), intro];
+  if (plan.work.length && v.work) lines.push("🔥  ДЕЛА, УЧЁБА И ДЕНЬГИ", withFacts(plan.work, v.work));
+  if (plan.love.length && v.love) lines.push("❤️  ЛЮБОВЬ И ОТНОШЕНИЯ", withFacts(plan.love, v.love));
+  if (v.state) lines.push("🌙  ТВОЁ СОСТОЯНИЕ", v.state);
+  if (plan.accent.length && v.accent) lines.push("✨  ЕЩЁ ОДИН АСТРОАКЦЕНТ", withFacts(plan.accent, v.accent));
+  lines.push("🖤  МОЙ СОВЕТ НА СЕГОДНЯ", name ? name + ", " + v.advice[0].toLocaleLowerCase("ru-RU") + v.advice.slice(1) : v.advice);
   return lines.join("\n");
 }
 
