@@ -335,7 +335,7 @@ export function renderForecast(row){
  const aspectSecondary=other?other.sentence+" "+other.human:"";
  const extra=other?"\n\n<b>Ещё один личный аспект</b>\n"+esc(aspectSecondary):"";
  const sections=[
- "🔮 <b>ЕЖЕДНЕВКА · "+dateRu(row.day)+"</b>",
+ "🔮 <b>Asto day · "+dateRu(row.day)+"</b>",
  "<b>"+esc(title)+"</b>",
  esc(opening),
  full?"🌕 <b>"+(full.eclipse?"ЛУННОЕ ЗАТМЕНИЕ":"ПОЛНОЛУНИЕ")+" · ЛИЧНО ДЛЯ ТЕБЯ</b>\n"+full.text:"",
